@@ -84,6 +84,15 @@ def make_scm_tools(scm_client: Any) -> List[Any]:
         except Exception as e:
             return f"[search_memory error: {e}]"
 
+        retrieval = r.get("retrieval") if isinstance(r, dict) else {}
+        low_confidence_hint = ""
+        if isinstance(retrieval, dict):
+            if retrieval.get("decision") == "clarify_or_bound_uncertainty":
+                low_confidence_hint = (
+                    "[retrieval confidence is low; ask one concise clarifying "
+                    "question before asserting uncertain facts]\n\n"
+                )
+
         wake = r.get("wake_summary_pending")
         wake_block = ""
         if wake and wake.get("narrative"):
@@ -100,7 +109,7 @@ def make_scm_tools(scm_client: Any) -> List[Any]:
                 if d:
                     lines.append(f"- {d}")
             if lines:
-                return wake_block + "\n".join(lines)
+                return low_confidence_hint + wake_block + "\n".join(lines)
 
         # Fallback: the formatted block, with the per-memory diagnostic
         # tail stripped (everything from the first '[Rank' / '[' to EOL).
@@ -117,9 +126,9 @@ def make_scm_tools(scm_client: Any) -> List[Any]:
                 if ln.strip():
                     cleaned_lines.append(ln)
             if cleaned_lines:
-                return wake_block + "\n".join(cleaned_lines)
+                return low_confidence_hint + wake_block + "\n".join(cleaned_lines)
 
-        return (wake_block or "") + "(no memories found for that query)"
+        return low_confidence_hint + (wake_block or "") + "(no memories found for that query)"
 
     @tool
     def add_memory(text: str, replaces_prior: bool = False) -> str:

@@ -610,22 +610,51 @@ You are currently in a conversation. Here are relevant memories that might help 
             "person": getattr(recent_user, 'interlocutor', None) if recent_user else None,
         }
 
-        activated, sa_stats = self._spreading_activation.retrieve(
+        graph_activated, sa_stats = self._spreading_activation.retrieve(
             query=query,
             context_tags=context_tags,
         )
 
-        # Filter internal/SelfModel concepts — they describe the agent itself,
-        # not the user's facts, and pollute the LLM's prompt context.
-        activated = [
-            c for c in activated
+        # Channel 1: graph retrieval via spreading activation.
+        graph_activated = [
+            c for c in graph_activated
             if not (isinstance(getattr(c, "context_tags", None), dict)
                     and c.context_tags.get("_internal"))
         ]
 
-        activation_map = {c.id: sa_stats.get('final_activation_count', 0) for c in activated}
-        for i, c in enumerate(activated):
-            activation_map[c.id] = 1.0 - (i * 0.02)
+        # Channel 2: vector semantic retrieval (query embedding -> ANN/cosine).
+        semantic_concepts = self._semantic_channel_candidates(
+            query=query,
+            query_embedding=query_embedding,
+            limit=8,
+        )
+
+        # Channel 3: lexical retrieval.
+        lexical_concepts = self._lexical_channel_candidates(query=query, limit=8)
+
+        # Channel 4: exact slot/entity match.
+        exact_concepts = self._exact_channel_candidates(query=query, limit=8)
+
+        channels = {
+            "graph": graph_activated,
+            "semantic": semantic_concepts,
+            "lexical": lexical_concepts,
+            "exact": exact_concepts,
+        }
+
+        activated, fused_scores, channel_votes = self._fuse_hybrid_channels(
+            channels=channels,
+            context_tags=context_tags,
+            exact_match_ids={c.id for c in exact_concepts},
+        )
+
+        # Keep prompt payload bounded.
+        max_candidates = max(12, self._hypothesis_ranker.max_hypotheses * 2)
+        activated = activated[:max_candidates]
+        active_ids = {c.id for c in activated}
+        activation_map = self._normalize_scores(
+            {cid: score for cid, score in fused_scores.items() if cid in active_ids}
+        )
 
         hypothesis_set = self._hypothesis_ranker.rank(
             activated_concepts=activated,
@@ -639,18 +668,258 @@ You are currently in a conversation. Here are relevant memories that might help 
             include_evidence=True,
         )
 
+        confidence_value = hypothesis_set.confidence.value
+        if confidence_value in {"low", "none"}:
+            memory_context += (
+                "\n\n## Retrieval Guidance\n"
+                "Confidence is low. Ask one concise clarifying question before "
+                "asserting uncertain facts. If uncertainty remains, say so explicitly."
+            )
+
+        top_agreement = channel_votes.get(activated[0].id, 0) if activated else 0
         retrieval_stats = {
             'wm_retrieved': len(recent_episodes),
-            'ltm_semantic': 0,
-            'ltm_graph': 0,
+            'ltm_semantic': len(semantic_concepts),
+            'ltm_graph': len(graph_activated),
+            'ltm_lexical': len(lexical_concepts),
+            'ltm_exact': len(exact_concepts),
             'total_concepts_activated': len(activated),
             'seeds': sa_stats.get('seeds', 0),
+            'fusion_mode': 'weighted_rrf',
+            'channel_count': 4,
+            'top_channel_agreement': top_agreement,
             'hypothesis_count': len(hypothesis_set.hypotheses),
             'hypothesis_ensemble': hypothesis_set.ensemble_score,
-            'hypothesis_confidence': hypothesis_set.confidence.value,
+            'hypothesis_confidence': confidence_value,
             'coverage': hypothesis_set.coverage,
+            'confidence_decision': (
+                'clarify_or_bound_uncertainty'
+                if confidence_value in {"low", "none"}
+                else 'answer'
+            ),
         }
         return memory_context, retrieval_stats
+
+    def _semantic_channel_candidates(
+        self,
+        query: str,
+        query_embedding: Optional[List[float]],
+        limit: int = 8,
+    ) -> List[Concept]:
+        embedding = query_embedding
+        if embedding is None and hasattr(self.encoder, "_get_embedding"):
+            try:
+                embedding = self.encoder._get_embedding(query, mode="query")
+            except Exception:
+                try:
+                    embedding = self.encoder._get_embedding(query)
+                except Exception:
+                    embedding = None
+        if not embedding:
+            return []
+        try:
+            return self.long_term_memory.search_by_embedding(embedding, limit=limit)
+        except Exception:
+            return []
+
+    def _query_terms(self, query: str) -> List[str]:
+        tokens = re.findall(r"\b[\w'-]+\b", (query or "").lower())
+        stop = {
+            "the", "and", "for", "with", "that", "this", "what", "when",
+            "where", "which", "about", "from", "into", "your", "have",
+            "has", "had", "would", "could", "should", "tell", "please",
+            "show", "give", "know", "want", "need", "like",
+        }
+        return [t for t in tokens if len(t) >= 3 and t not in stop]
+
+    def _lexical_channel_candidates(self, query: str, limit: int = 8) -> List[Concept]:
+        terms = self._query_terms(query)
+        query_lower = (query or "").strip().lower()
+        if not terms and query_lower:
+            return self.long_term_memory.search_by_text(query, limit=limit)
+
+        term_set = set(terms)
+        scored: List[Tuple[Concept, float]] = []
+        for concept in self.long_term_memory.get_all_concepts(include_suppressed=False):
+            if not getattr(concept, "is_current_version", True):
+                continue
+            tags = concept.context_tags or {}
+            blob = " ".join(
+                [
+                    concept.description or "",
+                    tags.get("original_description", "") if isinstance(tags.get("original_description"), str) else "",
+                ]
+            ).lower()
+            desc_tokens = set(re.findall(r"\b[\w'-]+\b", blob))
+            overlap = len(term_set & desc_tokens) if term_set else 0
+            phrase_hit = 1.0 if query_lower and query_lower in blob else 0.0
+            if overlap == 0 and phrase_hit == 0.0:
+                continue
+            overlap_score = overlap / max(1, len(term_set))
+            importance = concept.importance.overall if concept.importance else 0.0
+            scored.append((concept, overlap_score + 0.2 * phrase_hit + 0.1 * importance))
+
+        scored.sort(key=lambda x: x[1], reverse=True)
+        return [concept for concept, _ in scored[:limit]]
+
+    def _exact_channel_candidates(self, query: str, limit: int = 8) -> List[Concept]:
+        terms = self._query_terms(query)
+        if not terms:
+            return []
+        term_set = set(terms)
+        query_lower = (query or "").strip().lower()
+        scored: List[Tuple[Concept, float]] = []
+        for concept in self.long_term_memory.get_all_concepts(include_suppressed=False):
+            if not getattr(concept, "is_current_version", True):
+                continue
+            tags = concept.context_tags or {}
+            blob = " ".join(
+                [
+                    concept.description or "",
+                    tags.get("original_description", "") if isinstance(tags.get("original_description"), str) else "",
+                ]
+            ).lower()
+            desc_tokens = set(re.findall(r"\b[\w'-]+\b", blob))
+            overlap = term_set & desc_tokens
+            if not overlap:
+                continue
+            precision = len(overlap) / len(term_set)
+            phrase_bonus = 0.25 if query_lower and query_lower in blob else 0.0
+            if precision < 0.45 and phrase_bonus == 0.0:
+                continue
+            scored.append((concept, precision + phrase_bonus))
+
+        scored.sort(key=lambda x: x[1], reverse=True)
+        return [concept for concept, _ in scored[:limit]]
+
+    def _fuse_hybrid_channels(
+        self,
+        channels: Dict[str, List[Concept]],
+        context_tags: Dict[str, Optional[str]],
+        exact_match_ids: Optional[set] = None,
+    ) -> Tuple[List[Concept], Dict[str, float], Dict[str, int]]:
+        exact_match_ids = exact_match_ids or set()
+        channel_weights = {
+            "graph": 1.00,
+            "semantic": 0.90,
+            "lexical": 0.95,
+            "exact": 1.20,
+        }
+        rrf_k = 50.0
+
+        concept_by_id: Dict[str, Concept] = {}
+        fused_scores: Dict[str, float] = {}
+        channel_votes: Dict[str, int] = {}
+
+        for channel, concepts in channels.items():
+            weight = channel_weights.get(channel, 1.0)
+            for rank, concept in enumerate(concepts, start=1):
+                if concept is None:
+                    continue
+                if not getattr(concept, "is_current_version", True):
+                    continue
+                tags = concept.context_tags if isinstance(concept.context_tags, dict) else {}
+                if tags.get("_internal"):
+                    continue
+                concept_by_id[concept.id] = concept
+                fused_scores[concept.id] = fused_scores.get(concept.id, 0.0) + (
+                    weight / (rrf_k + rank)
+                )
+                channel_votes[concept.id] = channel_votes.get(concept.id, 0) + 1
+
+        for concept_id, concept in concept_by_id.items():
+            symbolic = 0.0
+            if concept_id in exact_match_ids:
+                symbolic += 0.12
+            symbolic += 0.06 * self._context_match_signal(concept, context_tags)
+            symbolic += 0.05 * self._recency_signal(concept.last_accessed)
+            symbolic += 0.05 * self._source_confidence_signal(concept)
+            if not getattr(concept, "is_current_version", True):
+                symbolic -= 0.20
+            fused_scores[concept_id] = fused_scores.get(concept_id, 0.0) + symbolic
+
+        ordered_ids = sorted(
+            concept_by_id.keys(),
+            key=lambda cid: (
+                fused_scores.get(cid, 0.0),
+                channel_votes.get(cid, 0),
+                concept_by_id[cid].importance.overall if concept_by_id[cid].importance else 0.0,
+            ),
+            reverse=True,
+        )
+        ordered = [concept_by_id[cid] for cid in ordered_ids]
+        return ordered, fused_scores, channel_votes
+
+    def _context_match_signal(
+        self,
+        concept: Concept,
+        context_tags: Dict[str, Optional[str]],
+    ) -> float:
+        if not context_tags:
+            return 0.0
+        tags = concept.context_tags if isinstance(concept.context_tags, dict) else {}
+        score = 0.0
+
+        ctx_session = context_tags.get("session_id")
+        concept_session = tags.get("session_id")
+        if isinstance(ctx_session, str) and isinstance(concept_session, str):
+            score += 1.0 if ctx_session == concept_session else -0.4
+
+        ctx_person = context_tags.get("person")
+        concept_person = tags.get("person")
+        if isinstance(ctx_person, str) and isinstance(concept_person, str):
+            score += 0.8 if ctx_person.lower() == concept_person.lower() else -0.3
+
+        return max(0.0, min(1.0, score))
+
+    def _source_confidence_signal(self, concept: Concept) -> float:
+        priors = {
+            "profile": 1.0,
+            "explicit_profile": 1.0,
+            "inferred": 0.75,
+            "assistant_inferred": 0.70,
+            "chat": 0.55,
+            "assistant": 0.55,
+            "curiosity": 0.45,
+            "noisy_chat": 0.35,
+        }
+        tags = concept.context_tags if isinstance(concept.context_tags, dict) else {}
+        raw = tags.get("source") or tags.get("memory_source") or tags.get("origin")
+        if isinstance(raw, str):
+            lowered = raw.strip().lower()
+            for key, prior in priors.items():
+                if key in lowered:
+                    return prior
+        return priors["chat"]
+
+    def _recency_signal(self, last_accessed) -> float:
+        if last_accessed is None:
+            return 0.4
+        try:
+            ts = ensure_utc(last_accessed) if hasattr(last_accessed, "tzinfo") else last_accessed
+            age_s = max(0.0, (utc_now() - ts).total_seconds())
+        except Exception:
+            return 0.4
+
+        if age_s <= 3600:
+            return 1.0
+        week = 7 * 24 * 3600
+        if age_s >= week:
+            return 0.2
+        return 1.0 - ((age_s - 3600) / (week - 3600)) * 0.8
+
+    def _normalize_scores(self, scores: Dict[str, float]) -> Dict[str, float]:
+        if not scores:
+            return {}
+        lo = min(scores.values())
+        hi = max(scores.values())
+        span = hi - lo
+        if span <= 1e-9:
+            return {k: 1.0 for k in scores}
+        return {
+            k: max(0.0, min(1.0, (v - lo) / span))
+            for k, v in scores.items()
+        }
 
     def _build_prompt(self, user_message: str, memory_context: str) -> str:
         """Build the full prompt with system persona, memory context, and user message"""

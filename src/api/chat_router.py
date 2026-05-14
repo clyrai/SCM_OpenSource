@@ -45,7 +45,7 @@ import threading
 import time
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import json
 
@@ -223,9 +223,16 @@ class _InProcessSCM:
     Implements the subset of SCMClient that make_scm_tools depends on:
     add_memory, search_memory, consolidate, wake_summary.
     """
-    def __init__(self, engine: ChatEngine, user_id: str):
+    def __init__(
+        self,
+        engine: ChatEngine,
+        user_id: str,
+        retrieval_hook: Optional[Callable[[Dict[str, Any]], None]] = None,
+    ):
         self.engine = engine
         self.user_id = user_id
+        self._retrieval_hook = retrieval_hook
+        self.last_search_result: Optional[Dict[str, Any]] = None
 
     def add_memory(self, text: str, metadata: Optional[Dict[str, Any]] = None,
                    replaces_prior: bool = False) -> Dict[str, Any]:
@@ -289,11 +296,22 @@ class _InProcessSCM:
 
     def search_memory(self, query: str, limit: int = 5,
                       wait_for_pending: bool = False) -> Dict[str, Any]:
-        return _search_memory_handler(
+        result = _search_memory_handler(
             {"query": query, "user_id": self.user_id, "limit": limit,
              "wait_for_pending": wait_for_pending},
             self.engine,
         )
+        retrieval = result.get("retrieval")
+        if isinstance(retrieval, dict):
+            snapshot = dict(retrieval)
+            snapshot["updated_at"] = datetime.now(timezone.utc).isoformat()
+            self.last_search_result = snapshot
+            if callable(self._retrieval_hook):
+                try:
+                    self._retrieval_hook(snapshot)
+                except Exception:
+                    pass
+        return result
 
     def consolidate(self, mode: str = "deep") -> Dict[str, Any]:
         return _consolidate_handler(
@@ -377,6 +395,7 @@ class _ChatSession:
         )
         self.transcript: List[Dict[str, Any]] = []
         self.task_context = TaskContextState()
+        self.last_retrieval: Dict[str, Any] = {}
         self.last_activity = time.time()
         self._lock = threading.Lock()
 
@@ -764,7 +783,11 @@ def _run_agent_sync(payload: _MessageRequest, slug: str) -> Dict[str, Any]:
     # In-process SCM access — bypasses HTTP and the cloud-auth middleware
     # that gates /v1/*. The chat router IS the SCM server, no point doing
     # a self-loopback HTTP call.
-    scm = _InProcessSCM(engine=sess.engine, user_id=slug)
+    scm = _InProcessSCM(
+        engine=sess.engine,
+        user_id=slug,
+        retrieval_hook=lambda snap: setattr(sess, "last_retrieval", dict(snap)),
+    )
 
     llm = _build_llm(payload.llm_provider, payload.llm_api_key, payload.llm_model)
     agent = _build_agent(llm=llm, scm_client=scm)
@@ -857,8 +880,12 @@ def _run_agent_sync(payload: _MessageRequest, slug: str) -> Dict[str, Any]:
         "ts": datetime.now(timezone.utc).isoformat(),
         "tools": tool_calls,
         "task_context": task_updates,
+        "retrieval": scm.last_search_result if isinstance(scm.last_search_result, dict) else None,
     })
-    return {"reply": reply, "tools_called": tool_calls}
+    response: Dict[str, Any] = {"reply": reply, "tools_called": tool_calls}
+    if isinstance(scm.last_search_result, dict):
+        response["retrieval"] = scm.last_search_result
+    return response
 
 
 @router.post("/api/message/{slug}")
@@ -913,7 +940,11 @@ async def _stream_agent(payload: _MessageRequest, slug: str):
     """
     try:
         sess = _pool.get_or_create(slug)
-        scm = _InProcessSCM(engine=sess.engine, user_id=slug)
+        scm = _InProcessSCM(
+            engine=sess.engine,
+            user_id=slug,
+            retrieval_hook=lambda snap: setattr(sess, "last_retrieval", dict(snap)),
+        )
         llm = _build_llm(payload.llm_provider, payload.llm_api_key, payload.llm_model)
         agent = _build_agent(llm=llm, scm_client=scm)
         byok = _BYOKLLM(payload.llm_provider, payload.llm_api_key, payload.llm_model)
@@ -1013,8 +1044,12 @@ async def _stream_agent(payload: _MessageRequest, slug: str):
             "ts": datetime.now(timezone.utc).isoformat(),
             "tools": tools_called,
             "task_context": task_updates,
+            "retrieval": scm.last_search_result if isinstance(scm.last_search_result, dict) else None,
         })
-        yield _sse({"type": "done", "tools_called": tools_called})
+        done_payload: Dict[str, Any] = {"type": "done", "tools_called": tools_called}
+        if isinstance(scm.last_search_result, dict):
+            done_payload["retrieval"] = scm.last_search_result
+        yield _sse(done_payload)
 
     except Exception as e:
         yield _sse({"type": "error", "message": f"{type(e).__name__}: {e}"})
@@ -1164,6 +1199,18 @@ async def chat_context(slug: str) -> JSONResponse:
         "slots": slots,
         "total": len(slots),
     })
+
+
+@router.get("/api/retrieval/{slug}")
+async def chat_retrieval(slug: str) -> JSONResponse:
+    """Last hybrid-retrieval snapshot used in this chat slug."""
+    sess = _pool.get(slug)
+    if sess is None:
+        return JSONResponse({"available": False, "retrieval": {}})
+    snapshot = sess.last_retrieval if isinstance(sess.last_retrieval, dict) else {}
+    if not snapshot:
+        return JSONResponse({"available": False, "retrieval": {}})
+    return JSONResponse({"available": True, "retrieval": snapshot})
 
 
 @router.get("/api/history/{slug}")

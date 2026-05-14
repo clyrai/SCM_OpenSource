@@ -168,6 +168,71 @@ class TestPhase3Pipeline:
         assert 'coverage' in stats
         assert 'hypothesis_ensemble' in stats
 
+    def test_hybrid_retrieval_surfaces_and_fusion_stats(self, monkeypatch):
+        monkeypatch.setattr(chat_engine_module, "HME_ENABLED", True)
+
+        engine = ChatEngine(
+            llm=_DummyLLM(),
+            encoder=_StubEncoderWithConcepts([]),
+            enable_auto_sleep=False,
+            session_id=f"phase3_hybrid_{uuid.uuid4().hex}",
+            sandbox_mode=True,
+            enable_persistence=False,
+        )
+        engine.long_term_memory._persist_concept = lambda c: None
+        engine.long_term_memory._persist_relation = lambda r: None
+
+        work = Concept(
+            type=ConceptType.FACT,
+            description="I work at Atlas Labs in Zurich",
+            embedding=_stub_embedding(11),
+            importance=ImportanceVector(novelty=0.8, task_relevance=0.9),
+            salience_score=0.9,
+            grasp_score=0.9,
+            context_tags={"source": "profile"},
+        )
+        work.id = "atlas_work"
+        engine.long_term_memory.add_concept(work)
+
+        noise = Concept(
+            type=ConceptType.FACT,
+            description="I walked near the river on Tuesday",
+            embedding=_stub_embedding(12),
+            importance=ImportanceVector(novelty=0.5, task_relevance=0.4),
+            salience_score=0.4,
+            grasp_score=0.5,
+            context_tags={"source": "chat"},
+        )
+        noise.id = "river_noise"
+        engine.long_term_memory.add_concept(noise)
+
+        memory_context, stats = engine._retrieve_hme("Where do I work in Zurich?", None)
+
+        assert "Retrieved Memories" in memory_context
+        assert "Atlas Labs" in memory_context
+        assert stats["fusion_mode"] == "weighted_rrf"
+        assert stats["channel_count"] == 4
+        assert stats["ltm_lexical"] >= 1
+        assert stats["ltm_exact"] >= 1
+
+    def test_low_confidence_retrieval_adds_clarifying_guidance(self, monkeypatch):
+        monkeypatch.setattr(chat_engine_module, "HME_ENABLED", True)
+
+        engine = ChatEngine(
+            llm=_DummyLLM(),
+            encoder=_StubEncoderWithConcepts([]),
+            enable_auto_sleep=False,
+            session_id=f"phase3_clarify_{uuid.uuid4().hex}",
+            sandbox_mode=True,
+            enable_persistence=False,
+        )
+
+        memory_context, stats = engine._retrieve_hme("qzvtr ynxpl unknown entity", None)
+
+        assert "Retrieval Guidance" in memory_context
+        assert "clarifying question" in memory_context.lower()
+        assert stats["confidence_decision"] == "clarify_or_bound_uncertainty"
+
 
 class TestPhase3PipelineStress:
     def test_phase3_retrieval_throughput(self, monkeypatch):

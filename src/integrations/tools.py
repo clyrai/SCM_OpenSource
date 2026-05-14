@@ -84,18 +84,13 @@ def _add_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
 
 
 def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
-    """Retrieve memories relevant to a query, by association + recency.
+    """Retrieve memories relevant to a query via the latest hybrid stack.
 
-    Three retrieval paths run in order, results merged and deduped:
-      1. Spreading activation via SpreadingActivationRetriever
-         (the right path for question-form queries that don't share
-         tokens with the storage form — uses cues + graph propagation).
-      2. Direct LTM text search (substring match — catches verbatim hits).
-      3. Embedding fallback inside spreading activation when token cues
-         find no seeds (already wired into _select_seeds).
-
-    All paths filter is_current_version=False to avoid leaking superseded
-    concepts (Phase 7 Bug 4 fix).
+    Canonical path:
+      1) ChatEngine._retrieve_hme() for fused context + confidence stats.
+      2) Reconstruct top candidates from the same hybrid channels
+         (graph + semantic + lexical + exact) for structured `memories`.
+      3) Fallback to direct text search if no candidates survive filtering.
     """
     query = args.get("query", "").strip()
     if not query:
@@ -129,33 +124,78 @@ def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
             ),
         })
 
-    # 1. Spreading activation — the strongest retrieval path. Returns the
-    #    concepts the cue-driven graph propagation activated.
     memory_context: str = ""
-    sa_stats: Dict[str, Any] = {}
-    sa = getattr(engine, "_spreading_activation", None)
-    if sa is not None:
-        try:
-            ctx_tags = {
-                "session_id": getattr(engine, "session_id", None),
-                "person": None,
-            }
-            activated, sa_stats = sa.retrieve(query, context_tags=ctx_tags)
-            for c in activated[:limit * 2]:
-                _add(c)
-        except Exception:
-            pass
+    retrieval_stats: Dict[str, Any] = {}
 
-    # 2. Get the formatted memory context too (for prompt injection).
+    # 1) Canonical fused context + stats from engine retrieval.
     try:
-        memory_context, _ = engine._retrieve_hme(query)
+        memory_context, retrieval_stats = engine._retrieve_hme(query)
     except Exception:
         memory_context = ""
+        retrieval_stats = {}
 
-    # 3. LTM text search — catches verbatim substring hits the spreading
-    #    activation might have missed.
+    # 2) Structured memories from the same hybrid channels.
+    context_tags = {
+        "session_id": getattr(engine, "session_id", None),
+        "person": None,
+    }
+    channel_limit = max(limit * 2, 8)
+    hybrid_candidates = []
+    sa = getattr(engine, "_spreading_activation", None)
+
+    try:
+        graph_concepts = []
+        if sa is not None:
+            graph_concepts, _sa_stats = sa.retrieve(query, context_tags=context_tags)
+
+        semantic_concepts = (
+            engine._semantic_channel_candidates(
+                query=query,
+                query_embedding=None,
+                limit=channel_limit,
+            )
+            if hasattr(engine, "_semantic_channel_candidates")
+            else []
+        )
+        lexical_concepts = (
+            engine._lexical_channel_candidates(query=query, limit=channel_limit)
+            if hasattr(engine, "_lexical_channel_candidates")
+            else []
+        )
+        exact_concepts = (
+            engine._exact_channel_candidates(query=query, limit=channel_limit)
+            if hasattr(engine, "_exact_channel_candidates")
+            else []
+        )
+
+        if hasattr(engine, "_fuse_hybrid_channels"):
+            hybrid_candidates, _scores, _votes = engine._fuse_hybrid_channels(
+                channels={
+                    "graph": graph_concepts,
+                    "semantic": semantic_concepts,
+                    "lexical": lexical_concepts,
+                    "exact": exact_concepts,
+                },
+                context_tags=context_tags,
+                exact_match_ids={c.id for c in exact_concepts},
+            )
+        else:
+            # Backward-compat fallback for older engines.
+            hybrid_candidates = [
+                *graph_concepts,
+                *semantic_concepts,
+                *lexical_concepts,
+                *exact_concepts,
+            ]
+    except Exception:
+        hybrid_candidates = []
+
+    for c in hybrid_candidates[: limit * 3]:
+        _add(c)
+
+    # 3) Last fallback: text search if everything above returned nothing.
     ltm = getattr(engine, "long_term_memory", None)
-    if ltm is not None:
+    if not concepts and ltm is not None:
         try:
             results = ltm.search_by_text(query, limit=limit)
             for c in results:
@@ -163,12 +203,31 @@ def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
         except Exception:
             pass
 
+    retrieval_stats = retrieval_stats if isinstance(retrieval_stats, dict) else {}
+    retrieval = {
+        "query": query,
+        "retrieved_count": len(concepts),
+        "confidence": retrieval_stats.get("hypothesis_confidence", "none"),
+        "decision": retrieval_stats.get("confidence_decision", "answer"),
+        "fusion_mode": retrieval_stats.get("fusion_mode", "weighted_rrf"),
+        "channel_count": int(retrieval_stats.get("channel_count", 0) or 0),
+        "top_channel_agreement": int(retrieval_stats.get("top_channel_agreement", 0) or 0),
+        "channels": {
+            "graph": int(retrieval_stats.get("ltm_graph", 0) or 0),
+            "semantic": int(retrieval_stats.get("ltm_semantic", 0) or 0),
+            "lexical": int(retrieval_stats.get("ltm_lexical", 0) or 0),
+            "exact": int(retrieval_stats.get("ltm_exact", 0) or 0),
+        },
+    }
+
     return {
         "ok": True,
         "user_id": user_id,
         "query": query,
         "memories": concepts[:limit],
         "memory_context": memory_context or "",
+        "retrieval_stats": retrieval_stats,
+        "retrieval": retrieval,
         "retrieved_count": len(concepts),
     }
 

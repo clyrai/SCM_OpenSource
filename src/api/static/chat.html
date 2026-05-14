@@ -604,6 +604,16 @@
 
     <div class="memory-section">
       <div class="section-head">
+        <h3>Retrieval</h3>
+        <span class="count" id="retrievalCount">0</span>
+      </div>
+      <div class="mem-list" id="retrievalList">
+        <div class="mem-section-empty">No retrieval yet.</div>
+      </div>
+    </div>
+
+    <div class="memory-section">
+      <div class="section-head">
         <h3>Patterns</h3>
         <span class="count" id="schemaCount">0</span>
       </div>
@@ -983,6 +993,13 @@
               t.innerHTML = `<b>tools:</b> ${summary}`;
               botEl.appendChild(t);
             }
+            if (ev.retrieval && typeof ev.retrieval === "object") {
+              const r = ev.retrieval;
+              const t = document.createElement("div");
+              t.className = "tools";
+              t.innerHTML = `<b>retrieval:</b> ${escape(r.confidence || "none")} · ${escape(r.decision || "answer")} · ${escape(r.fusion_mode || "weighted_rrf")}`;
+              botEl.appendChild(t);
+            }
             if (window.hljs) botEl.querySelectorAll("pre code").forEach(b => hljs.highlightElement(b));
             toolTraceEl.remove();
             refreshMemoryPanel();
@@ -1056,15 +1073,19 @@
   // ── Memory panel ──────────────────────────────────────────────
   async function refreshMemoryPanel() {
     try {
-      const [profileRes, contextRes] = await Promise.all([
+      const [profileRes, contextRes, retrievalRes] = await Promise.all([
         fetch(`/chat/api/profile/${slug}`),
         fetch(`/chat/api/context/${slug}`),
+        fetch(`/chat/api/retrieval/${slug}`),
       ]);
       const data = profileRes.ok ? await profileRes.json() : { concepts: [], schemas: [] };
       const contextData = contextRes.ok ? await contextRes.json() : { slots: [] };
+      const retrievalData = retrievalRes.ok ? await retrievalRes.json() : { available: false, retrieval: {} };
       $("conceptCount").textContent = (data.concepts || []).length;
       $("schemaCount").textContent = (data.schemas || []).length;
       $("contextCount").textContent = (contextData.slots || []).length;
+      const retrieval = retrievalData.retrieval || {};
+      $("retrievalCount").textContent = retrievalData.available ? String(retrieval.retrieved_count || 0) : "0";
 
       const cl = $("conceptList");
       const concepts = data.concepts || [];
@@ -1100,6 +1121,19 @@
             <span class="kind">${escape(s.type || "schema")}</span>${escape(s.description)}
           </div>
         `).join("");
+      }
+
+      const rl = $("retrievalList");
+      if (!retrievalData.available) {
+        rl.innerHTML = `<div class="mem-section-empty">No retrieval yet.</div>`;
+      } else {
+        const channels = retrieval.channels || {};
+        const channelSummary = `g:${channels.graph || 0} · s:${channels.semantic || 0} · l:${channels.lexical || 0} · e:${channels.exact || 0}`;
+        rl.innerHTML = `
+          <div class="mem-item"><span class="kind">query</span>${escape(retrieval.query || "—")}</div>
+          <div class="mem-item"><span class="kind">confidence</span>${escape(retrieval.confidence || "none")} · ${escape(retrieval.decision || "answer")}</div>
+          <div class="mem-item"><span class="kind">fusion</span>${escape(retrieval.fusion_mode || "weighted_rrf")} · ${escape(channelSummary)}</div>
+        `;
       }
     } catch {}
   }
@@ -1147,6 +1181,12 @@
             t.tools.forEach(n => { counts[n] = (counts[n] || 0) + 1; });
             tdiv.innerHTML = `<b>tools:</b> ${Object.entries(counts).map(([k,v])=>v>1?`${k} ×${v}`:k).join(" · ")}`;
             b.appendChild(tdiv);
+          }
+          if (t.retrieval && typeof t.retrieval === "object") {
+            const rdiv = document.createElement("div");
+            rdiv.className = "tools";
+            rdiv.innerHTML = `<b>retrieval:</b> ${escape(t.retrieval.confidence || "none")} · ${escape(t.retrieval.decision || "answer")} · ${escape(t.retrieval.fusion_mode || "weighted_rrf")}`;
+            b.appendChild(rdiv);
           }
           $("convInner").appendChild(b);
           if (window.hljs) b.querySelectorAll("pre code").forEach(c => hljs.highlightElement(c));
