@@ -1,0 +1,1491 @@
+{
+  "timestamp": "2026-05-01T08:21:19.084369+00:00",
+  "benchmark": "LOCOMO++ (workload sensitivity)",
+  "config": {
+    "data": "data/locomo/locomo10.json",
+    "max_conv": 3,
+    "seeds": [
+      42,
+      7,
+      13
+    ],
+    "noise_density": 0.3,
+    "contradictions": 8,
+    "distractors": 3,
+    "systems": [
+      "lexical",
+      "vector",
+      "scm_phase4",
+      "scm_hme"
+    ],
+    "output_name": "locomo_plus_3conv_3seed.json"
+  },
+  "n_convs": 3,
+  "n_seeds": 3,
+  "total_runs": 36,
+  "total_time_s": 751.7,
+  "summary_by_system": {
+    "lexical": {
+      "original_recall_clean": {
+        "mean": 0.2237,
+        "std": 0.0372,
+        "n": 9
+      },
+      "original_recall_perturbed": {
+        "mean": 0.1847,
+        "std": 0.0357,
+        "n": 9
+      },
+      "contradiction_current": {
+        "mean": 0.1875,
+        "std": 0.0,
+        "n": 9
+      },
+      "contradiction_old": {
+        "mean": 0.0903,
+        "std": 0.0329,
+        "n": 9
+      },
+      "entity_disambig": {
+        "mean": 0.8889,
+        "std": 0.0833,
+        "n": 9
+      },
+      "noise_rejection": {
+        "mean": 0.037,
+        "std": 0.0735,
+        "n": 9
+      }
+    },
+    "vector": {
+      "original_recall_clean": {
+        "mean": 0.2796,
+        "std": 0.0254,
+        "n": 9
+      },
+      "original_recall_perturbed": {
+        "mean": 0.2796,
+        "std": 0.0254,
+        "n": 9
+      },
+      "contradiction_current": {
+        "mean": 0.375,
+        "std": 0.0541,
+        "n": 9
+      },
+      "contradiction_old": {
+        "mean": 0.5417,
+        "std": 0.0827,
+        "n": 9
+      },
+      "entity_disambig": {
+        "mean": 0.963,
+        "std": 0.0735,
+        "n": 9
+      },
+      "noise_rejection": {
+        "mean": 0.037,
+        "std": 0.0735,
+        "n": 9
+      }
+    },
+    "scm_phase4": {
+      "original_recall_clean": {
+        "mean": 0.43,
+        "std": 0.0485,
+        "n": 9
+      },
+      "original_recall_perturbed": {
+        "mean": 0.3825,
+        "std": 0.053,
+        "n": 9
+      },
+      "contradiction_current": {
+        "mean": 0.1042,
+        "std": 0.0312,
+        "n": 9
+      },
+      "contradiction_old": {
+        "mean": 0.4375,
+        "std": 0.1127,
+        "n": 9
+      },
+      "entity_disambig": {
+        "mean": 1.0,
+        "std": 0.0,
+        "n": 9
+      },
+      "noise_rejection": {
+        "mean": 0.1667,
+        "std": 0.1179,
+        "n": 9
+      }
+    },
+    "scm_hme": {
+      "original_recall_clean": {
+        "mean": 0.0224,
+        "std": 0.0045,
+        "n": 9
+      },
+      "original_recall_perturbed": {
+        "mean": 0.0184,
+        "std": 0.0043,
+        "n": 9
+      },
+      "contradiction_current": {
+        "mean": 0.0,
+        "std": 0.0,
+        "n": 9
+      },
+      "contradiction_old": {
+        "mean": 0.0,
+        "std": 0.0,
+        "n": 9
+      },
+      "entity_disambig": {
+        "mean": 0.7037,
+        "std": 0.0735,
+        "n": 9
+      },
+      "noise_rejection": {
+        "mean": 1.0,
+        "std": 0.0,
+        "n": 9
+      }
+    }
+  },
+  "per_run": [
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 419
+        },
+        "perturbed": {
+          "docs": 636
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.18846862791343036,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.15824618375957505,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.125,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.00018262863159179688,
+      "qa_time_s": 0.7512292861938477,
+      "conv_idx": 0,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 419
+        },
+        "perturbed": {
+          "docs": 636
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.24576157608373103,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.24574965770081722,
+        "contradiction_current": 0.375,
+        "contradiction_old": 0.625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 19.78657817840576,
+      "qa_time_s": 3.3102738857269287,
+      "conv_idx": 0,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 419,
+          "concepts": 425,
+          "sleep_cycles": 19
+        },
+        "perturbed": {
+          "turns": 636,
+          "concepts": 642,
+          "sleep_cycles": 19
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.38297026490714436,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.36585070567803457,
+        "contradiction_current": 0.0625,
+        "contradiction_old": 0.375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 14.415358543395996,
+      "qa_time_s": 6.558909893035889,
+      "conv_idx": 0,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 419,
+          "auto_sleeps": 105,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 636,
+          "auto_sleeps": 160,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.022457646963844433,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.014030470914127423,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.6666666666666666,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 36.316205978393555,
+      "qa_time_s": 1.084218978881836,
+      "conv_idx": 0,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 419
+        },
+        "perturbed": {
+          "docs": 636
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.18846862791343036,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.15223541184746767,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.125,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.0002655982971191406,
+      "qa_time_s": 0.755744457244873,
+      "conv_idx": 0,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 419
+        },
+        "perturbed": {
+          "docs": 636
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.24576157608373103,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.24574807288964748,
+        "contradiction_current": 0.375,
+        "contradiction_old": 0.625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 13.568433284759521,
+      "qa_time_s": 3.763392686843872,
+      "conv_idx": 0,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 419,
+          "concepts": 425,
+          "sleep_cycles": 19
+        },
+        "perturbed": {
+          "turns": 636,
+          "concepts": 642,
+          "sleep_cycles": 19
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.38297026490714436,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.3458620064044114,
+        "contradiction_current": 0.0625,
+        "contradiction_old": 0.375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 15.099226951599121,
+      "qa_time_s": 6.625888109207153,
+      "conv_idx": 0,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 419,
+          "auto_sleeps": 105,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 636,
+          "auto_sleeps": 160,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.022457646963844433,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.014395967990150816,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.6666666666666666,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 33.89096260070801,
+      "qa_time_s": 1.0019910335540771,
+      "conv_idx": 0,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 419
+        },
+        "perturbed": {
+          "docs": 636
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.18846862791343036,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.15237774971716675,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.125,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.0002541542053222656,
+      "qa_time_s": 0.7352492809295654,
+      "conv_idx": 0,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 419
+        },
+        "perturbed": {
+          "docs": 636
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.24576157608373103,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.24595905725810477,
+        "contradiction_current": 0.375,
+        "contradiction_old": 0.625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 11.976961135864258,
+      "qa_time_s": 3.4292471408843994,
+      "conv_idx": 0,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 419,
+          "concepts": 425,
+          "sleep_cycles": 19
+        },
+        "perturbed": {
+          "turns": 636,
+          "concepts": 642,
+          "sleep_cycles": 19
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.38297026490714436,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.35106306944679855,
+        "contradiction_current": 0.0625,
+        "contradiction_old": 0.375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 14.141622066497803,
+      "qa_time_s": 8.381895780563354,
+      "conv_idx": 0,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 419,
+          "auto_sleeps": 105,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 636,
+          "auto_sleeps": 160,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.022457646963844433,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.020609418282548475,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.6666666666666666,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 31.32526731491089,
+      "qa_time_s": 0.9545438289642334,
+      "conv_idx": 0,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 183,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 369
+        },
+        "perturbed": {
+          "docs": 563
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.21103371259204654,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.18918367799934757,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.0625,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.0003170967102050781,
+      "qa_time_s": 0.35452795028686523,
+      "conv_idx": 1,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 369
+        },
+        "perturbed": {
+          "docs": 563
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.29470901039628467,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.29470901039628467,
+        "contradiction_current": 0.4375,
+        "contradiction_old": 0.5625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 11.168157815933228,
+      "qa_time_s": 1.9484717845916748,
+      "conv_idx": 1,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 369,
+          "concepts": 382,
+          "sleep_cycles": 19
+        },
+        "perturbed": {
+          "turns": 563,
+          "concepts": 576,
+          "sleep_cycles": 19
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.4150437510971573,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.35356023674007975,
+        "contradiction_current": 0.125,
+        "contradiction_old": 0.6875,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 11.302008867263794,
+      "qa_time_s": 3.29984450340271,
+      "conv_idx": 1,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 369,
+          "auto_sleeps": 93,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 563,
+          "auto_sleeps": 141,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.017096828958057277,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.026675798605623167,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.6666666666666666,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 27.626124620437622,
+      "qa_time_s": 0.492800235748291,
+      "conv_idx": 1,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 369
+        },
+        "perturbed": {
+          "docs": 563
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.21103371259204654,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.14023442136253952,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.0625,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.0002627372741699219,
+      "qa_time_s": 0.33302783966064453,
+      "conv_idx": 1,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 369
+        },
+        "perturbed": {
+          "docs": 563
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.29470901039628467,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.29470901039628467,
+        "contradiction_current": 0.4375,
+        "contradiction_old": 0.5625,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 10.132392644882202,
+      "qa_time_s": 1.9117259979248047,
+      "conv_idx": 1,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 369,
+          "concepts": 382,
+          "sleep_cycles": 19
+        },
+        "perturbed": {
+          "turns": 563,
+          "concepts": 576,
+          "sleep_cycles": 19
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.4150437510971573,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.32987191485133965,
+        "contradiction_current": 0.125,
+        "contradiction_old": 0.4375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.3333333333333333,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 13.429158687591553,
+      "qa_time_s": 3.794320821762085,
+      "conv_idx": 1,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 369,
+          "auto_sleeps": 93,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 563,
+          "auto_sleeps": 141,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.017096828958057277,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.014562181228847896,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.6666666666666666,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 26.775691032409668,
+      "qa_time_s": 0.47066354751586914,
+      "conv_idx": 1,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 369
+        },
+        "perturbed": {
+          "docs": 563
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.21103371259204654,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.18894858823655608,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.125,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.0002570152282714844,
+      "qa_time_s": 0.32985901832580566,
+      "conv_idx": 1,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 369
+        },
+        "perturbed": {
+          "docs": 563
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.29470901039628467,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.29470901039628467,
+        "contradiction_current": 0.4375,
+        "contradiction_old": 0.5625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 10.109187126159668,
+      "qa_time_s": 1.9182980060577393,
+      "conv_idx": 1,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 369,
+          "concepts": 382,
+          "sleep_cycles": 19
+        },
+        "perturbed": {
+          "turns": 563,
+          "concepts": 576,
+          "sleep_cycles": 19
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.4150437510971573,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.34112740420188314,
+        "contradiction_current": 0.125,
+        "contradiction_old": 0.5625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 13.632997512817383,
+      "qa_time_s": 3.7147200107574463,
+      "conv_idx": 1,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 369,
+          "auto_sleeps": 93,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 563,
+          "auto_sleeps": 141,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.017096828958057277,
+        "original_n_clean": 81,
+        "original_recall_perturbed": 0.014330119593277487,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.6666666666666666,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 27.35430908203125,
+      "qa_time_s": 0.48748278617858887,
+      "conv_idx": 1,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 160,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 663
+        },
+        "perturbed": {
+          "docs": 984
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.27147883131690237,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.22687139953728988,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.0625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.0004019737243652344,
+      "qa_time_s": 1.1675126552581787,
+      "conv_idx": 2,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 663
+        },
+        "perturbed": {
+          "docs": 984
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.29836966466046116,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.2984142204944907,
+        "contradiction_current": 0.3125,
+        "contradiction_old": 0.4375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 17.818477869033813,
+      "qa_time_s": 3.3175859451293945,
+      "conv_idx": 2,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 663,
+          "concepts": 675,
+          "sleep_cycles": 32
+        },
+        "perturbed": {
+          "turns": 984,
+          "concepts": 996,
+          "sleep_cycles": 32
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.49186623812341695,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.4610008290442812,
+        "contradiction_current": 0.125,
+        "contradiction_old": 0.375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 20.46511673927307,
+      "qa_time_s": 7.587579965591431,
+      "conv_idx": 2,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 663,
+          "auto_sleeps": 166,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 984,
+          "auto_sleeps": 247,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.027554998607630186,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.020224171539961013,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.6666666666666666,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 68.46070075035095,
+      "qa_time_s": 2.5523338317871094,
+      "conv_idx": 2,
+      "seed": 42,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 663
+        },
+        "perturbed": {
+          "docs": 984
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.27147883131690237,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.2272808661863687,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.0625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.0007069110870361328,
+      "qa_time_s": 1.935209035873413,
+      "conv_idx": 2,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 663
+        },
+        "perturbed": {
+          "docs": 984
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.29836966466046116,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.2984142204944907,
+        "contradiction_current": 0.3125,
+        "contradiction_old": 0.4375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 20.648664236068726,
+      "qa_time_s": 3.500947952270508,
+      "conv_idx": 2,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 663,
+          "concepts": 675,
+          "sleep_cycles": 32
+        },
+        "perturbed": {
+          "turns": 984,
+          "concepts": 996,
+          "sleep_cycles": 32
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.49186623812341695,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.44719956549984047,
+        "contradiction_current": 0.125,
+        "contradiction_old": 0.375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.3333333333333333,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 20.852477073669434,
+      "qa_time_s": 7.431817054748535,
+      "conv_idx": 2,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 663,
+          "auto_sleeps": 166,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 984,
+          "auto_sleeps": 247,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.027554998607630186,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.020224171539961013,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 65.19628882408142,
+      "qa_time_s": 1.720203161239624,
+      "conv_idx": 2,
+      "seed": 7,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "lexical",
+      "ingest": {
+        "clean": {
+          "docs": 663
+        },
+        "perturbed": {
+          "docs": 984
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.27147883131690237,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.2271314245999465,
+        "contradiction_current": 0.1875,
+        "contradiction_old": 0.0625,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 0.000476837158203125,
+      "qa_time_s": 1.3784639835357666,
+      "conv_idx": 2,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "vector",
+      "ingest": {
+        "clean": {
+          "docs": 663
+        },
+        "perturbed": {
+          "docs": 984
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.29836966466046116,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.29839770085263656,
+        "contradiction_current": 0.3125,
+        "contradiction_old": 0.4375,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 0.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 17.73325228691101,
+      "qa_time_s": 3.336298942565918,
+      "conv_idx": 2,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_phase4",
+      "ingest": {
+        "clean": {
+          "turns": 663,
+          "concepts": 675,
+          "sleep_cycles": 32
+        },
+        "perturbed": {
+          "turns": 984,
+          "concepts": 996,
+          "sleep_cycles": 32
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.49186623812341695,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.44704163234216693,
+        "contradiction_current": 0.125,
+        "contradiction_old": 0.375,
+        "entity_disambig": 1.0,
+        "noise_rejection": 0.16666666666666666,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 20.39841938018799,
+      "qa_time_s": 7.479721784591675,
+      "conv_idx": 2,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    },
+    {
+      "system": "scm_hme",
+      "ingest": {
+        "clean": {
+          "turns": 663,
+          "auto_sleeps": 166,
+          "errors": 0
+        },
+        "perturbed": {
+          "turns": 984,
+          "auto_sleeps": 247,
+          "errors": 0
+        }
+      },
+      "scores": {
+        "original_recall_clean": 0.027554998607630186,
+        "original_n_clean": 152,
+        "original_recall_perturbed": 0.020224171539961013,
+        "contradiction_current": 0.0,
+        "contradiction_old": 0.0,
+        "entity_disambig": 0.8333333333333334,
+        "noise_rejection": 1.0,
+        "counts": {
+          "n_contradiction_current": 8,
+          "n_contradiction_old": 8,
+          "n_entity_disambig": 3,
+          "n_noise_reject": 6
+        }
+      },
+      "ingest_time_s": 58.417643785476685,
+      "qa_time_s": 1.568965196609497,
+      "conv_idx": 2,
+      "seed": 13,
+      "perturbations": {
+        "noise_turns_added": 287,
+        "contradiction_turns_added": 8,
+        "distractor_turns_added": 18
+      }
+    }
+  ]
+}

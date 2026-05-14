@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-05-01T07:11:12.283993+00:00",
+  "benchmark": "LoCoMo (ACL 2024) \u2014 HME pipeline",
+  "num_conversations": 1,
+  "total_time_s": 17.8,
+  "overall_score": 0.0162,
+  "config": {
+    "profile": "research",
+    "hme_enabled": true,
+    "sandbox": true,
+    "auto_sleep_interval": 4,
+    "answer_strategy": "spreading_activation_top1_no_llm"
+  },
+  "category_scores": {
+    "1": {
+      "name": "single-hop",
+      "score": 0.0342,
+      "num_conversations": 1
+    },
+    "2": {
+      "name": "temporal",
+      "score": 0.0,
+      "num_conversations": 1
+    },
+    "3": {
+      "name": "multi-hop",
+      "score": 0.006,
+      "num_conversations": 1
+    },
+    "4": {
+      "name": "open-ended",
+      "score": 0.0183,
+      "num_conversations": 1
+    }
+  },
+  "conversations": [
+    {
+      "conv_idx": 0,
+      "speakers": "Caroline/Melanie",
+      "evaluated_qa": 152,
+      "ingest_stats": {
+        "total_turns": 419,
+        "sessions": 19,
+        "auto_sleeps": 105,
+        "ingest_errors": 0
+      },
+      "ltm_concepts": 342,
+      "ingest_time_s": 17.37,
+      "eval_time_s": 0.41,
+      "category_scores": {
+        "2": {
+          "name": "temporal",
+          "score": 0.0,
+          "num_questions": 37
+        },
+        "3": {
+          "name": "multi-hop",
+          "score": 0.006,
+          "num_questions": 13
+        },
+        "1": {
+          "name": "single-hop",
+          "score": 0.0342,
+          "num_questions": 32
+        },
+        "4": {
+          "name": "open-ended",
+          "score": 0.0183,
+          "num_questions": 70
+        }
+      },
+      "overall_score": 0.0162
+    }
+  ],
+  "baselines_reported_in_literature": {
+    "Mem0": 0.671,
+    "MemGPT": 0.42,
+    "RAG (gpt-3.5-turbo)": 0.56,
+    "MemMachine": 0.899
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "benchmark": "phase4_sleepkernel_v2",
+  "timestamp_utc": "2026-05-01T04:27:11.063301+00:00",
+  "python": "3.14",
+  "seed": 4242,
+  "targets": {
+    "micro_disambiguation_gain_min_abs": 0.2,
+    "deep_disambiguation_gain_min_abs": 0.2,
+    "deep_noise_retention_max": 0.4
+  },
+  "inputs": {
+    "pair_count": 36,
+    "micro_turns_grid": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "deep_pressure_grid": [
+      0.86,
+      0.9,
+      0.93,
+      0.96
+    ]
+  },
+  "metrics": {
+    "sleep_gain": {
+      "dataset": {
+        "pair_count": 36,
+        "concepts_initial": 78,
+        "relations_initial": 41,
+        "episodes": 36
+      },
+      "baseline": {
+        "top1_recall": 0.0,
+        "disambiguation_recall": 0.0,
+        "entropy": 0.9502,
+        "pressure": {
+          "total_concepts": 78,
+          "key_kept": 36,
+          "noise_kept": 36,
+          "key_retention": 1.0,
+          "noise_retention": 1.0
+        }
+      },
+      "micro_sleep": {
+        "top1_recall": 0.3333,
+        "top1_gain_abs": 0.3333,
+        "disambiguation_recall": 1.0,
+        "disambiguation_gain_abs": 1.0,
+        "entropy": 0.9994,
+        "entropy_delta": 0.0491,
+        "pressure": {
+          "total_concepts": 37,
+          "key_kept": 36,
+          "noise_kept": 0,
+          "key_retention": 1.0,
+          "noise_retention": 0.0
+        },
+        "stats": {
+          "replayed": 12,
+          "duplicates_merged": 41,
+          "relations_reinforced": 11
+        }
+      },
+      "deep_sleep": {
+        "top1_recall": 0.5278,
+        "top1_gain_abs": 0.5278,
+        "disambiguation_recall": 0.9444,
+        "disambiguation_gain_abs": 0.9444,
+        "entropy": 1.0,
+        "entropy_delta": 0.0498,
+        "pressure": {
+          "total_concepts": 36,
+          "key_kept": 36,
+          "noise_kept": 0,
+          "key_retention": 1.0,
+          "noise_retention": 0.0
+        },
+        "stats": {
+          "consolidated_to_ltm": 42,
+          "forgotten": 42,
+          "dreams_generated": 5
+        }
+      }
+    },
+    "threshold_sweep": {
+      "rows": [
+        {
+          "micro_interval_turns": 3,
+          "deep_pressure_threshold": 0.86,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.86"
+        },
+        {
+          "micro_interval_turns": 3,
+          "deep_pressure_threshold": 0.9,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.9"
+        },
+        {
+          "micro_interval_turns": 3,
+          "deep_pressure_threshold": 0.93,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.93"
+        },
+        {
+          "micro_interval_turns": 3,
+          "deep_pressure_threshold": 0.96,
+          "selected_mode": "micro",
+          "reason": "Micro entropy spike: 0.950 >= 0.82"
+        },
+        {
+          "micro_interval_turns": 4,
+          "deep_pressure_threshold": 0.86,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.86"
+        },
+        {
+          "micro_interval_turns": 4,
+          "deep_pressure_threshold": 0.9,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.9"
+        },
+        {
+          "micro_interval_turns": 4,
+          "deep_pressure_threshold": 0.93,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.93"
+        },
+        {
+          "micro_interval_turns": 4,
+          "deep_pressure_threshold": 0.96,
+          "selected_mode": "micro",
+          "reason": "Micro entropy spike: 0.950 >= 0.82"
+        },
+        {
+          "micro_interval_turns": 5,
+          "deep_pressure_threshold": 0.86,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.86"
+        },
+        {
+          "micro_interval_turns": 5,
+          "deep_pressure_threshold": 0.9,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.9"
+        },
+        {
+          "micro_interval_turns": 5,
+          "deep_pressure_threshold": 0.93,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.93"
+        },
+        {
+          "micro_interval_turns": 5,
+          "deep_pressure_threshold": 0.96,
+          "selected_mode": "micro",
+          "reason": "Micro entropy spike: 0.950 >= 0.82"
+        },
+        {
+          "micro_interval_turns": 6,
+          "deep_pressure_threshold": 0.86,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.86"
+        },
+        {
+          "micro_interval_turns": 6,
+          "deep_pressure_threshold": 0.9,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.9"
+        },
+        {
+          "micro_interval_turns": 6,
+          "deep_pressure_threshold": 0.93,
+          "selected_mode": "deep",
+          "reason": "Deep pressure high: 0.950 >= 0.93"
+        },
+        {
+          "micro_interval_turns": 6,
+          "deep_pressure_threshold": 0.96,
+          "selected_mode": "micro",
+          "reason": "Micro entropy spike: 0.950 >= 0.82"
+        }
+      ],
+      "mode_counts": {
+        "micro": 4,
+        "deep": 12,
+        "none": 0
+      }
+    }
+  },
+  "status": {
+    "micro_gain_pass": true,
+    "deep_gain_pass": true,
+    "deep_noise_pass": true,
+    "overall_pass": true
+  }
+}

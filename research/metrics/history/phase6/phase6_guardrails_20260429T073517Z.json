@@ -1,0 +1,541 @@
+{
+  "benchmark": "phase6_full_stack_guardrails",
+  "timestamp_utc": "2026-04-29T07:35:17.325236+00:00",
+  "platform": "darwin",
+  "python": "3.14",
+  "seed": 9090,
+  "targets": {
+    "phase2_overall_pass": true,
+    "phase4_overall_pass": true,
+    "human_overall_pass": true,
+    "pytest_returncode_zero": true,
+    "pytest_warnings_zero": true,
+    "deprecated_patterns_zero": true
+  },
+  "inputs": {
+    "phase4_pair_count": 48,
+    "phase4_micro_turns_grid": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "phase4_deep_pressure_grid": [
+      0.82,
+      0.86,
+      0.9,
+      0.93,
+      0.96
+    ],
+    "human_pair_count": 64,
+    "human_key_count": 32,
+    "human_noise_count": 96,
+    "pytest_targets": [
+      "tests/test_phase2_pipeline.py",
+      "tests/test_phase3_pipeline.py",
+      "tests/test_micro_sleep.py",
+      "tests/test_deep_sleep.py",
+      "tests/test_forgetting_dynamics.py",
+      "tests/test_contradiction_versioning.py",
+      "tests/test_human_memory_behavior.py",
+      "tests/test_memory_pipeline.py"
+    ]
+  },
+  "metrics": {
+    "phase2": {
+      "benchmark": "phase2_hme",
+      "timestamp_utc": "2026-04-29T07:35:06.620792+00:00",
+      "platform": "darwin",
+      "python": "3.14",
+      "targets": {
+        "association_coverage_min": 0.8,
+        "duplicate_inflation_max": 0.1
+      },
+      "metrics": {
+        "event_compiler": {
+          "episodes": 5000,
+          "seconds": 0.069336,
+          "events_per_second": 72112.87,
+          "field_extraction_rate": {
+            "when": 1.0,
+            "where": 1.0,
+            "why": 1.0
+          }
+        },
+        "association_coverage": {
+          "expected_pairs": 900,
+          "bound_pairs": 900,
+          "coverage": 1.0,
+          "target": 0.8
+        },
+        "duplicate_event_inflation": {
+          "unique_baseline": 120,
+          "accepted_after_dedup": 13,
+          "inflation": 0.0,
+          "target_max": 0.1
+        },
+        "edge_cap_pressure": {
+          "anchor_out_degree": 6,
+          "cap": 12
+        },
+        "association_large_scale": {
+          "events": 1000,
+          "seconds": 0.294123,
+          "events_per_second": 3399.93,
+          "pairs_bound": 3000
+        },
+        "relation_aging": {
+          "initial_edges": 88,
+          "removed": 88,
+          "final_edges": 0
+        },
+        "pipeline_stress": {
+          "working_memory_user_episodes": 7,
+          "episodes_with_event_key": 7,
+          "episodes_duplicate_flagged": 7,
+          "ltm_relations": 31,
+          "event_history": 11
+        }
+      },
+      "status": {
+        "association_coverage_pass": true,
+        "duplicate_inflation_pass": true,
+        "overall_pass": true
+      }
+    },
+    "phase4": {
+      "benchmark": "phase4_sleepkernel_v2",
+      "timestamp_utc": "2026-04-29T07:35:11.792207+00:00",
+      "python": "3.14",
+      "seed": 9191,
+      "targets": {
+        "micro_disambiguation_gain_min_abs": 0.2,
+        "deep_disambiguation_gain_min_abs": 0.2,
+        "deep_noise_retention_max": 0.4
+      },
+      "inputs": {
+        "pair_count": 48,
+        "micro_turns_grid": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "deep_pressure_grid": [
+          0.82,
+          0.86,
+          0.9,
+          0.93,
+          0.96
+        ]
+      },
+      "metrics": {
+        "sleep_gain": {
+          "dataset": {
+            "pair_count": 48,
+            "concepts_initial": 104,
+            "relations_initial": 55,
+            "episodes": 48
+          },
+          "baseline": {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.1042,
+            "entropy": 0.9533,
+            "pressure": {
+              "total_concepts": 104,
+              "key_kept": 48,
+              "noise_kept": 48,
+              "key_retention": 1.0,
+              "noise_retention": 1.0
+            }
+          },
+          "micro_sleep": {
+            "top1_recall": 0.0,
+            "top1_gain_abs": 0.0,
+            "disambiguation_recall": 1.0,
+            "disambiguation_gain_abs": 0.8958,
+            "entropy": 0.9996,
+            "entropy_delta": 0.0462,
+            "pressure": {
+              "total_concepts": 49,
+              "key_kept": 48,
+              "noise_kept": 0,
+              "key_retention": 1.0,
+              "noise_retention": 0.0
+            },
+            "stats": {
+              "replayed": 12,
+              "duplicates_merged": 55,
+              "relations_reinforced": 6
+            }
+          },
+          "deep_sleep": {
+            "top1_recall": 0.0208,
+            "top1_gain_abs": 0.0208,
+            "disambiguation_recall": 0.3958,
+            "disambiguation_gain_abs": 0.2917,
+            "entropy": 0.9984,
+            "entropy_delta": 0.0451,
+            "pressure": {
+              "total_concepts": 56,
+              "key_kept": 48,
+              "noise_kept": 0,
+              "key_retention": 1.0,
+              "noise_retention": 0.0
+            },
+            "stats": {
+              "consolidated_to_ltm": 56,
+              "forgotten": 48,
+              "dreams_generated": 5
+            }
+          }
+        },
+        "threshold_sweep": {
+          "rows": [
+            {
+              "micro_interval_turns": 2,
+              "deep_pressure_threshold": 0.82,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 2,
+              "deep_pressure_threshold": 0.86,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.86"
+            },
+            {
+              "micro_interval_turns": 2,
+              "deep_pressure_threshold": 0.9,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.9"
+            },
+            {
+              "micro_interval_turns": 2,
+              "deep_pressure_threshold": 0.93,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.93"
+            },
+            {
+              "micro_interval_turns": 2,
+              "deep_pressure_threshold": 0.96,
+              "selected_mode": "micro",
+              "reason": "Micro entropy spike: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 3,
+              "deep_pressure_threshold": 0.82,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 3,
+              "deep_pressure_threshold": 0.86,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.86"
+            },
+            {
+              "micro_interval_turns": 3,
+              "deep_pressure_threshold": 0.9,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.9"
+            },
+            {
+              "micro_interval_turns": 3,
+              "deep_pressure_threshold": 0.93,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.93"
+            },
+            {
+              "micro_interval_turns": 3,
+              "deep_pressure_threshold": 0.96,
+              "selected_mode": "micro",
+              "reason": "Micro entropy spike: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 4,
+              "deep_pressure_threshold": 0.82,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 4,
+              "deep_pressure_threshold": 0.86,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.86"
+            },
+            {
+              "micro_interval_turns": 4,
+              "deep_pressure_threshold": 0.9,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.9"
+            },
+            {
+              "micro_interval_turns": 4,
+              "deep_pressure_threshold": 0.93,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.93"
+            },
+            {
+              "micro_interval_turns": 4,
+              "deep_pressure_threshold": 0.96,
+              "selected_mode": "micro",
+              "reason": "Micro entropy spike: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 5,
+              "deep_pressure_threshold": 0.82,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 5,
+              "deep_pressure_threshold": 0.86,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.86"
+            },
+            {
+              "micro_interval_turns": 5,
+              "deep_pressure_threshold": 0.9,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.9"
+            },
+            {
+              "micro_interval_turns": 5,
+              "deep_pressure_threshold": 0.93,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.93"
+            },
+            {
+              "micro_interval_turns": 5,
+              "deep_pressure_threshold": 0.96,
+              "selected_mode": "micro",
+              "reason": "Micro entropy spike: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 6,
+              "deep_pressure_threshold": 0.82,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.82"
+            },
+            {
+              "micro_interval_turns": 6,
+              "deep_pressure_threshold": 0.86,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.86"
+            },
+            {
+              "micro_interval_turns": 6,
+              "deep_pressure_threshold": 0.9,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.9"
+            },
+            {
+              "micro_interval_turns": 6,
+              "deep_pressure_threshold": 0.93,
+              "selected_mode": "deep",
+              "reason": "Deep pressure high: 0.953 >= 0.93"
+            },
+            {
+              "micro_interval_turns": 6,
+              "deep_pressure_threshold": 0.96,
+              "selected_mode": "micro",
+              "reason": "Micro entropy spike: 0.953 >= 0.82"
+            }
+          ],
+          "mode_counts": {
+            "micro": 5,
+            "deep": 20,
+            "none": 0
+          }
+        }
+      },
+      "status": {
+        "micro_gain_pass": true,
+        "deep_gain_pass": true,
+        "deep_noise_pass": true,
+        "overall_pass": true
+      }
+    },
+    "human_memory": {
+      "benchmark": "phase6_human_memory_behavior",
+      "timestamp_utc": "2026-04-29T07:35:12.093547+00:00",
+      "python": "3.14",
+      "seed": 9301,
+      "targets": {
+        "one_shot_accuracy_min": 1.0,
+        "micro_disambiguation_gain_min_abs": 0.2,
+        "deep_disambiguation_gain_min_abs": 0.2,
+        "deep_noise_retention_max": 0.4,
+        "key_retention_min": 0.8,
+        "noise_retention_max": 0.35,
+        "contradiction_accuracy_min": 0.9
+      },
+      "inputs": {
+        "pair_count": 64,
+        "key_count": 32,
+        "noise_count": 96
+      },
+      "metrics": {
+        "one_shot_recall": {
+          "name_response": "Your name is Alice.",
+          "location_response": "You live in Seattle.",
+          "name_hit": true,
+          "location_hit": true,
+          "accuracy": 1.0
+        },
+        "sleep_gain": {
+          "dataset": {
+            "pair_count": 64,
+            "concepts_initial": 138,
+            "relations_initial": 73,
+            "episodes": 64
+          },
+          "baseline": {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0781,
+            "entropy": 0.9558,
+            "pressure": {
+              "total_concepts": 138,
+              "key_kept": 64,
+              "noise_kept": 64,
+              "key_retention": 1.0,
+              "noise_retention": 1.0
+            }
+          },
+          "micro_sleep": {
+            "top1_recall": 0.0,
+            "top1_gain_abs": 0.0,
+            "disambiguation_recall": 1.0,
+            "disambiguation_gain_abs": 0.9219,
+            "entropy": 0.9997,
+            "entropy_delta": 0.0439,
+            "pressure": {
+              "total_concepts": 65,
+              "key_kept": 64,
+              "noise_kept": 0,
+              "key_retention": 1.0,
+              "noise_retention": 0.0
+            },
+            "stats": {
+              "replayed": 12,
+              "duplicates_merged": 73,
+              "relations_reinforced": 8
+            }
+          },
+          "deep_sleep": {
+            "top1_recall": 0.0156,
+            "top1_gain_abs": 0.0156,
+            "disambiguation_recall": 0.3906,
+            "disambiguation_gain_abs": 0.3125,
+            "entropy": 0.9986,
+            "entropy_delta": 0.0428,
+            "pressure": {
+              "total_concepts": 74,
+              "key_kept": 64,
+              "noise_kept": 0,
+              "key_retention": 1.0,
+              "noise_retention": 0.0
+            },
+            "stats": {
+              "consolidated_to_ltm": 74,
+              "forgotten": 64,
+              "dreams_generated": 5
+            }
+          }
+        },
+        "selective_forgetting": {
+          "inputs": {
+            "key_count": 32,
+            "noise_count": 96
+          },
+          "first_cycle": {
+            "total_evaluated": 128,
+            "retained": 32,
+            "suppressed": 96,
+            "archived": 0,
+            "forgotten": 96,
+            "conflicts_resolved": 0,
+            "avg_retention": 0.2354,
+            "avg_decay_lambda": 0.0859,
+            "conflict_pairs": 0
+          },
+          "second_cycle": {
+            "total_evaluated": 128,
+            "retained": 32,
+            "suppressed": 0,
+            "archived": 96,
+            "forgotten": 96,
+            "conflicts_resolved": 0,
+            "avg_retention": 0.2087,
+            "avg_decay_lambda": 0.0929,
+            "conflict_pairs": 0
+          },
+          "key_retention": 1.0,
+          "noise_retention": 0.0
+        },
+        "contradiction_versioning": {
+          "chain_ok": true,
+          "old_hidden": true,
+          "retrieval_prefers_new": true,
+          "accuracy": 1.0
+        }
+      },
+      "status": {
+        "one_shot_pass": true,
+        "micro_gain_pass": true,
+        "deep_gain_pass": true,
+        "deep_noise_pass": true,
+        "key_retention_pass": true,
+        "noise_retention_pass": true,
+        "contradiction_pass": true,
+        "overall_pass": true
+      }
+    },
+    "deprecation_scan": {
+      "files_scanned": 75,
+      "patterns": [
+        "datetime.utcnow(",
+        ".dict("
+      ],
+      "hit_count": 0,
+      "hits": []
+    },
+    "pytest_guardrail": {
+      "command": [
+        "/Users/saish/Downloads/SleepAI/venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_phase2_pipeline.py",
+        "tests/test_phase3_pipeline.py",
+        "tests/test_micro_sleep.py",
+        "tests/test_deep_sleep.py",
+        "tests/test_forgetting_dynamics.py",
+        "tests/test_contradiction_versioning.py",
+        "tests/test_human_memory_behavior.py",
+        "tests/test_memory_pipeline.py",
+        "-q",
+        "-W",
+        "default::DeprecationWarning",
+        "-W",
+        "default::PendingDeprecationWarning"
+      ],
+      "returncode": 0,
+      "passed_tests": 24,
+      "failed_tests": 0,
+      "warnings_count": 0,
+      "output_tail": "........................                                                 [100%]\n24 passed in 3.45s"
+    }
+  },
+  "status": {
+    "phase2_pass": true,
+    "phase4_pass": true,
+    "human_pass": true,
+    "pytest_pass": true,
+    "warnings_pass": true,
+    "deprecations_pass": true,
+    "overall_pass": true
+  }
+}

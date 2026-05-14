@@ -1,0 +1,167 @@
+{
+  "summary": {
+    "benchmark": "phase4_seed_sweep_brutal",
+    "timestamp_utc": "2026-04-30T06:34:14.845806+00:00",
+    "settings": {
+      "pair_count": 96,
+      "seeds": [
+        7001,
+        7002,
+        7003,
+        7004,
+        7005,
+        7006,
+        7007,
+        7008,
+        7009,
+        7010
+      ]
+    },
+    "totals": {
+      "runs": 10,
+      "overall_pass_count": 10,
+      "overall_pass_rate": 1.0,
+      "micro_gain_pass_count": 10,
+      "deep_gain_pass_count": 10,
+      "deep_noise_pass_count": 10,
+      "min_deep_gain_abs": 0.8958,
+      "max_deep_gain_abs": 0.9167,
+      "avg_deep_gain_abs": 0.9021,
+      "avg_micro_gain_abs": 1.0,
+      "avg_baseline_disambiguation_recall": 0.0,
+      "avg_deep_disambiguation_recall": 0.9021
+    }
+  },
+  "runs": [
+    {
+      "seed": 7001,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.8958,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.8958
+    },
+    {
+      "seed": 7002,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.9062,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.9062
+    },
+    {
+      "seed": 7003,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.9167,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.9167
+    },
+    {
+      "seed": 7004,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.8958,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.8958
+    },
+    {
+      "seed": 7005,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.8958,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.8958
+    },
+    {
+      "seed": 7006,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.9062,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.9062
+    },
+    {
+      "seed": 7007,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.9167,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.9167
+    },
+    {
+      "seed": 7008,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.8958,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.8958
+    },
+    {
+      "seed": 7009,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.8958,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.8958
+    },
+    {
+      "seed": 7010,
+      "overall_pass": true,
+      "micro_gain_pass": true,
+      "deep_gain_pass": true,
+      "deep_noise_pass": true,
+      "micro_gain_abs": 1.0,
+      "deep_gain_abs": 0.8958,
+      "deep_noise_retention": 0.0,
+      "baseline_disambiguation_recall": 0.0,
+      "micro_disambiguation_recall": 1.0,
+      "deep_disambiguation_recall": 0.8958
+    }
+  ]
+}

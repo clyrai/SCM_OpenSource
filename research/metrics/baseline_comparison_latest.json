@@ -1,0 +1,229 @@
+{
+  "benchmark": "scm_baseline_comparison",
+  "timestamp_utc": "2026-05-01T04:17:57.482240+00:00",
+  "python": "3.14",
+  "inputs": {
+    "seed_start": 7001,
+    "seed_count": 10,
+    "seeds": [
+      7001,
+      7002,
+      7003,
+      7004,
+      7005,
+      7006,
+      7007,
+      7008,
+      7009,
+      7010
+    ],
+    "pair_count": 96,
+    "phase6_pair_count": 32,
+    "key_count": 20,
+    "noise_count": 40
+  },
+  "behavioral_comparison": {
+    "summary": {
+      "seed_count": 10,
+      "pair_count": 96,
+      "lexical_disambiguation_mean": 0.0,
+      "vector_disambiguation_mean": 0.0,
+      "scm_baseline_disambiguation_mean": 0.0,
+      "micro_disambiguation_mean": 1.0,
+      "deep_disambiguation_mean": 0.9052,
+      "deep_noise_retention_mean": 0.0,
+      "deep_pass_rate": 1.0
+    },
+    "rows": [
+      {
+        "method": "Lexical retrieval baseline",
+        "family": "Standard retrieval",
+        "top1_recall_mean": 0.0,
+        "top1_recall_std": 0.0,
+        "disambiguation_recall_mean": 0.0,
+        "disambiguation_recall_std": 0.0,
+        "key_retention_mean": 1.0,
+        "noise_retention_mean": 1.0,
+        "mean_query_latency_ms": 0.5394,
+        "pass_rate": 0.0,
+        "notes": "Token-overlap control."
+      },
+      {
+        "method": "Vector retrieval baseline",
+        "family": "Standard retrieval",
+        "top1_recall_mean": 0.0,
+        "top1_recall_std": 0.0,
+        "disambiguation_recall_mean": 0.0,
+        "disambiguation_recall_std": 0.0,
+        "key_retention_mean": 1.0,
+        "noise_retention_mean": 1.0,
+        "mean_query_latency_ms": 15.4428,
+        "pass_rate": 0.0,
+        "notes": "Deterministic text-embedding control."
+      },
+      {
+        "method": "SCM baseline (no sleep)",
+        "family": "SCM control",
+        "top1_recall_mean": 0.0,
+        "top1_recall_std": 0.0,
+        "disambiguation_recall_mean": 0.0,
+        "disambiguation_recall_std": 0.0,
+        "key_retention_mean": 1.0,
+        "noise_retention_mean": 1.0,
+        "mean_query_latency_ms": 1.9302,
+        "pass_rate": 0.0,
+        "notes": "Graph retrieval before sleep consolidation."
+      },
+      {
+        "method": "SCM + MicroSleep",
+        "family": "SCM sleep stage",
+        "top1_recall_mean": 0.125,
+        "top1_recall_std": 0.0,
+        "disambiguation_recall_mean": 1.0,
+        "disambiguation_recall_std": 0.0,
+        "key_retention_mean": 1.0,
+        "noise_retention_mean": 0.0,
+        "mean_query_latency_ms": 1.4698,
+        "pass_rate": 1.0,
+        "notes": "Light replay, merging, and local reinforcement."
+      },
+      {
+        "method": "SCM + DeepSleep",
+        "family": "SCM sleep stage",
+        "top1_recall_mean": 0.6292,
+        "top1_recall_std": 0.0615,
+        "disambiguation_recall_mean": 0.9052,
+        "disambiguation_recall_std": 0.0098,
+        "key_retention_mean": 1.0,
+        "noise_retention_mean": 0.0,
+        "mean_query_latency_ms": 31.1439,
+        "pass_rate": 1.0,
+        "notes": "Full replay, synthesis, and pruning pass."
+      }
+    ]
+  },
+  "human_memory_suite": {
+    "one_shot": {
+      "name_response": "If I have it right, your name is Alice.",
+      "location_response": "If I have it right, you live in Seattle.",
+      "name_hit": true,
+      "location_hit": true,
+      "accuracy": 1.0
+    },
+    "selective_forgetting": {
+      "inputs": {
+        "key_count": 20,
+        "noise_count": 40
+      },
+      "first_cycle": {
+        "total_evaluated": 60,
+        "retained": 20,
+        "suppressed": 40,
+        "archived": 0,
+        "forgotten": 40,
+        "conflicts_resolved": 0,
+        "avg_retention": 0.294,
+        "avg_decay_lambda": 0.0824,
+        "conflict_pairs": 0
+      },
+      "second_cycle": {
+        "total_evaluated": 60,
+        "retained": 20,
+        "suppressed": 0,
+        "archived": 40,
+        "forgotten": 40,
+        "conflicts_resolved": 0,
+        "avg_retention": 0.2658,
+        "avg_decay_lambda": 0.0889,
+        "conflict_pairs": 0
+      },
+      "key_retention": 1.0,
+      "noise_retention": 0.0
+    },
+    "contradiction": {
+      "chain_ok": true,
+      "old_hidden": true,
+      "retrieval_prefers_new": true,
+      "accuracy": 1.0
+    },
+    "summary": {
+      "one_shot_accuracy": 1.0,
+      "key_retention": 1.0,
+      "noise_retention": 0.0,
+      "contradiction_accuracy": 1.0
+    }
+  },
+  "reference_systems": {
+    "rows": [
+      {
+        "system": "SleepGate",
+        "meaning_based": "\u2717",
+        "sleep_consolidation": "\u25b3",
+        "nrem_rem": "\u2717",
+        "intentional_forgetting": "\u25b3",
+        "multi_dim_importance": "\u2717",
+        "cross_session": "\u2717",
+        "notes": "Sleep metaphor, but still cache-level eviction rather than semantic memory."
+      },
+      {
+        "system": "MemGPT",
+        "meaning_based": "\u2717",
+        "sleep_consolidation": "\u2717",
+        "nrem_rem": "\u2717",
+        "intentional_forgetting": "\u2717",
+        "multi_dim_importance": "\u2717",
+        "cross_session": "\u25b3",
+        "notes": "Strong memory-tiering idea, but no sleep or active forgetting."
+      },
+      {
+        "system": "Mem0",
+        "meaning_based": "\u25b3",
+        "sleep_consolidation": "\u2717",
+        "nrem_rem": "\u2717",
+        "intentional_forgetting": "\u25b3",
+        "multi_dim_importance": "\u25b3",
+        "cross_session": "\u25cf",
+        "notes": "Practical production memory, but awake-only and not sleep reorganized."
+      },
+      {
+        "system": "WSCL",
+        "meaning_based": "\u2717",
+        "sleep_consolidation": "\u25cf",
+        "nrem_rem": "\u25cf",
+        "intentional_forgetting": "\u2717",
+        "multi_dim_importance": "\u2717",
+        "cross_session": "\u25b3",
+        "notes": "Biologically inspired sleep stages, but not semantic conversational memory."
+      },
+      {
+        "system": "EWC",
+        "meaning_based": "\u2717",
+        "sleep_consolidation": "\u2717",
+        "nrem_rem": "\u2717",
+        "intentional_forgetting": "\u2717",
+        "multi_dim_importance": "\u25b3",
+        "cross_session": "\u25b3",
+        "notes": "Important weighting mechanism, but not a memory architecture."
+      },
+      {
+        "system": "SCM",
+        "meaning_based": "\u25cf",
+        "sleep_consolidation": "\u25cf",
+        "nrem_rem": "\u25cf",
+        "intentional_forgetting": "\u25cf",
+        "multi_dim_importance": "\u25cf",
+        "cross_session": "\u25cf",
+        "notes": "Semantic graph + sleep + forgetting + versioning in one system."
+      }
+    ],
+    "source": "research/04_Comparative_Gap_Analysis.md + current SCM implementation"
+  },
+  "status": {
+    "lexical_control_pass": true,
+    "vector_control_pass": true,
+    "scm_deep_pass": true,
+    "scm_noise_pass": true,
+    "human_suite_pass": true,
+    "overall_pass": true
+  }
+}

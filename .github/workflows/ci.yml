@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,embeddings]"
+
+      - name: Run focused regression suite
+        # Excludes flaky-LLM tests + brutal harnesses (which need Ollama / DeepSeek).
+        # Brutal harnesses are run separately as nightly jobs.
+        run: |
+          pytest tests/ -q --tb=short \
+            --ignore=tests/test_brutal_real_llm.py \
+            --ignore=tests/test_chat_integration.py \
+            --ignore=tests/brutal_langchain \
+            --ignore=tests/brutal_multiagent \
+            --ignore=tests/test_idle_learner_api_integration.py
+
+  build:
+    name: Build distribution artifacts
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build wheel + sdist
+        run: |
+          rm -rf dist build *.egg-info
+          python -m build --wheel --sdist
+
+      - name: Validate distribution metadata
+        run: twine check dist/*
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  paper-builds:
+    name: Verify the LaTeX paper compiles
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-science
+
+      - name: Compile paper
+        working-directory: research
+        run: |
+          pdflatex -interaction=nonstopmode -halt-on-error SCM_Final_Paper.tex
+          pdflatex -interaction=nonstopmode -halt-on-error SCM_Final_Paper.tex
+
+      - name: Verify PDF generated
+        run: |
+          test -f research/SCM_Final_Paper.pdf
+          pdfinfo research/SCM_Final_Paper.pdf | grep -E 'Pages'
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: research/SCM_Final_Paper.pdf

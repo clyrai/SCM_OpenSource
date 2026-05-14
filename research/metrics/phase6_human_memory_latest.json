@@ -1,0 +1,135 @@
+{
+  "benchmark": "phase6_human_memory_behavior",
+  "timestamp_utc": "2026-05-01T04:27:23.707854+00:00",
+  "python": "3.14",
+  "seed": 6060,
+  "targets": {
+    "one_shot_accuracy_min": 1.0,
+    "micro_disambiguation_gain_min_abs": 0.2,
+    "deep_disambiguation_gain_min_abs": 0.2,
+    "deep_noise_retention_max": 0.4,
+    "key_retention_min": 0.8,
+    "noise_retention_max": 0.35,
+    "contradiction_accuracy_min": 0.9
+  },
+  "inputs": {
+    "pair_count": 32,
+    "key_count": 20,
+    "noise_count": 40
+  },
+  "metrics": {
+    "one_shot_recall": {
+      "name_response": "If I have it right, your name is Alice.",
+      "location_response": "If I have it right, you live in Seattle.",
+      "name_hit": true,
+      "location_hit": true,
+      "accuracy": 1.0
+    },
+    "sleep_gain": {
+      "dataset": {
+        "pair_count": 32,
+        "concepts_initial": 69,
+        "relations_initial": 36,
+        "episodes": 32
+      },
+      "baseline": {
+        "top1_recall": 0.0,
+        "disambiguation_recall": 0.0,
+        "entropy": 0.9485,
+        "pressure": {
+          "total_concepts": 69,
+          "key_kept": 32,
+          "noise_kept": 32,
+          "key_retention": 1.0,
+          "noise_retention": 1.0
+        }
+      },
+      "micro_sleep": {
+        "top1_recall": 0.375,
+        "top1_gain_abs": 0.375,
+        "disambiguation_recall": 1.0,
+        "disambiguation_gain_abs": 1.0,
+        "entropy": 0.9993,
+        "entropy_delta": 0.0507,
+        "pressure": {
+          "total_concepts": 33,
+          "key_kept": 32,
+          "noise_kept": 0,
+          "key_retention": 1.0,
+          "noise_retention": 0.0
+        },
+        "stats": {
+          "replayed": 12,
+          "duplicates_merged": 36,
+          "relations_reinforced": 12
+        }
+      },
+      "deep_sleep": {
+        "top1_recall": 0.4375,
+        "top1_gain_abs": 0.4375,
+        "disambiguation_recall": 1.0,
+        "disambiguation_gain_abs": 1.0,
+        "entropy": 1.0,
+        "entropy_delta": 0.0515,
+        "pressure": {
+          "total_concepts": 32,
+          "key_kept": 32,
+          "noise_kept": 0,
+          "key_retention": 1.0,
+          "noise_retention": 0.0
+        },
+        "stats": {
+          "consolidated_to_ltm": 37,
+          "forgotten": 37,
+          "dreams_generated": 5
+        }
+      }
+    },
+    "selective_forgetting": {
+      "inputs": {
+        "key_count": 20,
+        "noise_count": 40
+      },
+      "first_cycle": {
+        "total_evaluated": 60,
+        "retained": 20,
+        "suppressed": 40,
+        "archived": 0,
+        "forgotten": 40,
+        "conflicts_resolved": 0,
+        "avg_retention": 0.294,
+        "avg_decay_lambda": 0.0824,
+        "conflict_pairs": 0
+      },
+      "second_cycle": {
+        "total_evaluated": 60,
+        "retained": 20,
+        "suppressed": 0,
+        "archived": 40,
+        "forgotten": 40,
+        "conflicts_resolved": 0,
+        "avg_retention": 0.2658,
+        "avg_decay_lambda": 0.0889,
+        "conflict_pairs": 0
+      },
+      "key_retention": 1.0,
+      "noise_retention": 0.0
+    },
+    "contradiction_versioning": {
+      "chain_ok": true,
+      "old_hidden": true,
+      "retrieval_prefers_new": true,
+      "accuracy": 1.0
+    }
+  },
+  "status": {
+    "one_shot_pass": true,
+    "micro_gain_pass": true,
+    "deep_gain_pass": true,
+    "deep_noise_pass": true,
+    "key_retention_pass": true,
+    "noise_retention_pass": true,
+    "contradiction_pass": true,
+    "overall_pass": true
+  }
+}

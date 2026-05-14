@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCM — Memory that works like yours</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #161922;
+    --panel-2: #1d2230;
+    --border: #2a2f40;
+    --text: #e6e8ee;
+    --muted: #8b91a4;
+    --accent: #7b8cff;
+    --user-bubble: #2a3050;
+    --bot-bubble: #1d2230;
+    --wake: #2d2433;
+    --wake-border: #5a3a6e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    display: flex; flex-direction: column;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .logo { font-weight: 600; letter-spacing: -0.01em; }
+  .logo small { color: var(--muted); font-weight: 400; margin-left: 8px; }
+  .session-link {
+    color: var(--muted); font-size: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .session-link a { color: var(--accent); text-decoration: none; }
+  main {
+    flex: 1; overflow-y: auto; padding: 20px;
+    display: flex; justify-content: center;
+  }
+  .conversation {
+    width: 100%; max-width: 720px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .empty {
+    color: var(--muted); padding: 40px 20px; text-align: center;
+    border: 1px dashed var(--border); border-radius: 12px; margin-top: 20px;
+  }
+  .empty h2 { color: var(--text); margin-bottom: 8px; font-weight: 500; font-size: 18px; }
+  .empty .hints { margin-top: 16px; font-size: 13px; }
+  .empty .hint { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--accent); cursor: pointer; }
+  .empty .hint:hover { text-decoration: underline; }
+  .msg {
+    padding: 10px 14px; border-radius: 12px; max-width: 80%;
+    white-space: pre-wrap; word-wrap: break-word;
+  }
+  .msg.user { background: var(--user-bubble); align-self: flex-end; }
+  .msg.bot { background: var(--bot-bubble); align-self: flex-start; border: 1px solid var(--border); }
+  .wake {
+    background: var(--wake); border: 1px solid var(--wake-border); border-radius: 12px;
+    padding: 14px 16px; margin: 8px 0;
+  }
+  .wake .title {
+    color: #c9a9d9; font-weight: 500; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .wake pre {
+    font-family: inherit; white-space: pre-wrap; line-height: 1.6;
+    color: var(--text); font-size: 14px;
+  }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 14px 20px;
+    flex-shrink: 0;
+  }
+  .composer { display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
+  textarea {
+    flex: 1; resize: none; padding: 10px 12px;
+    background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    font: inherit; min-height: 40px; max-height: 120px;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  button {
+    padding: 0 16px; background: var(--accent); color: white;
+    border: 0; border-radius: 8px; cursor: pointer; font-weight: 500;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  button.ghost:hover { color: var(--text); }
+  .toolbar { display: flex; gap: 8px; max-width: 720px; margin: 8px auto 0; font-size: 12px; }
+  .status {
+    color: var(--muted); font-size: 12px; padding: 6px 12px;
+    text-align: center; flex: 1;
+  }
+  .status.thinking::after {
+    content: "▮"; animation: blink 1s steps(2) infinite; margin-left: 4px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .typing { color: var(--muted); font-style: italic; padding: 4px 14px; font-size: 13px; }
+  .pill {
+    display: inline-block; padding: 1px 8px; border-radius: 10px;
+    background: var(--panel-2); color: var(--muted); font-size: 11px;
+    border: 1px solid var(--border); margin-right: 6px;
+  }
+  .settings-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 100; align-items: center; justify-content: center;
+  }
+  .settings-overlay.open { display: flex; }
+  .settings-panel {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; width: 90%; max-width: 480px;
+  }
+  .settings-panel h3 { font-weight: 500; margin-bottom: 4px; }
+  .settings-panel .sub { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  .settings-panel label { display: block; font-size: 13px; color: var(--muted); margin-top: 14px; }
+  .settings-panel input, .settings-panel select {
+    width: 100%; padding: 8px 10px; margin-top: 4px;
+    background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; font: inherit;
+  }
+  .settings-panel input:focus, .settings-panel select:focus {
+    outline: none; border-color: var(--accent);
+  }
+  .settings-panel .row { display: flex; gap: 12px; }
+  .settings-panel .row > div { flex: 1; }
+  .settings-panel .actions { display: flex; gap: 8px; margin-top: 22px; justify-content: flex-end; }
+  .settings-panel .clock {
+    margin-top: 14px; padding: 10px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px;
+    color: var(--muted);
+  }
+  .settings-panel .clock b { color: var(--text); }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">SCM <small>memory that works like yours</small></div>
+  <div class="session-link" id="sessionLink"></div>
+</header>
+<main>
+  <div class="conversation" id="conversation">
+    <div class="empty" id="empty">
+      <h2>Tell me about yourself.</h2>
+      <div>I'll remember what you say, and while you're idle I'll think about it. Come back later — same URL — to see what I figured out.</div>
+      <div class="hints">
+        Try:
+        <div class="hint" data-msg="Hi, I'm Alex. I'm a backend engineer in Lisbon.">Hi, I'm Alex. I'm a backend engineer in Lisbon.</div>
+        <div class="hint" data-msg="I run every Tuesday morning along the river.">I run every Tuesday morning along the river.</div>
+        <div class="hint" data-msg="My favorite coffee shop is Hello Kristof in Anjos.">My favorite coffee shop is Hello Kristof in Anjos.</div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="composer">
+    <textarea id="input" placeholder="Type a message..." rows="1"></textarea>
+    <button id="send">Send</button>
+  </div>
+  <div class="toolbar">
+    <button class="ghost" id="settingsBtn" title="Configure your sleep schedule + timezone">⚙ sleep schedule</button>
+    <button class="ghost" id="skipBtn" title="Demo aid: simulate the clock advancing into your sleep window">⏭ skip to night</button>
+    <button class="ghost" id="sleepBtn" title="Force one sleep cycle now (manual override)">/sleep</button>
+    <span class="status" id="status">ready</span>
+    <button class="ghost" id="resetBtn" title="Start a fresh session">/reset</button>
+  </div>
+</footer>
+
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <h3>Sleep schedule</h3>
+    <div class="sub">SCM consolidates memories during your configured sleep window — like human sleep, once per night, in your timezone.</div>
+
+    <label>Timezone (IANA)</label>
+    <input type="text" id="cfgTimezone" placeholder="Europe/Lisbon" />
+
+    <div class="row">
+      <div>
+        <label>Sleep starts</label>
+        <input type="text" id="cfgSleepStart" placeholder="23:00" />
+      </div>
+      <div>
+        <label>Sleep ends</label>
+        <input type="text" id="cfgSleepEnd" placeholder="07:00" />
+      </div>
+    </div>
+
+    <label style="display:flex; align-items:center; gap:8px; margin-top:18px;">
+      <input type="checkbox" id="cfgEnabled" style="width:auto;" />
+      <span>Enable nightly auto-consolidation</span>
+    </label>
+
+    <div class="clock" id="cfgClock">checking time…</div>
+
+    <div class="actions">
+      <button class="ghost" id="cfgCancelBtn">Cancel</button>
+      <button id="cfgSaveBtn">Save</button>
+    </div>
+  </div>
+</div>
+<script>
+  // Session ID lives in the URL slug. /demo/s/abc123. New visit → /demo redirects.
+  const urlMatch = window.location.pathname.match(/\/demo\/s\/([a-zA-Z0-9_-]+)/);
+  const sessionId = urlMatch ? urlMatch[1] : null;
+  if (!sessionId) {
+    // Bounce to a fresh session.
+    window.location.href = "/demo";
+  }
+
+  const sessionLink = document.getElementById("sessionLink");
+  sessionLink.innerHTML = `session: <a href="${window.location.href}">${window.location.href}</a> <span class="pill">bookmark this</span>`;
+
+  const conv = document.getElementById("conversation");
+  const empty = document.getElementById("empty");
+  const inputEl = document.getElementById("input");
+  const sendBtn = document.getElementById("send");
+  const sleepBtn = document.getElementById("sleepBtn");
+  const skipBtn = document.getElementById("skipBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const statusEl = document.getElementById("status");
+  const settingsOverlay = document.getElementById("settingsOverlay");
+  const cfgTimezone = document.getElementById("cfgTimezone");
+  const cfgSleepStart = document.getElementById("cfgSleepStart");
+  const cfgSleepEnd = document.getElementById("cfgSleepEnd");
+  const cfgEnabled = document.getElementById("cfgEnabled");
+  const cfgClock = document.getElementById("cfgClock");
+  const cfgSaveBtn = document.getElementById("cfgSaveBtn");
+  const cfgCancelBtn = document.getElementById("cfgCancelBtn");
+
+  // Detect the user's browser timezone so first-time visitors don't have
+  // to type "Europe/Lisbon" manually. Fallback to UTC if unavailable.
+  const browserTZ = (() => {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+    catch { return "UTC"; }
+  })();
+
+  function setStatus(text, thinking = false) {
+    statusEl.textContent = text;
+    statusEl.classList.toggle("thinking", thinking);
+  }
+
+  function addMsg(role, text) {
+    if (empty.parentNode) empty.remove();
+    const div = document.createElement("div");
+    div.className = "msg " + role;
+    div.textContent = text;
+    conv.appendChild(div);
+    conv.parentNode.scrollTop = conv.parentNode.scrollHeight;
+    return div;
+  }
+
+  function addWake(narrative) {
+    if (empty.parentNode) empty.remove();
+    const div = document.createElement("div");
+    div.className = "wake";
+    div.innerHTML = `<div class="title">💤 While you were away</div><pre></pre>`;
+    div.querySelector("pre").textContent = narrative;
+    conv.appendChild(div);
+    conv.parentNode.scrollTop = conv.parentNode.scrollHeight;
+  }
+
+  // Restore prior conversation from server (kept for the same session_id).
+  async function restoreHistory() {
+    try {
+      const r = await fetch(`/demo/api/history/${sessionId}`);
+      if (!r.ok) return;
+      const data = await r.json();
+      if (data.wake_summary && data.wake_summary.narrative) {
+        addWake(data.wake_summary.narrative);
+      }
+      for (const turn of (data.turns || [])) {
+        addMsg("user", turn.user);
+        if (turn.bot) addMsg("bot", turn.bot);
+      }
+    } catch (e) { /* fresh session, no history yet */ }
+  }
+
+  async function send(messageText) {
+    const text = messageText !== undefined ? messageText : inputEl.value.trim();
+    if (!text) return;
+    inputEl.value = "";
+    addMsg("user", text);
+    sendBtn.disabled = true;
+    setStatus("thinking", true);
+
+    try {
+      const r = await fetch(`/demo/api/chat/${sessionId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+      // Surface a wake-summary banner BEFORE the bot reply if one fired.
+      if (data.wake_summary && data.wake_summary.narrative) {
+        addWake(data.wake_summary.narrative);
+      }
+      addMsg("bot", data.reply || "(no reply)");
+      setStatus("ready");
+    } catch (e) {
+      addMsg("bot", `[error: ${e.message}]`);
+      setStatus("error");
+    } finally {
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
+  }
+
+  sendBtn.addEventListener("click", () => send());
+  inputEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  });
+
+  // Hint chips
+  document.querySelectorAll(".hint").forEach(h => {
+    h.addEventListener("click", () => send(h.dataset.msg));
+  });
+
+  sleepBtn.addEventListener("click", async () => {
+    setStatus("consolidating", true);
+    try {
+      const r = await fetch(`/demo/api/sleep/${sessionId}`, { method: "POST" });
+      const data = await r.json();
+      if (data.wake_summary && data.wake_summary.narrative) addWake(data.wake_summary.narrative);
+      setStatus("consolidated");
+    } catch (e) {
+      setStatus("sleep error");
+    }
+  });
+
+  // ── Settings panel: read the saved sleep schedule + edit it ──────────
+  async function loadConfig() {
+    try {
+      const r = await fetch(`/demo/api/config/${sessionId}`);
+      const c = await r.json();
+      cfgTimezone.value = c.timezone || browserTZ;
+      cfgSleepStart.value = c.sleep_start || "23:00";
+      cfgSleepEnd.value = c.sleep_end || "07:00";
+      cfgEnabled.checked = c.enabled !== false;
+      const local = c.now_local ? new Date(c.now_local) : null;
+      const localStr = local ? local.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) : "—";
+      cfgClock.innerHTML = `Your local time right now: <b>${localStr}</b>${
+        c.in_sleep_window ? " — currently inside sleep window 💤" : ""
+      }`;
+      // First-time visit: persist the detected timezone server-side so
+      // the scheduler knows when "night" is in the user's tz. Only push
+      // if the server is still on the UTC default.
+      if (c.timezone === "UTC" && browserTZ !== "UTC") {
+        await fetch(`/demo/api/config/${sessionId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ timezone: browserTZ }),
+        });
+      }
+    } catch (e) { /* defaults are fine */ }
+  }
+
+  settingsBtn.addEventListener("click", async () => {
+    await loadConfig();
+    settingsOverlay.classList.add("open");
+  });
+
+  cfgCancelBtn.addEventListener("click", () => settingsOverlay.classList.remove("open"));
+  settingsOverlay.addEventListener("click", (e) => {
+    if (e.target === settingsOverlay) settingsOverlay.classList.remove("open");
+  });
+
+  cfgSaveBtn.addEventListener("click", async () => {
+    cfgSaveBtn.disabled = true;
+    try {
+      const r = await fetch(`/demo/api/config/${sessionId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          timezone: cfgTimezone.value.trim(),
+          sleep_start: cfgSleepStart.value.trim(),
+          sleep_end: cfgSleepEnd.value.trim(),
+          enabled: cfgEnabled.checked,
+        }),
+      });
+      if (!r.ok) {
+        const err = await r.json();
+        alert(`Couldn't save: ${err.detail || r.status}`);
+      } else {
+        settingsOverlay.classList.remove("open");
+        setStatus("schedule saved");
+      }
+    } catch (e) {
+      alert(`Save failed: ${e.message}`);
+    } finally {
+      cfgSaveBtn.disabled = false;
+    }
+  });
+
+  // ── "Skip to night" demo aid: fast-forward perceived clock into the
+  //    sleep window so the scheduler fires immediately. Same code path as
+  //    the real nightly trigger.
+  skipBtn.addEventListener("click", async () => {
+    setStatus("fast-forwarding to your sleep window…", true);
+    try {
+      const r = await fetch(`/demo/api/skip-to-night/${sessionId}`, { method: "POST" });
+      const data = await r.json();
+      if (data.wake_summary && data.wake_summary.narrative) {
+        addWake(data.wake_summary.narrative);
+      } else {
+        addMsg("bot", "[The scheduler ran but produced no narrative — usually means you haven't said enough yet. Try 3+ messages with real content.]");
+      }
+      setStatus("ready");
+    } catch (e) {
+      setStatus("skip error");
+    }
+  });
+
+  resetBtn.addEventListener("click", () => {
+    if (!confirm("Reset this session and start fresh? You'll get a new URL.")) return;
+    window.location.href = "/demo";
+  });
+
+  // Auto-resize textarea
+  inputEl.addEventListener("input", () => {
+    inputEl.style.height = "auto";
+    inputEl.style.height = Math.min(120, inputEl.scrollHeight) + "px";
+  });
+
+  // Boot.
+  restoreHistory();
+  inputEl.focus();
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+{
+  "system_name": "SCM",
+  "system_version": "phase7-pilot-v0.1",
+  "persona_id": "persona_001",
+  "seed": 0,
+  "idle_on": true,
+  "scores": {
+    "pdr": 0.5,
+    "css": 0.0,
+    "cgc_id": 1.0,
+    "cgc_fill": 0.5,
+    "crai_current": 0.0,
+    "crai_old": 0.0,
+    "wsi_precision": 0.125,
+    "wsi_recall": 1.0,
+    "wsi_f1": 0.2222222222222222,
+    "imc_wall_seconds": 0.2209177499753423,
+    "imc_cpu_seconds": 0.12662400000000051,
+    "imc_total_idle_periods": 9
+  },
+  "raw_subscores": {
+    "pdr_per_pattern": [
+      {
+        "pattern_id": "p_running_tuesday",
+        "type": "TEMPORAL_CADENCE",
+        "matched": false,
+        "matched_schema_id": null
+      },
+      {
+        "pattern_id": "p_friday_dinner_mara",
+        "type": "COOCCUR",
+        "matched": false,
+        "matched_schema_id": null
+      },
+      {
+        "pattern_id": "p_employer_northstar",
+        "type": "REPETITION",
+        "matched": true,
+        "matched_schema_id": "fd8851a7-7fc4-378d-1992-64d1ec524b1d"
+      },
+      {
+        "pattern_id": "p_employer_atlas",
+        "type": "REPETITION",
+        "matched": true,
+        "matched_schema_id": "193e6d3c-ddd4-77c8-836b-64680392517c"
+      }
+    ],
+    "css_per_question": [
+      {
+        "question_id": "css_lunch",
+        "evidence_sessions": [
+          1,
+          3
+        ],
+        "passed": false,
+        "response_excerpt": ""
+      }
+    ],
+    "cgc_id_per_gap": [
+      {
+        "gap_id": "g_oauth",
+        "term": "OAuth flow",
+        "identified": true
+      },
+      {
+        "gap_id": "g_kubernetes_ingress",
+        "term": "Kubernetes ingress",
+        "identified": true
+      }
+    ],
+    "cgc_fill_per_gap": [
+      {
+        "gap_id": "g_oauth",
+        "term": "OAuth flow",
+        "keyword_match_passed": true,
+        "autonomous_fill": true,
+        "passed": true,
+        "response_excerpt": "Hit a wall on the OAuth flow again. The redirect handler isn't picking up the right scopes. Going to grab dinner and come back to it tomorrow. | Standup at Northstar Robotics was rough. We're rewritin"
+      },
+      {
+        "gap_id": "g_kubernetes_ingress",
+        "term": "Kubernetes ingress",
+        "keyword_match_passed": false,
+        "autonomous_fill": true,
+        "passed": false,
+        "response_excerpt": "Ingress and OAuth are linked: they appear together in 2 conversations. | Ingress and Northstar are linked: they appear together in 2 conversations. | Wrapped the OAuth flow doc. Northstar wants me to "
+      }
+    ],
+    "crai_current_per_contradiction": [
+      {
+        "contradiction_id": "c_employer",
+        "property": "employer",
+        "expected_new": "Atlas Labs",
+        "must_not_contain": "Northstar Robotics",
+        "passed": false,
+        "response_excerpt": "A networking resource that exposes services to external traffic, applying routing rules and load balancing. | An authorization framework where applications obtain access tokens to act on behalf of a r"
+      }
+    ],
+    "crai_old_per_contradiction": [
+      {
+        "contradiction_id": "c_employer",
+        "property": "employer",
+        "expected_old": "Northstar Robotics",
+        "passed": false,
+        "response_excerpt": "A networking resource that exposes services to external traffic, applying routing rules and load balancing. | An authorization framework where applications obtain access tokens to act on behalf of a r"
+      }
+    ]
+  },
+  "capabilities": [
+    "autonomous_fill",
+    "cross_session_pool",
+    "gap_tracking",
+    "idle_processing",
+    "schema_extraction",
+    "versioning",
+    "wake_summary"
+  ],
+  "wall_time_seconds": 156.14216550000128,
+  "turns_ingested": 15,
+  "schemas_count": 25,
+  "gaps_count": 2
+}

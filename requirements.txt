@@ -1,0 +1,32 @@
+# SleepAI Requirements
+
+# Core
+llama-cpp-python>=0.2.0           # LLaMA on M1 (Apple Silicon)
+sentence-transformers>=2.2.0      # Embeddings
+networkx>=3.0                     # Graph memory
+faiss-cpu>=1.7.0                  # Vector search (CPU version)
+
+# Database
+psycopg2-binary>=2.9.0           # PostgreSQL adapter
+sqlalchemy>=2.0                  # ORM
+
+# API
+fastapi>=0.100.0                  # Web framework
+uvicorn>=0.23.0                   # ASGI server
+pydantic>=2.0                     # Data validation
+prometheus-client>=0.20.0         # /metrics observability endpoint
+
+# Data Processing
+numpy>=1.24.0                     # Numerical operations
+pandas>=2.0.0                     # Data handling
+python-dateutil>=2.8.0            # Date utilities
+
+# Sleep Modules (Phase 2+)
+torch>=2.0.0                      # Neural networks
+
+# Testing
+pytest>=7.4.0                     # Unit tests
+pytest-asyncio>=0.21.0            # Async tests
+
+# Utilities
+python-dotenv>=1.0.0              # Environment variables

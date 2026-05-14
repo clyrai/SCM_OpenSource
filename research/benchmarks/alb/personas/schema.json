@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scm/research/benchmarks/alb/personas/schema.json",
+  "title": "ALB Persona Schema v0.1",
+  "description": "Frozen schema for ALB personas. Edits require a CHANGELOG entry.",
+  "type": "object",
+  "required": ["persona_id", "version", "demographics", "days", "ground_truth"],
+  "properties": {
+    "persona_id": {
+      "type": "string",
+      "pattern": "^persona_[0-9]{3}$",
+      "description": "Unique ID. Format: persona_NNN."
+    },
+    "version": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "demographics": {
+      "type": "object",
+      "description": "Author-only context. Not exposed to the system under test.",
+      "required": ["occupation", "city", "summary"],
+      "properties": {
+        "occupation": {"type": "string"},
+        "city": {"type": "string"},
+        "age_range": {"type": "string"},
+        "summary": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "Free-text 2-3 sentence portrait for the author's reference."
+        }
+      }
+    },
+    "days": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "required": ["day_number", "date_iso", "turns"],
+        "properties": {
+          "day_number": {"type": "integer", "minimum": 1},
+          "date_iso": {
+            "type": "string",
+            "format": "date",
+            "description": "YYYY-MM-DD. Determines weekday for cadence patterns."
+          },
+          "wake_time_local": {"type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$"},
+          "sleep_time_local": {"type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$"},
+          "timezone": {"type": "string", "default": "UTC"},
+          "turns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["timestamp_utc", "speaker", "text"],
+              "properties": {
+                "timestamp_utc": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "ISO 8601 with Z suffix. Drives the simulated clock."
+                },
+                "speaker": {"enum": ["user", "agent"]},
+                "text": {"type": "string", "minLength": 1, "maxLength": 2000},
+                "annotations": {
+                  "type": "object",
+                  "description": "Optional plant-tracking. NOT exposed to system. Used only by lint_personas.py.",
+                  "properties": {
+                    "plants_pattern": {"type": "string"},
+                    "plants_gap": {"type": "string"},
+                    "plants_contradiction_old": {"type": "string"},
+                    "plants_contradiction_new": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "probe_queries": {
+      "type": "array",
+      "description": "Injected at controlled timestamps. Drive PDR, CSS, CGC, CRAI, WSI scoring.",
+      "items": {
+        "type": "object",
+        "required": ["query_id", "timestamp_utc", "query", "target_metric", "scoring"],
+        "properties": {
+          "query_id": {"type": "string"},
+          "timestamp_utc": {"type": "string", "format": "date-time"},
+          "query": {"type": "string"},
+          "target_metric": {
+            "enum": ["PDR", "CSS", "CGC_id", "CGC_fill", "CRAI_current", "CRAI_old", "WSI"]
+          },
+          "scoring": {
+            "type": "object",
+            "description": "Metric-specific scoring config. Schema varies by target_metric.",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "ground_truth": {
+      "type": "object",
+      "required": ["patterns", "gaps", "contradictions", "cross_session_questions"],
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["pattern_id", "type", "signature", "planted_in_sessions", "expected_discovery_after_session"],
+            "properties": {
+              "pattern_id": {"type": "string"},
+              "type": {"enum": ["REPETITION", "COOCCUR", "TEMPORAL_CADENCE", "TRAJECTORY"]},
+              "signature": {
+                "type": "object",
+                "description": "Type-dependent. See SPEC.md §4.1 for required fields per type.",
+                "additionalProperties": true
+              },
+              "planted_in_sessions": {
+                "type": "array",
+                "items": {"type": "integer", "minimum": 1},
+                "minItems": 2
+              },
+              "expected_discovery_after_session": {"type": "integer", "minimum": 1},
+              "notes": {"type": "string", "description": "Optional author notes."}
+            }
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["gap_id", "term", "expected_definition_keywords", "planted_in_sessions", "min_keyword_match"],
+            "properties": {
+              "gap_id": {"type": "string"},
+              "term": {"type": "string"},
+              "expected_definition_keywords": {
+                "type": "array",
+                "items": {"type": "string"},
+                "minItems": 2
+              },
+              "planted_in_sessions": {
+                "type": "array",
+                "items": {"type": "integer", "minimum": 1},
+                "minItems": 1
+              },
+              "min_keyword_match": {"type": "integer", "minimum": 1}
+            }
+          }
+        },
+        "contradictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["contradiction_id", "property", "old_value", "new_value", "old_planted_session", "new_planted_session"],
+            "properties": {
+              "contradiction_id": {"type": "string"},
+              "property": {"type": "string", "description": "Human-readable property name (e.g., 'employer')"},
+              "old_value": {"type": "string"},
+              "new_value": {"type": "string"},
+              "old_planted_session": {"type": "integer", "minimum": 1},
+              "new_planted_session": {"type": "integer", "minimum": 2},
+              "current_probe_query_id": {"type": "string"},
+              "old_probe_query_id": {"type": "string"}
+            }
+          }
+        },
+        "cross_session_questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["question_id", "query", "evidence_sessions", "correct_answer_keywords"],
+            "properties": {
+              "question_id": {"type": "string"},
+              "query": {"type": "string"},
+              "evidence_sessions": {
+                "type": "array",
+                "items": {"type": "integer", "minimum": 1},
+                "minItems": 2,
+                "description": "Must require >=2 distinct sessions to answer."
+              },
+              "correct_answer_keywords": {
+                "type": "array",
+                "items": {"type": "string"},
+                "minItems": 1
+              },
+              "incorrect_leak_keywords": {
+                "type": "array",
+                "items": {"type": "string"},
+                "default": []
+              },
+              "min_correct_keyword_match": {"type": "integer", "default": 1}
+            }
+          }
+        }
+      }
+    },
+    "author_notes": {
+      "type": "string",
+      "description": "Free-text notes for review and quality control."
+    }
+  }
+}

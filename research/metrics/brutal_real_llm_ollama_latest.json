@@ -1,0 +1,79 @@
+{
+  "persona": "Pat (developer)",
+  "started_at": "2026-05-01T09:00:00",
+  "ended_at": "2026-05-01T21:04:00",
+  "turns_ingested": 8,
+  "sleep_cycles": 2,
+  "schemas_in_final_summary": 0,
+  "daemon_blocked_count": 0,
+  "pass_rate": 0.5,
+  "passed": 3,
+  "failed": 3,
+  "by_category": {
+    "long_horizon_recall": {
+      "passed": 1,
+      "failed": 0
+    },
+    "contradiction_current": {
+      "passed": 0,
+      "failed": 1
+    },
+    "recurring_topic": {
+      "passed": 0,
+      "failed": 1
+    },
+    "curiosity_gap": {
+      "passed": 0,
+      "failed": 1
+    },
+    "structural": {
+      "passed": 2,
+      "failed": 0
+    }
+  },
+  "scenarios": [
+    {
+      "name": "recall::long_horizon_recall::name",
+      "category": "long_horizon_recall",
+      "passed": true,
+      "description": "Pat's name from day 1 must survive to day 2",
+      "detail": "keywords=['name'] must_contain_any=['Pat'] must_not_contain=[] retrieved_excerpt='Pat is a person. | PostgreSQL (as the main store) | Pat is a person. | Pat is a person. | Editor (specifically VSCode)'"
+    },
+    {
+      "name": "recall::contradiction_current::team+current",
+      "category": "contradiction_current",
+      "passed": false,
+      "description": "Day-2 team change supersedes day-1",
+      "detail": "keywords=['team', 'current'] must_contain_any=['fraud'] must_not_contain=['payments'] retrieved_excerpt='PostgreSQL (as the main store) | Pat is a person. | Pat is a person. | Editor (specifically VSCode) | Database management system (PostgreSQL'"
+    },
+    {
+      "name": "schema::recurring_topic::PostgreSQL",
+      "category": "recurring_topic",
+      "passed": false,
+      "description": "Expected schema for PostgreSQL",
+      "detail": "expected entity=PostgreSQL category=recurring_topic min_occurrences=2 found=no"
+    },
+    {
+      "name": "curiosity::Kafka",
+      "category": "curiosity_gap",
+      "passed": false,
+      "description": "Kafka mentioned, agent should learn about it via curiosity if enabled",
+      "detail": "entity=Kafka filled_in_ltm=False"
+    },
+    {
+      "name": "structural::consolidation_happened",
+      "category": "structural",
+      "passed": true,
+      "description": "At least one sleep cycle consolidated something",
+      "detail": "total_consolidated=40 sleeps=2"
+    },
+    {
+      "name": "structural::idle_daemon_fired_at_least_once",
+      "category": "structural",
+      "passed": true,
+      "description": "IdleLearner fired during simulated idle gaps",
+      "detail": "autonomous_sleeps=1 long_idle_gaps_in_persona=1"
+    }
+  ],
+  "final_narrative": "Welcome back.\nI consolidated 40 memories.\nHere's what I have on you:\n  \u2022 PostgreSQL (as the main store)\n  \u2022 Editor (specifically VSCode)\n  \u2022 Database management system (PostgreSQL)\n  \u2022 Pat is a person.\nI'm ready when you are."
+}

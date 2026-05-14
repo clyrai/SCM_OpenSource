@@ -1,0 +1,5597 @@
+{
+  "benchmark": "scm_long_horizon_memory",
+  "timestamp_utc": "2026-05-01T04:14:51.783313+00:00",
+  "seed_start": 8801,
+  "seed_count": 10,
+  "inputs": {
+    "horizon_days": 7,
+    "daily_pair_count": 16,
+    "extra_noise_count": 8,
+    "review_count": 3,
+    "anchor_update_day": 4,
+    "deep_days": [
+      3,
+      6,
+      7
+    ]
+  },
+  "modes": {
+    "awake_only": {
+      "final_disambiguation_recall": 0.0,
+      "final_top1_recall": 0.0,
+      "final_strict_disambiguation_recall": 0.0,
+      "final_strict_top1_recall": 0.0,
+      "final_anchor_hit_rate": 1.0,
+      "final_noise_retention": 1.0,
+      "final_key_retention": 1.0,
+      "mean_disambiguation_recall": 0.0,
+      "mean_strict_disambiguation_recall": 0.0,
+      "mean_strict_top1_recall": 0.0,
+      "mean_anchor_hit_rate": 1.0,
+      "mean_noise_retention": 1.0,
+      "mean_key_retention": 1.0,
+      "mean_latency_ms": 1.3911,
+      "anchor_accuracy": 1.0,
+      "sleep_cycles": 0
+    },
+    "sleep_enabled": {
+      "final_disambiguation_recall": 1.0,
+      "final_top1_recall": 0.8,
+      "final_strict_disambiguation_recall": 0.0,
+      "final_strict_top1_recall": 0.0,
+      "final_anchor_hit_rate": 1.0,
+      "final_noise_retention": 0.0,
+      "final_key_retention": 0.4286,
+      "mean_disambiguation_recall": 0.9973,
+      "mean_strict_disambiguation_recall": 0.4286,
+      "mean_strict_top1_recall": 0.3839,
+      "mean_anchor_hit_rate": 1.0,
+      "mean_noise_retention": 0.0,
+      "mean_key_retention": 0.4286,
+      "mean_latency_ms": 1.7045,
+      "anchor_accuracy": 1.0,
+      "sleep_cycles": 7
+    }
+  },
+  "daily_curve": [
+    {
+      "day": 1,
+      "awake_only": {
+        "sleep_mode": "awake",
+        "disambiguation_recall": 0.0,
+        "noise_retention": 1.0,
+        "anchor_hit_rate": 1.0
+      },
+      "sleep_enabled": {
+        "sleep_mode": "micro",
+        "disambiguation_recall": 1.0,
+        "noise_retention": 0.0,
+        "anchor_hit_rate": 1.0
+      }
+    },
+    {
+      "day": 2,
+      "awake_only": {
+        "sleep_mode": "awake",
+        "disambiguation_recall": 0.0,
+        "noise_retention": 1.0,
+        "anchor_hit_rate": 1.0
+      },
+      "sleep_enabled": {
+        "sleep_mode": "micro",
+        "disambiguation_recall": 1.0,
+        "noise_retention": 0.0,
+        "anchor_hit_rate": 1.0
+      }
+    },
+    {
+      "day": 3,
+      "awake_only": {
+        "sleep_mode": "awake",
+        "disambiguation_recall": 0.0,
+        "noise_retention": 1.0,
+        "anchor_hit_rate": 1.0
+      },
+      "sleep_enabled": {
+        "sleep_mode": "deep",
+        "disambiguation_recall": 1.0,
+        "noise_retention": 0.0,
+        "anchor_hit_rate": 1.0
+      }
+    },
+    {
+      "day": 4,
+      "awake_only": {
+        "sleep_mode": "awake",
+        "disambiguation_recall": 0.0,
+        "noise_retention": 1.0,
+        "anchor_hit_rate": 1.0
+      },
+      "sleep_enabled": {
+        "sleep_mode": "micro",
+        "disambiguation_recall": 1.0,
+        "noise_retention": 0.0,
+        "anchor_hit_rate": 1.0
+      }
+    },
+    {
+      "day": 5,
+      "awake_only": {
+        "sleep_mode": "awake",
+        "disambiguation_recall": 0.0,
+        "noise_retention": 1.0,
+        "anchor_hit_rate": 1.0
+      },
+      "sleep_enabled": {
+        "sleep_mode": "micro",
+        "disambiguation_recall": 1.0,
+        "noise_retention": 0.0,
+        "anchor_hit_rate": 1.0
+      }
+    },
+    {
+      "day": 6,
+      "awake_only": {
+        "sleep_mode": "awake",
+        "disambiguation_recall": 0.0,
+        "noise_retention": 1.0,
+        "anchor_hit_rate": 1.0
+      },
+      "sleep_enabled": {
+        "sleep_mode": "deep",
+        "disambiguation_recall": 0.9812,
+        "noise_retention": 0.0,
+        "anchor_hit_rate": 1.0
+      }
+    },
+    {
+      "day": 7,
+      "awake_only": {
+        "sleep_mode": "awake",
+        "disambiguation_recall": 0.0,
+        "noise_retention": 1.0,
+        "anchor_hit_rate": 1.0
+      },
+      "sleep_enabled": {
+        "sleep_mode": "deep",
+        "disambiguation_recall": 1.0,
+        "noise_retention": 0.0,
+        "anchor_hit_rate": 1.0
+      }
+    }
+  ],
+  "strict_curve": [
+    {
+      "day": 1,
+      "awake_only": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      },
+      "sleep_enabled": {
+        "strict_top1_recall": 0.6875,
+        "strict_disambiguation_recall": 1.0
+      }
+    },
+    {
+      "day": 2,
+      "awake_only": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      },
+      "sleep_enabled": {
+        "strict_top1_recall": 1.0,
+        "strict_disambiguation_recall": 1.0
+      }
+    },
+    {
+      "day": 3,
+      "awake_only": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      },
+      "sleep_enabled": {
+        "strict_top1_recall": 1.0,
+        "strict_disambiguation_recall": 1.0
+      }
+    },
+    {
+      "day": 4,
+      "awake_only": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      },
+      "sleep_enabled": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      }
+    },
+    {
+      "day": 5,
+      "awake_only": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      },
+      "sleep_enabled": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      }
+    },
+    {
+      "day": 6,
+      "awake_only": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      },
+      "sleep_enabled": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      }
+    },
+    {
+      "day": 7,
+      "awake_only": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      },
+      "sleep_enabled": {
+        "strict_top1_recall": 0.0,
+        "strict_disambiguation_recall": 0.0
+      }
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 8801,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8801,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.5004,
+            "p95_latency_ms": 0.7011,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "438d5e83-7933-400e-933f-cdb81f9a1e81",
+              "top_id": "438d5e83-7933-400e-933f-cdb81f9a1e81",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.8557,
+            "p95_latency_ms": 1.1617,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "438d5e83-7933-400e-933f-cdb81f9a1e81",
+              "top_id": "438d5e83-7933-400e-933f-cdb81f9a1e81",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.1807,
+            "p95_latency_ms": 1.3747,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "438d5e83-7933-400e-933f-cdb81f9a1e81",
+              "top_id": "438d5e83-7933-400e-933f-cdb81f9a1e81",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6608,
+            "p95_latency_ms": 1.9155,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.702,
+            "p95_latency_ms": 1.9301,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.881,
+            "p95_latency_ms": 1.9798,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.0385,
+            "p95_latency_ms": 2.1737,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_id": "513d5eae-a3c6-4c3c-a0ca-5fa80c926cd9",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.4027,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8801,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6417,
+            "p95_latency_ms": 0.7279,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ff778c9c-04b5-42b9-b190-331e48db40d0",
+              "top_id": "ff778c9c-04b5-42b9-b190-331e48db40d0",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.61,
+            "p95_latency_ms": 0.6683,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ff778c9c-04b5-42b9-b190-331e48db40d0",
+              "top_id": "ff778c9c-04b5-42b9-b190-331e48db40d0",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.4875,
+            "p95_latency_ms": 1.7683,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ff778c9c-04b5-42b9-b190-331e48db40d0",
+              "top_id": "ff778c9c-04b5-42b9-b190-331e48db40d0",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7102,
+            "p95_latency_ms": 1.857,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.8044,
+            "p95_latency_ms": 1.8609,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.7638,
+            "p95_latency_ms": 3.1703,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.7913,
+            "p95_latency_ms": 4.2538,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_id": "e7900bb9-dec4-49e4-9165-98799a42c658",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.875,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 1.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.8298,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 21,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 20,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 146
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 75
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 18,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 75
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 201
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 278
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8802,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8802,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.4679,
+            "p95_latency_ms": 0.5808,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "988ad1fc-3b48-4cda-b650-7f9e1c984cd7",
+              "top_id": "988ad1fc-3b48-4cda-b650-7f9e1c984cd7",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.8076,
+            "p95_latency_ms": 0.9315,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "988ad1fc-3b48-4cda-b650-7f9e1c984cd7",
+              "top_id": "988ad1fc-3b48-4cda-b650-7f9e1c984cd7",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.1721,
+            "p95_latency_ms": 1.3493,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "988ad1fc-3b48-4cda-b650-7f9e1c984cd7",
+              "top_id": "988ad1fc-3b48-4cda-b650-7f9e1c984cd7",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4394,
+            "p95_latency_ms": 1.7255,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6107,
+            "p95_latency_ms": 1.7953,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.756,
+            "p95_latency_ms": 1.8786,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.9265,
+            "p95_latency_ms": 2.0214,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_id": "b522d3ba-93f1-4fee-9590-9d9e11bed5dd",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.3115,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8802,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6385,
+            "p95_latency_ms": 0.733,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "60764620-6d84-455e-8f85-0900fe5470f0",
+              "top_id": "60764620-6d84-455e-8f85-0900fe5470f0",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.5966,
+            "p95_latency_ms": 0.6261,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "60764620-6d84-455e-8f85-0900fe5470f0",
+              "top_id": "60764620-6d84-455e-8f85-0900fe5470f0",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.3047,
+            "p95_latency_ms": 1.5568,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "60764620-6d84-455e-8f85-0900fe5470f0",
+              "top_id": "60764620-6d84-455e-8f85-0900fe5470f0",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4216,
+            "p95_latency_ms": 1.5573,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.5625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.5552,
+            "p95_latency_ms": 1.5998,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.4572,
+            "p95_latency_ms": 2.7593,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.0351,
+            "p95_latency_ms": 3.8449,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_id": "2a730899-fd6e-42d0-9725-e0a2a310973a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.625,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 1.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.5727,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 21,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 20,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 152
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 66
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 66
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 193
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 267
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8803,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8803,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.4517,
+            "p95_latency_ms": 0.5157,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "3bcdbaa4-19e9-4ab0-8d26-e116cd973271",
+              "top_id": "3bcdbaa4-19e9-4ab0-8d26-e116cd973271",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.7772,
+            "p95_latency_ms": 0.9061,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "3bcdbaa4-19e9-4ab0-8d26-e116cd973271",
+              "top_id": "3bcdbaa4-19e9-4ab0-8d26-e116cd973271",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.1005,
+            "p95_latency_ms": 1.2924,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "3bcdbaa4-19e9-4ab0-8d26-e116cd973271",
+              "top_id": "3bcdbaa4-19e9-4ab0-8d26-e116cd973271",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4342,
+            "p95_latency_ms": 1.6886,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.5944,
+            "p95_latency_ms": 1.7814,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7587,
+            "p95_latency_ms": 1.8703,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.0047,
+            "p95_latency_ms": 2.059,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_id": "e7dd670d-f8dd-4ab6-aeab-74fe9c616b8a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.3031,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8803,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6469,
+            "p95_latency_ms": 0.814,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "922a4b7d-1cf3-41a3-8133-51f1900004d8",
+              "top_id": "922a4b7d-1cf3-41a3-8133-51f1900004d8",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6361,
+            "p95_latency_ms": 0.784,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "922a4b7d-1cf3-41a3-8133-51f1900004d8",
+              "top_id": "922a4b7d-1cf3-41a3-8133-51f1900004d8",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.3469,
+            "p95_latency_ms": 1.8524,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "922a4b7d-1cf3-41a3-8133-51f1900004d8",
+              "top_id": "922a4b7d-1cf3-41a3-8133-51f1900004d8",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.5674,
+            "p95_latency_ms": 1.7084,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6526,
+            "p95_latency_ms": 1.7824,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.75,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.4316,
+            "p95_latency_ms": 3.2972,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.1939,
+            "p95_latency_ms": 4.103,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_id": "9c7e5e2e-3017-45d6-bf32-2f9c0a68429a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.875,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 1.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.6393,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 21,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 20,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 145
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 69
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 19,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 69
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 199
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 260
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8804,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8804,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.483,
+            "p95_latency_ms": 0.6043,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0778b717-6092-4dff-989c-b8b86b9ece9c",
+              "top_id": "0778b717-6092-4dff-989c-b8b86b9ece9c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.8242,
+            "p95_latency_ms": 0.9745,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0778b717-6092-4dff-989c-b8b86b9ece9c",
+              "top_id": "0778b717-6092-4dff-989c-b8b86b9ece9c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.2854,
+            "p95_latency_ms": 1.479,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0778b717-6092-4dff-989c-b8b86b9ece9c",
+              "top_id": "0778b717-6092-4dff-989c-b8b86b9ece9c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.644,
+            "p95_latency_ms": 1.9958,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.0693,
+            "p95_latency_ms": 2.3923,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.0325,
+            "p95_latency_ms": 2.1795,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.0931,
+            "p95_latency_ms": 2.296,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_id": "64136552-9e1d-4fca-9a1b-9716305f6a8c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.4902,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8804,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.5975,
+            "p95_latency_ms": 0.6254,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "d986d8ec-219c-4d18-9a9a-2769baedeb66",
+              "top_id": "d986d8ec-219c-4d18-9a9a-2769baedeb66",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.575,
+            "p95_latency_ms": 0.5993,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "d986d8ec-219c-4d18-9a9a-2769baedeb66",
+              "top_id": "d986d8ec-219c-4d18-9a9a-2769baedeb66",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.3956,
+            "p95_latency_ms": 1.7268,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "d986d8ec-219c-4d18-9a9a-2769baedeb66",
+              "top_id": "d986d8ec-219c-4d18-9a9a-2769baedeb66",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6322,
+            "p95_latency_ms": 1.7287,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6927,
+            "p95_latency_ms": 1.7776,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.75,
+            "disambiguation_recall": 0.9375,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.511,
+            "p95_latency_ms": 2.804,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.75,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.2529,
+            "p95_latency_ms": 4.0563,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_id": "7b8a6e95-d3b0-4683-9a1c-0d4ebe00b844",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.75,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 0.9911,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.6653,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 22,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 21,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 149
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 19,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 75
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 19,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 75
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 204
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 270
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8805,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8805,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.4598,
+            "p95_latency_ms": 0.5312,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "844261bf-0e25-463d-9f4f-9f5e9e8ebe9f",
+              "top_id": "844261bf-0e25-463d-9f4f-9f5e9e8ebe9f",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.7797,
+            "p95_latency_ms": 0.9028,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "844261bf-0e25-463d-9f4f-9f5e9e8ebe9f",
+              "top_id": "844261bf-0e25-463d-9f4f-9f5e9e8ebe9f",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.1062,
+            "p95_latency_ms": 1.3287,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "844261bf-0e25-463d-9f4f-9f5e9e8ebe9f",
+              "top_id": "844261bf-0e25-463d-9f4f-9f5e9e8ebe9f",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4399,
+            "p95_latency_ms": 1.6996,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6112,
+            "p95_latency_ms": 1.7828,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7587,
+            "p95_latency_ms": 1.8926,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.9362,
+            "p95_latency_ms": 2.0061,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_id": "d43fbe1f-1e8f-4ebf-a925-f50fb920e6d8",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.2988,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8805,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.5956,
+            "p95_latency_ms": 0.6225,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "49e9ed69-c9d0-421d-91f5-76796bc236b3",
+              "top_id": "49e9ed69-c9d0-421d-91f5-76796bc236b3",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.5747,
+            "p95_latency_ms": 0.6014,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "49e9ed69-c9d0-421d-91f5-76796bc236b3",
+              "top_id": "49e9ed69-c9d0-421d-91f5-76796bc236b3",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.2471,
+            "p95_latency_ms": 1.6944,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "49e9ed69-c9d0-421d-91f5-76796bc236b3",
+              "top_id": "49e9ed69-c9d0-421d-91f5-76796bc236b3",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.3826,
+            "p95_latency_ms": 1.5586,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4488,
+            "p95_latency_ms": 1.516,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.2881,
+            "p95_latency_ms": 2.7463,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.8125,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.9726,
+            "p95_latency_ms": 3.6267,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_id": "2a62b1d5-a44b-4d4c-a4ca-b45ab3ac213a",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.8125,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 1.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.5014,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 22,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 19,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 152
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 66
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 66
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 197
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 264
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8806,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8806,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.4583,
+            "p95_latency_ms": 0.5256,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "8384269c-cf80-4ec1-8ed7-82e35db097c1",
+              "top_id": "8384269c-cf80-4ec1-8ed7-82e35db097c1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.7866,
+            "p95_latency_ms": 0.9208,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "8384269c-cf80-4ec1-8ed7-82e35db097c1",
+              "top_id": "8384269c-cf80-4ec1-8ed7-82e35db097c1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.1494,
+            "p95_latency_ms": 1.3634,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "8384269c-cf80-4ec1-8ed7-82e35db097c1",
+              "top_id": "8384269c-cf80-4ec1-8ed7-82e35db097c1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.448,
+            "p95_latency_ms": 1.7456,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6116,
+            "p95_latency_ms": 1.7975,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7571,
+            "p95_latency_ms": 1.8987,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.4906,
+            "p95_latency_ms": 3.3744,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_id": "c3cd3b26-05df-4c28-85d6-532c3c2a59b4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.3859,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8806,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6746,
+            "p95_latency_ms": 0.7515,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "cec7dbd6-141f-4d5e-befe-56d1a625913e",
+              "top_id": "cec7dbd6-141f-4d5e-befe-56d1a625913e",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.5976,
+            "p95_latency_ms": 0.6999,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "cec7dbd6-141f-4d5e-befe-56d1a625913e",
+              "top_id": "cec7dbd6-141f-4d5e-befe-56d1a625913e",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.3933,
+            "p95_latency_ms": 1.6659,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "cec7dbd6-141f-4d5e-befe-56d1a625913e",
+              "top_id": "cec7dbd6-141f-4d5e-befe-56d1a625913e",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.5986,
+            "p95_latency_ms": 1.8209,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7334,
+            "p95_latency_ms": 1.8377,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.5235,
+            "p95_latency_ms": 2.8806,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.75,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.4219,
+            "p95_latency_ms": 3.9905,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_id": "0e0499e8-0995-45af-8e24-374cc0aa8fa1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.75,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 1.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.7061,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 21,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 19,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 149
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 18,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 70
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 18,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 70
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 200
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 266
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8807,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8807,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.4571,
+            "p95_latency_ms": 0.5184,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ce825abe-9262-4c7a-921c-f1cab8101372",
+              "top_id": "ce825abe-9262-4c7a-921c-f1cab8101372",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.7871,
+            "p95_latency_ms": 0.914,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ce825abe-9262-4c7a-921c-f1cab8101372",
+              "top_id": "ce825abe-9262-4c7a-921c-f1cab8101372",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.117,
+            "p95_latency_ms": 1.3296,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ce825abe-9262-4c7a-921c-f1cab8101372",
+              "top_id": "ce825abe-9262-4c7a-921c-f1cab8101372",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4231,
+            "p95_latency_ms": 1.6894,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6602,
+            "p95_latency_ms": 1.803,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7557,
+            "p95_latency_ms": 1.8839,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.9917,
+            "p95_latency_ms": 2.0909,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_id": "1cede9fd-7613-47a7-861c-49c76ba691db",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.3131,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8807,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.64,
+            "p95_latency_ms": 0.729,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "5e22e3d8-cf05-48cb-8cef-4a12b4f2d61b",
+              "top_id": "5e22e3d8-cf05-48cb-8cef-4a12b4f2d61b",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6082,
+            "p95_latency_ms": 0.6996,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "5e22e3d8-cf05-48cb-8cef-4a12b4f2d61b",
+              "top_id": "5e22e3d8-cf05-48cb-8cef-4a12b4f2d61b",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.4106,
+            "p95_latency_ms": 1.6894,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "5e22e3d8-cf05-48cb-8cef-4a12b4f2d61b",
+              "top_id": "5e22e3d8-cf05-48cb-8cef-4a12b4f2d61b",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.4688,
+            "p95_latency_ms": 6.7928,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.5,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7294,
+            "p95_latency_ms": 1.933,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.5625,
+            "disambiguation_recall": 0.9375,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.9506,
+            "p95_latency_ms": 3.835,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.544,
+            "p95_latency_ms": 4.1627,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_id": "af04a4f6-f48b-4e62-94f1-d5a1b5fd7fa5",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.625,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 0.9911,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.9074,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 22,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 20,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 150
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 15,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 72
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 72
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 202
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 270
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8808,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8808,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.4747,
+            "p95_latency_ms": 0.6068,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "706d1774-c8a4-4744-96bb-a96d59f07b27",
+              "top_id": "706d1774-c8a4-4744-96bb-a96d59f07b27",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.8437,
+            "p95_latency_ms": 1.0465,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "706d1774-c8a4-4744-96bb-a96d59f07b27",
+              "top_id": "706d1774-c8a4-4744-96bb-a96d59f07b27",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.2304,
+            "p95_latency_ms": 1.4299,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "706d1774-c8a4-4744-96bb-a96d59f07b27",
+              "top_id": "706d1774-c8a4-4744-96bb-a96d59f07b27",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.8408,
+            "p95_latency_ms": 2.5415,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.142,
+            "p95_latency_ms": 2.842,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.9436,
+            "p95_latency_ms": 4.8183,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.988,
+            "p95_latency_ms": 2.2065,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_id": "6a071ed5-8973-45c6-a592-822c5b83fbd7",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.6376,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8808,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.605,
+            "p95_latency_ms": 0.6528,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "3beabfd9-60d3-413b-904a-75a93eef3a67",
+              "top_id": "3beabfd9-60d3-413b-904a-75a93eef3a67",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.5766,
+            "p95_latency_ms": 0.5964,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "3beabfd9-60d3-413b-904a-75a93eef3a67",
+              "top_id": "3beabfd9-60d3-413b-904a-75a93eef3a67",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.391,
+            "p95_latency_ms": 1.6743,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "3beabfd9-60d3-413b-904a-75a93eef3a67",
+              "top_id": "3beabfd9-60d3-413b-904a-75a93eef3a67",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.5852,
+            "p95_latency_ms": 1.7189,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7229,
+            "p95_latency_ms": 1.8833,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.8125,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.6983,
+            "p95_latency_ms": 3.0133,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.4214,
+            "p95_latency_ms": 3.9371,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_id": "aa7a5184-ea61-4561-9823-bdc0516f0ae4",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.875,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 1.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.7143,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 21,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 19,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 149
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 16,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 73
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 73
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 203
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 263
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8809,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8809,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.4572,
+            "p95_latency_ms": 0.5368,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0b95805a-e051-4b1d-94bb-99f19ba666b1",
+              "top_id": "0b95805a-e051-4b1d-94bb-99f19ba666b1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.78,
+            "p95_latency_ms": 0.9307,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0b95805a-e051-4b1d-94bb-99f19ba666b1",
+              "top_id": "0b95805a-e051-4b1d-94bb-99f19ba666b1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.1204,
+            "p95_latency_ms": 1.3051,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0b95805a-e051-4b1d-94bb-99f19ba666b1",
+              "top_id": "0b95805a-e051-4b1d-94bb-99f19ba666b1",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4888,
+            "p95_latency_ms": 1.7754,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6411,
+            "p95_latency_ms": 1.8674,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.9329,
+            "p95_latency_ms": 2.1382,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.1887,
+            "p95_latency_ms": 2.4101,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_id": "0729d3c3-3de8-47a6-8ed0-a9950a3752a2",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.3727,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8809,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6871,
+            "p95_latency_ms": 0.8017,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "7c5a410a-2f55-46d3-a44c-fbc96750da24",
+              "top_id": "7c5a410a-2f55-46d3-a44c-fbc96750da24",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.7254,
+            "p95_latency_ms": 0.8586,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "7c5a410a-2f55-46d3-a44c-fbc96750da24",
+              "top_id": "7c5a410a-2f55-46d3-a44c-fbc96750da24",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.5381,
+            "p95_latency_ms": 1.8216,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "7c5a410a-2f55-46d3-a44c-fbc96750da24",
+              "top_id": "7c5a410a-2f55-46d3-a44c-fbc96750da24",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6571,
+            "p95_latency_ms": 1.7874,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.5625,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7747,
+            "p95_latency_ms": 1.9207,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.686,
+            "p95_latency_ms": 3.3116,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.5585,
+            "p95_latency_ms": 4.1915,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_id": "336c21f8-6fee-4a83-a530-98375b2f1ffc",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.875,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 1.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.8038,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 22,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 21,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 150
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 18,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 75
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 18,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 75
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 203
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 269
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    },
+    {
+      "seed": 8810,
+      "awake_only": {
+        "mode": "awake_only",
+        "seed": 8810,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": false,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.5103,
+            "p95_latency_ms": 0.6723,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 45,
+            "day": 1,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7fbc728-3e46-4d48-82ac-5b5e6c429561",
+              "top_id": "e7fbc728-3e46-4d48-82ac-5b5e6c429561",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 24
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 0.9083,
+            "p95_latency_ms": 1.0267,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 89,
+            "day": 2,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7fbc728-3e46-4d48-82ac-5b5e6c429561",
+              "top_id": "e7fbc728-3e46-4d48-82ac-5b5e6c429561",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 48
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.2727,
+            "p95_latency_ms": 1.6461,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 133,
+            "day": 3,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "e7fbc728-3e46-4d48-82ac-5b5e6c429561",
+              "top_id": "e7fbc728-3e46-4d48-82ac-5b5e6c429561",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 72
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.4912,
+            "p95_latency_ms": 1.7324,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 177,
+            "day": 4,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 96
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.7763,
+            "p95_latency_ms": 2.0297,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 221,
+            "day": 5,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 120
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.8528,
+            "p95_latency_ms": 2.1667,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 265,
+            "day": 6,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 144
+          },
+          {
+            "top1_recall": 0.0,
+            "disambiguation_recall": 0.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.9591,
+            "p95_latency_ms": 2.034,
+            "key_retention": 1.0,
+            "noise_retention": 1.0,
+            "active_concepts": 309,
+            "day": 7,
+            "sleep_mode": "awake",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_id": "9002b5d0-b7a1-4dbd-9385-d49328912dad",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 168
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 0.0,
+          "final_top1_recall": 0.0,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 1.0,
+          "final_key_retention": 1.0,
+          "mean_disambiguation_recall": 0.0,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 1.0,
+          "mean_key_retention": 1.0,
+          "mean_latency_ms": 1.3958,
+          "mean_strict_disambiguation_recall": 0.0,
+          "mean_strict_top1_recall": 0.0,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 0,
+          "sleep_history": []
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      },
+      "sleep_enabled": {
+        "mode": "sleep_enabled",
+        "seed": 8810,
+        "inputs": {
+          "horizon_days": 7,
+          "daily_pair_count": 16,
+          "extra_noise_count": 8,
+          "review_count": 3,
+          "anchor_update_day": 4,
+          "sleep_enabled": true,
+          "deep_days": [
+            3,
+            6,
+            7
+          ]
+        },
+        "curve": [
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.6002,
+            "p95_latency_ms": 0.6262,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 1,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ca37913b-6a4a-498a-8e00-f0c8b799f242",
+              "top_id": "ca37913b-6a4a-498a-8e00-f0c8b799f242",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 0.5821,
+            "p95_latency_ms": 0.6132,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 2,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ca37913b-6a4a-498a-8e00-f0c8b799f242",
+              "top_id": "ca37913b-6a4a-498a-8e00-f0c8b799f242",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0,
+            "mean_latency_ms": 1.4628,
+            "p95_latency_ms": 1.8053,
+            "key_retention": 1.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 3,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "ca37913b-6a4a-498a-8e00-f0c8b799f242",
+              "top_id": "ca37913b-6a4a-498a-8e00-f0c8b799f242",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 1.0,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6189,
+            "p95_latency_ms": 1.731,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 19,
+            "day": 4,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 1
+          },
+          {
+            "top1_recall": 0.6875,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 1.6213,
+            "p95_latency_ms": 1.7397,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 20,
+            "day": 5,
+            "sleep_mode": "micro",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 2
+          },
+          {
+            "top1_recall": 0.875,
+            "disambiguation_recall": 0.9375,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 2.6375,
+            "p95_latency_ms": 2.9291,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 34,
+            "day": 6,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          },
+          {
+            "top1_recall": 0.9375,
+            "disambiguation_recall": 1.0,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0,
+            "mean_latency_ms": 3.4116,
+            "p95_latency_ms": 4.2472,
+            "key_retention": 0.0,
+            "noise_retention": 0.0,
+            "active_concepts": 50,
+            "day": 7,
+            "sleep_mode": "deep",
+            "anchor": {
+              "query": "project atlas owner",
+              "expected_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_id": "b76353de-c7ee-46e7-8826-6f37c2b30c9c",
+              "top_hit": true,
+              "expected_is_current": true,
+              "expected_is_active": true
+            },
+            "active_noise_count": 0
+          }
+        ],
+        "summary": {
+          "final_disambiguation_recall": 1.0,
+          "final_top1_recall": 0.9375,
+          "final_strict_disambiguation_recall": 0.0,
+          "final_strict_top1_recall": 0.0,
+          "final_anchor_hit_rate": 1.0,
+          "final_noise_retention": 0.0,
+          "final_key_retention": 0.4286,
+          "mean_disambiguation_recall": 0.9911,
+          "mean_anchor_hit_rate": 1.0,
+          "mean_noise_retention": 0.0,
+          "mean_key_retention": 0.4286,
+          "mean_latency_ms": 1.7049,
+          "mean_strict_disambiguation_recall": 0.4286,
+          "mean_strict_top1_recall": 0.3839,
+          "anchor_accuracy": 1.0,
+          "anchor_top_hit_rate": 1.0,
+          "sleep_cycles": 7,
+          "sleep_history": [
+            {
+              "day": 1,
+              "mode": "micro",
+              "consolidated": 22,
+              "forgotten": 26,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 26,
+              "synced_relations": 19
+            },
+            {
+              "day": 2,
+              "mode": "micro",
+              "consolidated": 20,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 19
+            },
+            {
+              "day": 3,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 149
+            },
+            {
+              "day": 4,
+              "mode": "micro",
+              "consolidated": 17,
+              "forgotten": 59,
+              "dreams": 0,
+              "synced_concepts": 19,
+              "removed_concepts": 59,
+              "synced_relations": 70
+            },
+            {
+              "day": 5,
+              "mode": "micro",
+              "consolidated": 18,
+              "forgotten": 43,
+              "dreams": 0,
+              "synced_concepts": 20,
+              "removed_concepts": 43,
+              "synced_relations": 70
+            },
+            {
+              "day": 6,
+              "mode": "deep",
+              "consolidated": 37,
+              "forgotten": 30,
+              "dreams": 5,
+              "synced_concepts": 34,
+              "removed_concepts": 0,
+              "synced_relations": 203
+            },
+            {
+              "day": 7,
+              "mode": "deep",
+              "consolidated": 53,
+              "forgotten": 12,
+              "dreams": 5,
+              "synced_concepts": 50,
+              "removed_concepts": 16,
+              "synced_relations": 263
+            }
+          ]
+        },
+        "strict_curve": [
+          {
+            "day": 1,
+            "strict_top1_recall": 0.6875,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 2,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 3,
+            "strict_top1_recall": 1.0,
+            "strict_disambiguation_recall": 1.0
+          },
+          {
+            "day": 4,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 5,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 6,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          },
+          {
+            "day": 7,
+            "strict_top1_recall": 0.0,
+            "strict_disambiguation_recall": 0.0
+          }
+        ]
+      }
+    }
+  ],
+  "comparative": {
+    "disambiguation_lift": 1.0,
+    "strict_disambiguation_lift": 0.0,
+    "noise_reduction": 1.0,
+    "anchor_lift": 0.0
+  },
+  "status": {
+    "sleep_final_recall_pass": true,
+    "sleep_final_noise_pass": true,
+    "sleep_anchor_pass": true,
+    "sleep_curve_pass": true,
+    "overall_pass": true
+  }
+}

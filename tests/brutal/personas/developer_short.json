@@ -1,0 +1,68 @@
+{
+  "_comment": "Compact 2-day persona used for real-LLM brutal tests. Kept short on purpose to bound API cost. Contains: durable identity facts + recurring topic + one clear contradiction + one curiosity gap.",
+  "name": "Pat (developer)",
+  "background": "Backend engineer at FinTech Inc, switching projects.",
+  "primary_speaker": "Pat",
+  "secondary_speaker": "AI",
+
+  "days": [
+    {
+      "day_offset_days": 0,
+      "label": "monday",
+      "turns": [
+        "Pat: My name is Pat and I work at FinTech Inc.",
+        "Pat: I'm a backend engineer, focused on the payments API.",
+        "Pat: We use PostgreSQL for our main database.",
+        "Pat: My favorite editor is VSCode."
+      ]
+    },
+    {
+      "day_offset_days": 1,
+      "label": "tuesday",
+      "idle_seconds_before": 43200,
+      "turns": [
+        "Pat: Quick update — I switched from the payments team to the fraud team.",
+        "Pat: We're building on Kafka now for event streaming.",
+        "Pat: PostgreSQL is still the main store though.",
+        "Pat: Coffee, lol"
+      ]
+    }
+  ],
+
+  "expected_recall": [
+    {
+      "after_day_offset": 1,
+      "question_keywords": ["name"],
+      "must_contain_any": ["Pat"],
+      "must_not_contain": [],
+      "category": "long_horizon_recall",
+      "description": "Pat's name from day 1 must survive to day 2"
+    },
+    {
+      "after_day_offset": 1,
+      "question_keywords": ["team", "current"],
+      "must_contain_any": ["fraud"],
+      "must_not_contain": ["payments"],
+      "category": "contradiction_current",
+      "description": "Day-2 team change supersedes day-1"
+    }
+  ],
+
+  "expected_schemas": [
+    {
+      "category": "recurring_topic",
+      "expected_entity": "PostgreSQL",
+      "min_occurrences": 2,
+      "after_day_offset": 1
+    }
+  ],
+
+  "expected_curiosity_gaps": [
+    {
+      "entity": "Kafka",
+      "after_day_offset": 1,
+      "min_occurrences": 1,
+      "description": "Kafka mentioned, agent should learn about it via curiosity if enabled"
+    }
+  ]
+}

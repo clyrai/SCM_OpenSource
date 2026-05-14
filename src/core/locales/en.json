@@ -1,0 +1,173 @@
+{
+  "_comment": "Default English linguistic resources for SCM. Override at runtime via LINGUISTIC_CONFIG_PATH env var. Schema documented in src/core/linguistic_resources.py.",
+  "locale": "en",
+  "version": "1.0",
+
+  "entity_detection": {
+    "named_entity_regex": "\\b([A-Z][a-zA-Z]{2,}(?:-[A-Za-z]+)*|[A-Z]{2,})\\b",
+    "min_entity_length": 4
+  },
+
+  "stopwords": {
+    "schema_extractor": [
+      "speaker", "user", "person", "today", "tomorrow", "yesterday",
+      "morning", "evening", "afternoon", "thing", "things", "time",
+      "really", "great", "good", "very", "about", "with", "from",
+      "what", "when", "where", "which", "this", "that", "these",
+      "those", "have", "has", "had", "been", "being", "the",
+      "code", "side", "long", "big", "back", "next", "last",
+      "quick", "rough", "hope", "glad", "noted", "got",
+      "wrapped", "standup", "okay", "sure", "yes",
+      "monday", "tuesday", "wednesday", "thursday", "friday",
+      "saturday", "sunday", "week", "weekend", "weekly", "daily"
+    ],
+    "curiosity_engine": [
+      "speaker", "user", "person", "today", "tomorrow", "yesterday",
+      "morning", "evening", "afternoon", "anyway", "really",
+      "talking", "going", "looking", "thinking", "saying", "telling",
+      "being", "having", "doing", "making", "trying",
+      "actually", "honestly", "basically", "literally",
+      "everyone", "someone", "anyone", "nobody"
+    ]
+  },
+
+  "trajectory_keywords": {
+    "past_state": [
+      "used to", "formerly", "previously", "once"
+    ],
+    "transition": [
+      "switched", "moved", "changed", "left", "stopped"
+    ],
+    "current_state": [
+      "now", "currently", "these days", "nowadays", "just started"
+    ]
+  },
+
+  "definitional_pattern": {
+    "_comment": "Used by CuriosityEngine to decide if a description defines an entity. Pattern is a regex template: {entity} placeholder is filled in at runtime with re.escape(entity).",
+    "regex_template": "\\b{entity}\\s+(?:(?:is|was|are|were)\\s+(?:a|an|the)\\b|means\\b|refers\\s+to\\b|stands\\s+for\\b)",
+    "min_description_chars": 25,
+    "head_chars": 80
+  },
+
+  "hybrid_encoder": {
+    "filler_tokens": [
+      "lol", "haha", "yeah", "yes", "no", "ok", "okay", "right", "sure",
+      "totally", "really", "anyway", "hmm", "uh", "um", "k", "mhm", "sorry"
+    ],
+    "filler_phrases": [
+      "lol", "haha", "for real", "sounds good", "got it", "anyway",
+      "by the way did you", "hold on", "brb", "sorry got distracted",
+      "what was the question"
+    ],
+    "high_signal_keywords": [
+      "actually", "switched", "changed my mind", "no longer", "not anymore",
+      "moved", "moved out", "moved to", "i now", "instead of", "used to",
+      "by the way", "fyi", "just so you know", "for context", "to recap",
+      "i'm at", "i'm in", "i'm a", "i work at", "i live in", "my name is",
+      "my favorite", "i prefer", "i love", "i hate", "i'm allergic"
+    ]
+  },
+
+  "paraphrase_rules": {
+    "_comment": "Each rule has: pattern (regex with named groups sp/obj/verb/rest), template (Python str.format), and an optional speaker prefix shared across rules.",
+    "speaker_prefix_regex": "(?:(?P<sp>[A-Z][a-zA-Z'-]+)(?:\\s+says|):\\s+)?",
+    "rules": [
+      {
+        "pattern": "^{SP}I (?P<verb>went|attended|joined|visited|met|saw|met up with|moved|stopped|started|picked up|drove|drank|ate|read|watched|switched|left|returned|tried|lost|finished|told|asked|gave|received|bought|sold|signed|enrolled|completed)(?P<rest>\\s+[^.!?]*)?",
+        "template": "{sp} {verb}{rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I work(?P<rest>\\s+[^.!?]*)?",
+        "template": "{sp} works{rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I live(?P<rest>\\s+[^.!?]*)?",
+        "template": "{sp} lives{rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}My name is\\s+(?P<obj>[A-Z][a-zA-Z'-]+)",
+        "template": "{sp}'s name is {obj}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I (?:prefer|preferred)(?P<rest>\\s+[^.!?]*)?",
+        "template": "{sp} prefers{rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I love(?:d)?(?P<rest>\\s+[^.!?]*)?",
+        "template": "{sp} loves{rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I (?:hate|disliked?|hates)(?P<rest>\\s+[^.!?]*)?",
+        "template": "{sp} dislikes{rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I'?m\\s+(?P<rest>[^.!?]*)",
+        "template": "{sp} is {rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I have\\s+(?P<rest>[^.!?]*)",
+        "template": "{sp} has {rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I'?ve been\\s+(?P<rest>[^.!?]*)",
+        "template": "{sp} has been {rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^{SP}I (?:was|am)\\s+(?P<rest>[^.!?]*)",
+        "template": "{sp} is {rest}.",
+        "flags": "IGNORECASE"
+      },
+      {
+        "pattern": "^Person:\\s+(?P<obj>[A-Z][a-zA-Z'-]+)",
+        "template": "{obj} is a person.",
+        "flags": ""
+      },
+      {
+        "pattern": "^Preference:\\s+(?P<obj>.+)",
+        "template": "Preference is {obj}.",
+        "flags": ""
+      },
+      {
+        "pattern": "^Location:\\s+(?P<obj>[A-Z][a-zA-Z'-]+)",
+        "template": "Location: {obj}.",
+        "flags": ""
+      }
+    ]
+  },
+
+  "wake_summary_templates": {
+    "_comment": "Format keys: duration_text, cycles_label, autonomous_note, n, entity, source, ...",
+    "no_idle_known": "Welcome back.",
+    "idle_no_cycles": "Welcome back. You were away for {duration_text}. I didn't run any consolidation cycles in that time.",
+    "idle_with_cycles": "Welcome back. While you were away ({duration_text}), I ran {cycles_label}{autonomous_note}.",
+    "autonomous_note": " ({n} ran autonomously while you were away)",
+    "cycles_singular": "1 sleep cycle",
+    "cycles_plural": "{n} sleep cycles",
+    "totals_consolidated": "consolidated {n} memories",
+    "totals_forgotten": "forgot {n} low-value items",
+    "totals_dreams": "generated {n} associative dreams",
+    "totals_wrap": "I {parts}.",
+    "sessions_consulted_singular": "My consolidation drew on 1 prior session of yours.",
+    "sessions_consulted_plural": "My consolidation drew on {n} prior sessions of yours.",
+    "patterns_intro_singular": "I noticed 1 pattern:",
+    "patterns_intro_plural": "I noticed {n} patterns:",
+    "no_patterns_yet": "I didn't form any new patterns yet — give me more conversations to work with.",
+    "curiosity_insight_template": "I read up on {entity} (from {source}): {brief}",
+    "closer": "I'm ready when you are.",
+    "duration_seconds": "{n} seconds",
+    "duration_minutes": "{n} minutes",
+    "duration_hours": "{n} hours",
+    "duration_days": "{n} days"
+  }
+}

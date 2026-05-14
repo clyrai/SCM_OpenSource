@@ -1,0 +1,5 @@
+system,version,persona,seed,idle_on,pdr,css,cgc_id,cgc_fill,crai_current,crai_old,wsi_f1,wsi_precision,wsi_recall,imc_wall_seconds,wall_total_s
+SCM,phase7-pilot-v0.1,persona_001,0,True,0.5,0.0,1.0,0.5,0.0,0.0,0.2222222222222222,0.125,1.0,0.2209177499753423,160.57769370800816
+SCM,phase7-pilot-v0.1,persona_001,0,False,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.001536914991447702,204.679297374998
+SCM,phase7-pilot-v0.1,persona_002,0,True,0.0,0.0,0.0,0.0,0.0,0.0,0.5,0.3333333333333333,1.0,0.1255080829723738,157.59438837500056
+SCM,phase7-pilot-v0.1,persona_002,0,False,0.0,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0012414170778356493,262.5658057090186

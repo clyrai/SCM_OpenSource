@@ -1,0 +1,153 @@
+{
+  "_comment": "Realistic 5-day persona script. Mixes durable facts, noise, contradictions, and references to prior days. Used by the brutal test harness — no conversation lines are hardcoded in Python.",
+  "name": "Caroline",
+  "background": "Therapist switching jobs in Seattle, has a recurring weekly support group, climbs rocks, just got a new pet.",
+  "primary_speaker": "Caroline",
+  "secondary_speaker": "AI",
+
+  "days": [
+    {
+      "day_offset_days": 0,
+      "label": "monday_morning",
+      "turns": [
+        "Caroline: Hi, my name is Caroline. I work at GreenLeaf Cafe.",
+        "Caroline: I live in Seattle, in the Capitol Hill neighborhood.",
+        "Caroline: My favorite hobby is rock climbing.",
+        "Caroline: I have a cat named Mochi.",
+        "Caroline: lol",
+        "Caroline: Going to grab coffee, brb",
+        "Caroline: I went to the LGBTQ support group on May 7th, 2023.",
+        "Caroline: The support group meets on Sundays."
+      ]
+    },
+    {
+      "day_offset_days": 0,
+      "label": "monday_evening",
+      "idle_seconds_before": 28800,
+      "turns": [
+        "Caroline: Did you watch the Mariners game last night?",
+        "Caroline: Anyway, my friend Melanie also goes to the support group.",
+        "Caroline: Melanie and I are climbing buddies too.",
+        "Caroline: hmm, I should make dinner soon"
+      ]
+    },
+    {
+      "day_offset_days": 1,
+      "label": "tuesday_morning",
+      "idle_seconds_before": 43200,
+      "turns": [
+        "Caroline: Quick update — I left GreenLeaf Cafe last month. I'm at TechCorp now.",
+        "Caroline: TechCorp is way more demanding but the pay is much better.",
+        "Caroline: Met Melanie for coffee this morning.",
+        "Caroline: Coffee, the only thing keeping me going lol"
+      ]
+    },
+    {
+      "day_offset_days": 2,
+      "label": "wednesday",
+      "idle_seconds_before": 86400,
+      "turns": [
+        "Caroline: I went to the support group on Sunday, like usual.",
+        "Caroline: We talked about boundaries at work, very relevant for me at TechCorp.",
+        "Caroline: I should mention — I also use Datadog at TechCorp for monitoring.",
+        "Caroline: Datadog dashboards are my new best friend.",
+        "Caroline: Melanie mentioned she's getting a dog.",
+        "Caroline: Random thought, I love rainy days."
+      ]
+    },
+    {
+      "day_offset_days": 3,
+      "label": "thursday",
+      "idle_seconds_before": 86400,
+      "turns": [
+        "Caroline: Long day. Datadog alerts woke me up at 3am.",
+        "Caroline: yeah",
+        "Caroline: I'm still going to the support group every Sunday — that part hasn't changed.",
+        "Caroline: My cat Mochi has been extra needy this week."
+      ]
+    },
+    {
+      "day_offset_days": 4,
+      "label": "friday",
+      "idle_seconds_before": 86400,
+      "turns": [
+        "Caroline: Hobby update: I stopped rock climbing for now. I picked up sculpting instead.",
+        "Caroline: TechCorp asked me to lead a Snowflake migration.",
+        "Caroline: Snowflake is everywhere at this company.",
+        "Caroline: Snowflake queries are expensive though, watch out for that.",
+        "Caroline: I picked up Snowflake basics from the onboarding docs."
+      ]
+    }
+  ],
+
+  "expected_recall": [
+    {
+      "after_day_offset": 4,
+      "question_keywords": ["name"],
+      "must_contain_any": ["Caroline"],
+      "must_not_contain": [],
+      "category": "long_horizon_recall",
+      "description": "Day-1 self-introduction (name) must survive to day 5"
+    },
+    {
+      "after_day_offset": 4,
+      "question_keywords": ["live", "city"],
+      "must_contain_any": ["Seattle", "Capitol Hill"],
+      "must_not_contain": [],
+      "category": "long_horizon_recall",
+      "description": "Day-1 location must survive to day 5"
+    },
+    {
+      "after_day_offset": 4,
+      "question_keywords": ["work", "current", "employer"],
+      "must_contain_any": ["TechCorp"],
+      "must_not_contain": ["GreenLeaf"],
+      "category": "contradiction_current",
+      "description": "Day-2 employer change should win over day-1 employer"
+    },
+    {
+      "after_day_offset": 4,
+      "question_keywords": ["hobby", "current"],
+      "must_contain_any": ["sculpting"],
+      "must_not_contain": ["rock climbing"],
+      "category": "contradiction_current",
+      "description": "Day-5 hobby change should win"
+    }
+  ],
+
+  "expected_schemas": [
+    {
+      "category": "recurring_topic",
+      "expected_entity": "Caroline",
+      "min_occurrences": 5,
+      "after_day_offset": 4
+    },
+    {
+      "category": "recurring_topic",
+      "expected_entity": "Snowflake",
+      "min_occurrences": 3,
+      "after_day_offset": 4
+    },
+    {
+      "category": "recurring_topic",
+      "expected_entity": "TechCorp",
+      "min_occurrences": 3,
+      "after_day_offset": 4
+    }
+  ],
+
+  "expected_curiosity_gaps": [
+    {
+      "entity": "Datadog",
+      "after_day_offset": 4,
+      "min_occurrences": 2,
+      "description": "Datadog mentioned multiple times, agent should ingest a brief if curiosity is enabled"
+    },
+    {
+      "entity": "Snowflake",
+      "after_day_offset": 4,
+      "min_occurrences": 3,
+      "description": "Snowflake mentioned multiple times, ditto"
+    }
+  ]
+}

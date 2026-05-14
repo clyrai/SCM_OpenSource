@@ -1,0 +1,44 @@
+\begin{thebibliography}{1}
+
+\bibitem{chhikara2025mem0}
+Taranjeet~Singh Chhikara et~al.
+\newblock Mem0: Personalized {AI} memory layer.
+\newblock {\em arXiv preprint arXiv:2504.19413}, 2025.
+
+\bibitem{lewis2020retrieval}
+Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir
+  Karpukhin, Naman Goyal, Heinrich K{\"u}ttler, Mike Lewis, Wen-tau Yih, Tim
+  Rockt{\"a}schel, et~al.
+\newblock Retrieval-augmented generation for knowledge-intensive {NLP} tasks.
+\newblock In {\em Advances in Neural Information Processing Systems (NeurIPS)},
+  2020.
+
+\bibitem{liu2023lost}
+Nelson~F Liu, Kevin Lin, John Hewitt, Ashwin Paranjape, Michele Bevilacqua,
+  Fabio Petroni, and Percy Liang.
+\newblock Lost in the middle: How language models use long contexts.
+\newblock {\em arXiv preprint arXiv:2307.03172}, 2023.
+
+\bibitem{miller1956magical}
+George~A Miller.
+\newblock The magical number seven, plus or minus two: Some limits on our
+  capacity for processing information.
+\newblock {\em Psychological Review}, 63(2):81--97, 1956.
+
+\bibitem{packer2023memgpt}
+Charles Packer, Vivian Fang, Shishir~G Patil, Kevin Lin, Joseph Wooders, and
+  Joseph~E Gonzalez.
+\newblock {MemGPT}: Towards {LLMs} as operating systems.
+\newblock {\em arXiv preprint arXiv:2310.08560}, 2023.
+
+\bibitem{rasch2013sleep}
+Bj{\"o}rn Rasch and Jan Born.
+\newblock About sleep's role in memory.
+\newblock {\em Physiological Reviews}, 93(2):681--766, 2013.
+
+\bibitem{tononi2003sleep}
+Giulio Tononi and Chiara Cirelli.
+\newblock Sleep and synaptic homeostasis: A hypothesis.
+\newblock {\em Brain Research Bulletin}, 62(2):143--150, 2003.
+
+\end{thebibliography}

@@ -1,0 +1,25 @@
+{
+  "name": "scm-memory",
+  "version": "0.1.0",
+  "description": "SCM memory layer client — works like human memory (wake + sleep phases) for any agent.",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "node --test src/index.test.js"
+  },
+  "keywords": [
+    "memory",
+    "llm",
+    "agent",
+    "sleep",
+    "consolidation",
+    "ai",
+    "scm"
+  ],
+  "author": "SCM Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

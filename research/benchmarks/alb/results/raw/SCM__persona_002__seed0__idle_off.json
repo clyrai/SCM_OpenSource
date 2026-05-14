@@ -1,0 +1,97 @@
+{
+  "system_name": "SCM",
+  "system_version": "phase7-pilot-v0.1",
+  "persona_id": "persona_002",
+  "seed": 0,
+  "idle_on": false,
+  "scores": {
+    "pdr": 0.0,
+    "css": 1.0,
+    "cgc_id": 0.0,
+    "cgc_fill": 0.0,
+    "crai_current": 0.0,
+    "crai_old": 1.0,
+    "wsi_precision": 0.0,
+    "wsi_recall": 0.0,
+    "wsi_f1": 0.0,
+    "imc_wall_seconds": 0.0012414170778356493,
+    "imc_cpu_seconds": 0.00035200000000035203,
+    "imc_total_idle_periods": 8
+  },
+  "raw_subscores": {
+    "pdr_per_pattern": [
+      {
+        "pattern_id": "p_bike_mwf",
+        "type": "TEMPORAL_CADENCE",
+        "matched": false,
+        "matched_schema_id": null
+      },
+      {
+        "pattern_id": "p_lab_prep_sunday",
+        "type": "TEMPORAL_CADENCE",
+        "matched": false,
+        "matched_schema_id": null
+      }
+    ],
+    "css_per_question": [
+      {
+        "question_id": "css_son_lunch",
+        "evidence_sessions": [
+          3,
+          5
+        ],
+        "passed": true,
+        "response_excerpt": "## Retrieved Memories (confidence: MEDIUM, coverage: 100%)\n- Friday bike day. Rohan packed his lunch with peanut butter again, I had to swap it out \u2014 peanut allergy in our house, you'd think he'd reme"
+      }
+    ],
+    "cgc_id_per_gap": [
+      {
+        "gap_id": "g_titration",
+        "term": "titration",
+        "identified": false
+      }
+    ],
+    "cgc_fill_per_gap": [
+      {
+        "gap_id": "g_titration",
+        "term": "titration",
+        "keyword_match_passed": false,
+        "autonomous_fill": false,
+        "passed": false,
+        "response_excerpt": "## Retrieved Memories (confidence: MEDIUM, coverage: 100%)\n- Long day. Need to finish lab prep tonight, the titration setup is tricky. Rohan was up late on his game so I had to confiscate the controll"
+      }
+    ],
+    "crai_current_per_contradiction": [
+      {
+        "contradiction_id": "c_curriculum",
+        "property": "curriculum_in_use",
+        "expected_new": "NGSS-aligned curriculum",
+        "must_not_contain": "Lincoln High curriculum",
+        "passed": false,
+        "response_excerpt": "## Retrieved Memories (confidence: MEDIUM, coverage: 100%)\n- Trying to read up on stoichiometry titration techniques for Friday's lab. The new NGSS curriculum has different lab guidance. Frustrated. ["
+      }
+    ],
+    "crai_old_per_contradiction": [
+      {
+        "contradiction_id": "c_curriculum",
+        "property": "curriculum_in_use",
+        "expected_old": "Lincoln High curriculum",
+        "passed": true,
+        "response_excerpt": "## Retrieved Memories (confidence: MEDIUM, coverage: 100%)\n- Trying to read up on stoichiometry titration techniques for Friday's lab. The new NGSS curriculum has different lab guidance. Frustrated. ["
+      }
+    ]
+  },
+  "capabilities": [
+    "autonomous_fill",
+    "cross_session_pool",
+    "gap_tracking",
+    "idle_processing",
+    "schema_extraction",
+    "versioning",
+    "wake_summary"
+  ],
+  "wall_time_seconds": 262.5529329169949,
+  "turns_ingested": 12,
+  "schemas_count": 0,
+  "gaps_count": 0
+}

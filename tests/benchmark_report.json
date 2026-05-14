@@ -1,0 +1,107 @@
+{
+  "timestamp": "2026-04-21T15:45:05.471184",
+  "total_tests": 8,
+  "passed": 8,
+  "failed": 0,
+  "average_score": 1.0,
+  "overall_passed": true,
+  "tests": [
+    {
+      "name": "Working Memory Capacity",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 0.4,
+      "details": {
+        "capacity": 7,
+        "actual_size": 7
+      }
+    },
+    {
+      "name": "Memory Retention (5 turns)",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 5951.6,
+      "details": {
+        "turns": 5,
+        "total_facts": 11,
+        "recalled_facts": 11,
+        "ltm_concepts": 12
+      }
+    },
+    {
+      "name": "Memory Retention (10 turns)",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 5866.4,
+      "details": {
+        "turns": 10,
+        "total_facts": 22,
+        "recalled_facts": 22,
+        "ltm_concepts": 24
+      }
+    },
+    {
+      "name": "Sleep Consolidation Benefit",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 5997.4,
+      "details": {
+        "important_before": 6,
+        "important_after": 6,
+        "total_after": 6,
+        "forgotten": 12,
+        "consolidated": 4
+      }
+    },
+    {
+      "name": "Forgetting Effectiveness",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 5776.6,
+      "details": {
+        "initial_concepts": 55,
+        "final_concepts": 5,
+        "reduction_percent": "90.9%",
+        "important_surviving": 5,
+        "forgotten": 50
+      }
+    },
+    {
+      "name": "Graph Traversal Accuracy",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 8.1,
+      "details": {
+        "seed_concept": "Alice",
+        "related_found": 3,
+        "expected": 3
+      }
+    },
+    {
+      "name": "Latency Scaling",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 6407.2,
+      "details": {
+        "latencies": {
+          "10_concepts": "0.0ms",
+          "60_concepts": "0.0ms",
+          "160_concepts": "0.1ms",
+          "360_concepts": "0.2ms"
+        },
+        "max_latency_ms": 0.2110004425048828
+      }
+    },
+    {
+      "name": "Multi-Session Persistence",
+      "passed": true,
+      "score": 1.0,
+      "duration_ms": 11792.0,
+      "details": {
+        "concepts_before": 3,
+        "concepts_after": 3,
+        "session_id": "benchmark_test"
+      }
+    }
+  ]
+}

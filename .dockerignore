@@ -1,0 +1,49 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+venv/
+env/
+.venv/
+
+# Build artifacts (built fresh inside the image)
+build/
+dist/
+
+# Local data
+data/
+*.db
+*.sqlite
+*.sqlite3
+~/.scm/
+
+# Tests aren't needed in a runtime image
+tests/
+
+# Research artifacts
+research/arxiv_submission/
+research/benchmarks/
+research/metrics/
+research/SCM_Final_Paper.aux
+research/SCM_Final_Paper.log
+research/SCM_Final_Paper.out
+research/SCM_Final_Paper.toc
+research/SleepAI_arXiv_Paper.md
+research/SCM_arXiv_Paper_v2.md
+
+# Docs are nice to ship for self-documenting demo, but not required
+docs/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# Logs
+*.log
+/tmp/

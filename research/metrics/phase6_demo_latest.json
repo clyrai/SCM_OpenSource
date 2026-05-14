@@ -1,0 +1,35 @@
+{
+  "demo": "phase6_story_pack",
+  "timestamp_utc": "2026-04-29T04:47:58.757170+00:00",
+  "seed": 4242,
+  "inputs": {
+    "pair_count": 24,
+    "key_count": 16,
+    "noise_count": 32
+  },
+  "story": {
+    "one_shot_memory": {
+      "accuracy": 1.0,
+      "example_name_response": "Your name is Alice.",
+      "example_location_response": "You live in Seattle."
+    },
+    "sleep_benefit": {
+      "baseline_disambiguation_recall": 0.2083,
+      "micro_disambiguation_gain_abs": 0.7917,
+      "deep_disambiguation_gain_abs": 0.5417,
+      "deep_noise_retention": 0.0
+    },
+    "selective_forgetting": {
+      "key_retention": 1.0,
+      "noise_retention": 0.0,
+      "first_cycle_forgotten": 32,
+      "second_cycle_forgotten": 32
+    },
+    "contradiction_safety": {
+      "chain_ok": true,
+      "old_hidden": true,
+      "retrieval_prefers_new": true,
+      "accuracy": 1.0
+    }
+  }
+}

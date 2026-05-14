@@ -1,0 +1,76 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {paragraph}{Contributions.}{4}{section*.3}%
+\contentsline {subsection}{\numberline {1.1}Design Principles}{5}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Related Work}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Memory-Augmented Language Models}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Autonomous and Lifelong Agents}{6}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Continual Learning and Forgetting}{6}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Neuroscientific Foundations}{6}{subsection.2.4}%
+\contentsline {section}{\numberline {3}System Architecture}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Data Model}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Deployment Tiers}{8}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Phase 1: Selective Encoding}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}AttentionGate}{11}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Salience Model}{11}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Grasp Score}{11}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Integration with the Encoding Pipeline}{12}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Phase 2: Event Structuring and Associative Binding}{12}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Event Compiler}{13}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Association Binder}{13}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Intra-Event Binding}{13}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Event-to-Anchor Binding}{13}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Edge Management}{13}{subsubsection.5.2.3}%
+\contentsline {subsection}{\numberline {5.3}Predicate Inference}{14}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Phase 3: Associative Retrieval}{14}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Spreading Activation Retriever}{14}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Hypothesis Ranker}{15}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Phase 4: Dual-Mode Sleep Kernel}{15}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Sleep Trigger}{15}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}MicroSleep}{16}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}DeepSleep}{16}{subsection.7.3}%
+\contentsline {section}{\numberline {8}Phase 5: Forgetting Dynamics and Contradiction Versioning}{17}{section.8}%
+\contentsline {subsection}{\numberline {8.1}ForgettingDynamics}{17}{subsection.8.1}%
+\contentsline {subsubsection}{\numberline {8.1.1}Retention Scoring}{17}{subsubsection.8.1.1}%
+\contentsline {subsubsection}{\numberline {8.1.2}Trace-Specific Decay}{17}{subsubsection.8.1.2}%
+\contentsline {subsubsection}{\numberline {8.1.3}State Transitions}{18}{subsubsection.8.1.3}%
+\contentsline {subsection}{\numberline {8.2}Contradiction Versioning}{18}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Forgetting Dynamics Integration with Sleep}{18}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Phase 7: Autonomous Idle-Time Learning}{19}{section.9}%
+\contentsline {subsection}{\numberline {9.1}M1: Idle-Aware Background Daemon}{19}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}M2: Cross-Session Memory Pool}{19}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}M3: Schema Extraction in REM}{20}{subsection.9.3}%
+\contentsline {paragraph}{Stable schema identity.}{20}{section*.4}%
+\contentsline {subsection}{\numberline {9.4}M4: Wake-Up Summary}{21}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}M5: Curiosity Engine}{21}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}M6: Lifecycle Policy}{21}{subsection.9.6}%
+\contentsline {subsection}{\numberline {9.7}De-Hardcoding via \texttt {LinguisticResources}}{22}{subsection.9.7}%
+\contentsline {subsection}{\numberline {9.8}Temporal Structure}{22}{subsection.9.8}%
+\contentsline {section}{\numberline {10}Implementation and Infrastructure}{23}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Persistence Architecture}{23}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}API Surface}{23}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Deterministic Demo and Smoke Testing}{24}{subsection.10.3}%
+\contentsline {section}{\numberline {11}Evaluation}{24}{section.11}%
+\contentsline {paragraph}{Configuration disclosure.}{24}{section*.5}%
+\contentsline {subsection}{\numberline {11.1}Component-Level Performance}{24}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Sleep Gain}{24}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Baseline Stress Comparison}{25}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Long-Horizon Behavior}{25}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Phase 6 Human-Memory Suite}{25}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Regression Safety}{25}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}LoCoMo: External Long-Conversation Memory Benchmark}{26}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}LoCoMo++: Memory Workload Sensitivity}{26}{subsection.11.8}%
+\contentsline {subsection}{\numberline {11.9}Phase 6 Architecture Fixes}{28}{subsection.11.9}%
+\contentsline {subsection}{\numberline {11.10}Brutal Testing: Persona-Driven Multi-Day Simulation}{29}{subsection.11.10}%
+\contentsline {paragraph}{Persona format.}{29}{section*.6}%
+\contentsline {paragraph}{Harness design.}{29}{section*.7}%
+\contentsline {paragraph}{Tier coverage.}{30}{section*.8}%
+\contentsline {subsection}{\numberline {11.11}Bug Discovery via the Brutal Harness}{30}{subsection.11.11}%
+\contentsline {paragraph}{Bug\nobreakspace {}1: Schema-ID instability.}{30}{section*.9}%
+\contentsline {paragraph}{Bug\nobreakspace {}2: Spreading-activation seed purging.}{30}{section*.10}%
+\contentsline {paragraph}{Bug\nobreakspace {}3: Dead cross-session pool in single-user case.}{30}{section*.11}%
+\contentsline {paragraph}{Bug\nobreakspace {}4: Superseded-concept retrieval leakage.}{31}{section*.12}%
+\contentsline {paragraph}{Quantifying what idle work buys us.}{31}{section*.13}%
+\contentsline {subsection}{\numberline {11.12}Real-LLM Validation}{31}{subsection.11.12}%
+\contentsline {section}{\numberline {12}Discussion}{32}{section.12}%
+\contentsline {section}{\numberline {13}Limitations}{32}{section.13}%
+\contentsline {section}{\numberline {14}Conclusion}{34}{section.14}%

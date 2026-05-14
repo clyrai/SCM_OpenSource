@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCM — Memory that works like yours</title>
+<meta name="description" content="The hosted memory layer for AI agents. Wake + sleep phases, autonomous learning, BYOK. Drop into any LLM stack — LangChain, OpenAI Agents, Claude, MCP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --bg-card: #ffffff;
+    --bg-soft: #ebe7df;
+    --bg-warm: #faf8f3;
+    --bg-ink: #1f1d1b;
+
+    --text: #1f1d1b;
+    --text-muted: #6e6962;
+    --text-faint: #a39d92;
+
+    --border: #d8d3c9;
+    --border-soft: #e5e1d7;
+
+    --accent: #c96442;
+    --accent-hover: #b3573a;
+    --accent-soft: #f5e6df;
+
+    --ink: #1f1d1b;
+    --ink-hover: #000000;
+
+    --r-sm: 6px;
+    --r: 10px;
+    --r-lg: 16px;
+    --r-pill: 999px;
+
+    --serif: 'Instrument Serif', 'Iowan Old Style', 'Times New Roman', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  html, body { min-height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15.5px; line-height: 1.6; letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection { background: rgba(201, 100, 66, 0.18); }
+
+  a { color: inherit; text-decoration: none; }
+
+  code, pre, .mono { font-family: var(--mono); }
+  .serif { font-family: var(--serif); font-weight: 400; }
+
+  /* ── Layout ────────────────────────────────────────────────────── */
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 700px) { .container { padding: 0 22px; } }
+
+  section { position: relative; }
+
+  /* ── Navigation ────────────────────────────────────────────────── */
+  .nav {
+    border-bottom: 1px solid var(--border-soft);
+    background: rgba(245, 243, 238, 0.85);
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: saturate(180%) blur(12px);
+  }
+  .nav-inner {
+    max-width: 1120px; margin: 0 auto;
+    padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px;
+  }
+  .brand {
+    display: flex; align-items: baseline; gap: 10px;
+    font-family: var(--serif); font-size: 22px;
+    color: var(--ink); letter-spacing: -0.005em;
+  }
+  .brand-mark { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); align-self: center; }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 28px;
+    font-size: 14px; color: var(--text-muted);
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { display: flex; align-items: center; gap: 10px; }
+
+  @media (max-width: 800px) {
+    .nav-links { display: none; }
+  }
+
+  /* ── Hero ──────────────────────────────────────────────────────── */
+  .hero {
+    padding: 110px 0 90px;
+    text-align: center;
+    position: relative;
+  }
+  @media (max-width: 700px) { .hero { padding: 70px 0 60px; } }
+  .hero .eyebrow {
+    display: inline-block;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    background: var(--bg-warm);
+    margin-bottom: 36px;
+  }
+  .hero h1 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(48px, 7vw, 84px); line-height: 1.0;
+    letter-spacing: -0.025em;
+    margin-bottom: 30px;
+    color: var(--ink);
+    max-width: 14ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero p.lede {
+    font-size: 19px; line-height: 1.55;
+    color: var(--text-muted);
+    max-width: 600px; margin: 0 auto 44px;
+  }
+  .hero .cta-row {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  }
+  .hero-quote {
+    font-family: var(--serif); font-style: italic;
+    font-size: 17px; color: var(--text-muted);
+    margin-top: 64px; padding-top: 28px;
+    border-top: 1px solid var(--border-soft);
+    max-width: 540px; margin-left: auto; margin-right: auto;
+    text-align: center;
+  }
+  .hero-quote .author {
+    display: block; font-style: normal; font-family: var(--sans);
+    font-size: 12px; color: var(--text-faint);
+    margin-top: 12px; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  /* ── Thesis ────────────────────────────────────────────────────── */
+  .thesis {
+    border-top: 1px solid var(--border-soft);
+    padding: 110px 0;
+  }
+  .thesis-grid {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 80px;
+    align-items: center;
+  }
+  @media (max-width: 900px) { .thesis-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .thesis h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(32px, 4vw, 48px); line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .thesis h2 em { font-style: italic; color: var(--accent); }
+  .thesis p {
+    font-size: 16.5px; color: var(--text-muted);
+    margin-bottom: 16px; line-height: 1.65;
+  }
+  .thesis p strong { color: var(--ink); font-weight: 500; }
+
+  /* Two-phase comparison block */
+  .phases {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .phase {
+    padding: 32px 28px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .phase:last-child { border-bottom: 0; }
+  .phase-eyebrow {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .phase h3 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 28px; line-height: 1.15; letter-spacing: -0.015em;
+    margin-bottom: 8px;
+  }
+  .phase p { font-size: 14.5px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.6; }
+  .phase ul { list-style: none; }
+  .phase ul li {
+    font-size: 14px; color: var(--text-muted); padding: 6px 0 6px 24px;
+    position: relative;
+  }
+  .phase ul li::before {
+    content: ""; position: absolute; left: 0; top: 14px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .phase ul li strong { color: var(--ink); font-weight: 500; }
+
+  /* ── Big number stats ──────────────────────────────────────────── */
+  .stats {
+    border-top: 1px solid var(--border-soft);
+    padding: 80px 0;
+  }
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  @media (max-width: 800px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat {
+    background: var(--bg-card);
+    padding: 32px 28px;
+  }
+  .stat .num {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 48px; line-height: 1; letter-spacing: -0.02em;
+    color: var(--ink); margin-bottom: 8px;
+  }
+  .stat .num em { font-style: italic; color: var(--accent); }
+  .stat .label {
+    font-size: 13px; color: var(--text-muted); line-height: 1.5;
+  }
+
+  /* ── How it works ──────────────────────────────────────────────── */
+  .how {
+    border-top: 1px solid var(--border-soft);
+    padding: 110px 0;
+  }
+  .section-head {
+    max-width: 640px; margin: 0 auto 60px; text-align: center;
+  }
+  .section-head .eyebrow {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 16px; display: block;
+  }
+  .section-head h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(32px, 4vw, 44px); line-height: 1.1;
+    letter-spacing: -0.02em; margin-bottom: 16px;
+  }
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+  .section-head p { font-size: 16px; color: var(--text-muted); }
+
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--border-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  @media (max-width: 850px) { .features-grid { grid-template-columns: 1fr; } }
+  .feature {
+    padding: 36px 32px;
+    background: var(--bg-card);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .feature .num {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-faint); letter-spacing: 0.12em;
+  }
+  .feature h3 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 24px; line-height: 1.2; letter-spacing: -0.012em;
+  }
+  .feature p { color: var(--text-muted); font-size: 14.5px; line-height: 1.65; }
+
+  /* ── Code section (real two-column) ────────────────────────────── */
+  .code-section {
+    border-top: 1px solid var(--border-soft);
+    padding: 110px 0;
+  }
+  .code-grid {
+    display: grid; grid-template-columns: 1fr 1.1fr; gap: 60px;
+    align-items: center;
+  }
+  @media (max-width: 900px) { .code-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .code-grid h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(32px, 4vw, 44px); line-height: 1.1;
+    letter-spacing: -0.02em; margin-bottom: 20px;
+  }
+  .code-grid h2 em { font-style: italic; color: var(--accent); }
+  .code-grid p {
+    font-size: 16px; color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+  .code-tabs {
+    display: flex; gap: 4px; padding: 6px;
+    background: var(--bg-warm); border: 1px solid var(--border);
+    border-radius: var(--r) var(--r) 0 0;
+    border-bottom: 0;
+    overflow-x: auto;
+  }
+  .code-tab {
+    padding: 6px 14px;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text-muted);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    background: transparent; border: 0;
+    transition: background 150ms, color 150ms;
+    white-space: nowrap;
+  }
+  .code-tab.active { background: var(--bg-ink); color: white; }
+  .code-tab:not(.active):hover { color: var(--ink); }
+  .code-block {
+    background: var(--bg-ink); color: #e8eaef;
+    padding: 24px 26px;
+    font-family: var(--mono); font-size: 13px; line-height: 1.7;
+    border-radius: 0 0 var(--r) var(--r);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-block .kw  { color: #c084fc; }   /* keywords */
+  .code-block .str { color: #9ce5b3; }   /* strings */
+  .code-block .com { color: #6b7280; font-style: italic; }
+  .code-block .fn  { color: #93c5fd; }
+  .code-block .num { color: #fbbf24; }
+  .code-block .acc { color: var(--accent); }
+
+  /* ── Use cases ────────────────────────────────────────────────── */
+  .usecases {
+    border-top: 1px solid var(--border-soft);
+    padding: 110px 0;
+  }
+  .usecase-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  @media (max-width: 900px) { .usecase-grid { grid-template-columns: 1fr; } }
+  .usecase {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 32px 28px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .usecase .icon {
+    width: 36px; height: 36px;
+    background: var(--accent-soft);
+    border-radius: var(--r-sm);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); margin-bottom: 4px;
+  }
+  .usecase h3 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 22px; line-height: 1.2; letter-spacing: -0.012em;
+  }
+  .usecase p { color: var(--text-muted); font-size: 14.5px; line-height: 1.6; }
+
+  /* ── Paper / research section ─────────────────────────────────── */
+  .paper {
+    border-top: 1px solid var(--border-soft);
+    padding: 110px 0;
+    background: var(--bg-warm);
+  }
+  .paper-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 48px;
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 40px; align-items: center;
+  }
+  @media (max-width: 800px) { .paper-card { grid-template-columns: 1fr; padding: 32px; } }
+  .paper-card .eyebrow {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 16px;
+  }
+  .paper-card h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(28px, 3.5vw, 36px); line-height: 1.15;
+    letter-spacing: -0.018em; margin-bottom: 14px;
+  }
+  .paper-card p { color: var(--text-muted); font-size: 15.5px; margin-bottom: 18px; line-height: 1.6; }
+  .paper-card .meta {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text-muted); margin-bottom: 20px;
+  }
+  .paper-card .meta b { color: var(--ink); font-weight: 500; }
+
+  /* ── Pricing ──────────────────────────────────────────────────── */
+  .pricing {
+    border-top: 1px solid var(--border-soft);
+    padding: 110px 0;
+  }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    max-width: 980px; margin: 0 auto;
+  }
+  @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }
+  .plan {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 32px 28px;
+    display: flex; flex-direction: column;
+  }
+  .plan.featured {
+    border-color: var(--ink);
+    background: var(--bg-card);
+    position: relative;
+  }
+  .plan.featured::before {
+    content: "Most popular";
+    position: absolute; top: -12px; left: 28px;
+    font-size: 11px; font-weight: 500;
+    background: var(--ink); color: white;
+    padding: 4px 10px; border-radius: var(--r-pill);
+  }
+  .plan-name {
+    font-family: var(--serif); font-size: 24px; font-weight: 400;
+    margin-bottom: 6px; letter-spacing: -0.01em;
+  }
+  .plan-desc { color: var(--text-muted); font-size: 13.5px; margin-bottom: 24px; }
+  .plan-price {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 44px; line-height: 1; letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .plan-price small { font-family: var(--sans); font-size: 14px; color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+  .plan-period { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; }
+  .plan ul {
+    list-style: none; flex: 1; margin-bottom: 24px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .plan ul li {
+    font-size: 14px; padding-left: 22px; position: relative;
+    color: var(--text-muted);
+  }
+  .plan ul li::before {
+    content: "✓"; position: absolute; left: 0; top: 0;
+    color: var(--accent); font-weight: 600;
+  }
+
+  /* ── Buttons ──────────────────────────────────────────────────── */
+  .btn {
+    padding: 12px 22px;
+    background: var(--ink); color: white;
+    border: 1px solid var(--ink);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    font: 500 13.5px var(--sans);
+    letter-spacing: 0.005em;
+    transition: background 150ms, border-color 150ms, color 150ms, transform 80ms;
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    text-decoration: none !important;
+  }
+  .btn:hover { background: var(--ink-hover); }
+  .btn:active { transform: translateY(1px); }
+  .btn.secondary {
+    background: var(--bg-card); color: var(--ink);
+    border-color: var(--border);
+  }
+  .btn.secondary:hover { background: var(--bg-warm); border-color: var(--ink); }
+  .btn.ghost {
+    background: transparent; color: var(--text-muted);
+    border-color: transparent; padding: 8px 14px;
+  }
+  .btn.ghost:hover { color: var(--ink); }
+  .btn.lg { padding: 14px 26px; font-size: 14.5px; }
+  .btn.sm { padding: 7px 14px; font-size: 12.5px; }
+  .btn.full { width: 100%; justify-content: center; }
+
+  /* ── CTA strip ────────────────────────────────────────────────── */
+  .cta-strip {
+    border-top: 1px solid var(--border-soft);
+    padding: 80px 0;
+    background: var(--bg-ink);
+    color: white; text-align: center;
+  }
+  .cta-strip h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(32px, 4.5vw, 52px); line-height: 1.05;
+    letter-spacing: -0.02em; margin-bottom: 18px;
+    color: white;
+  }
+  .cta-strip h2 em { font-style: italic; color: var(--accent); }
+  .cta-strip p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 17px; margin-bottom: 32px;
+    max-width: 560px; margin-left: auto; margin-right: auto;
+  }
+  .cta-strip .btn {
+    background: white; color: var(--ink); border-color: white;
+  }
+  .cta-strip .btn:hover { background: rgba(255, 255, 255, 0.92); }
+  .cta-strip .btn.secondary {
+    background: transparent; color: white; border-color: rgba(255,255,255,0.3);
+  }
+  .cta-strip .btn.secondary:hover { background: rgba(255,255,255,0.1); border-color: white; }
+
+  /* ── Footer ───────────────────────────────────────────────────── */
+  footer {
+    background: var(--bg);
+    padding: 60px 0 36px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 800px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  .footer-brand .brand { margin-bottom: 12px; }
+  .footer-brand p { color: var(--text-muted); font-size: 13.5px; max-width: 320px; line-height: 1.55; }
+  .footer-col h4 {
+    font-size: 12px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-faint); margin-bottom: 14px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .footer-col li a {
+    color: var(--text-muted); font-size: 14px;
+  }
+  .footer-col li a:hover { color: var(--ink); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--border-soft);
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 14px;
+    color: var(--text-faint); font-size: 13px;
+  }
+
+  /* ── Misc ─────────────────────────────────────────────────────── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: var(--r-pill);
+    font-size: 11.5px; font-weight: 500; letter-spacing: 0.015em;
+    background: var(--bg-soft); color: var(--text-muted);
+    border: 1px solid var(--border-soft);
+  }
+  .arrow { display: inline-block; transition: transform 200ms; }
+  a:hover .arrow { transform: translateX(3px); }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark"></span>
+      <span>SCM</span>
+    </a>
+    <div class="nav-links">
+      <a href="#thesis">Why sleep</a>
+      <a href="#how">How it works</a>
+      <a href="#code">Quickstart</a>
+      <a href="#paper">Paper</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/demo">Demo</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn ghost sm" href="/app">Sign in</a>
+      <a class="btn sm" href="/app">Get an API key</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HERO ────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">Beta · Hosted memory for AI agents</span>
+    <h1>Memory that<br>works <em>like yours.</em></h1>
+    <p class="lede">
+      The first agent memory layer with a wake phase <em style="font-style:italic;">and</em>
+      a sleep phase. Your agent doesn't just retrieve facts — it consolidates,
+      abstracts patterns, and surfaces what it figured out while you were idle.
+    </p>
+    <div class="cta-row">
+      <a class="btn lg" href="/app">
+        Get an API key
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn secondary lg" href="#paper">Read the paper</a>
+    </div>
+    <div class="hero-quote">
+      “The agent that wakes up tomorrow is exactly the agent that went to sleep last night.”
+      <span class="author">The flaw SCM fixes</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── THESIS ──────────────────────────────────────────────────── -->
+<section class="thesis" id="thesis">
+  <div class="container">
+    <div class="thesis-grid">
+      <div>
+        <h2>Sleep is when memory <em>consolidates.</em></h2>
+        <p>
+          When you sleep, your hippocampus replays the day's experiences and
+          your cortex abstracts patterns from them. You wake up with a
+          <strong>better</strong> version of yesterday's understanding —
+          not the same one.
+        </p>
+        <p>
+          Every other agent memory product — vector stores, RAG layers,
+          context windows — only models the wake phase. They store facts
+          and retrieve facts. They never think between sessions.
+        </p>
+        <p>
+          SCM models both phases. <strong>Once per night</strong>, in the
+          user's configured timezone, your agent runs a real consolidation
+          cycle: schemas form, contradictions resolve, low-value memories
+          fade. The next time the user comes back, the agent has grown.
+        </p>
+      </div>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-eyebrow">Phase 1 — Wake</div>
+          <h3>Selective attention</h3>
+          <p>While the user is active, SCM behaves like prefrontal working memory: bounded, cue-driven, contradiction-aware.</p>
+          <ul>
+            <li><strong>Spreading activation</strong> across a concept graph</li>
+            <li><strong>Bounded</strong> ~7-item working memory</li>
+            <li><strong>Contradiction versioning</strong> — "I left Northstar"</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <div class="phase-eyebrow">Phase 2 — Sleep</div>
+          <h3>Consolidation + dreams</h3>
+          <p>At the user's bedtime, in their timezone, SCM runs NREM consolidation and REM schema extraction. Once per night.</p>
+          <ul>
+            <li><strong>NREM:</strong> rehearsal, importance reweighting, forgetting</li>
+            <li><strong>REM:</strong> pattern abstraction across the day</li>
+            <li><strong>Wake summary:</strong> a narrative of what was learned</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ───────────────────────────────────────────────────── -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="num"><em>484×</em></div>
+        <div class="label">Faster ANN retrieval at 100K concepts vs the legacy O(n) cosine scan.</div>
+      </div>
+      <div class="stat">
+        <div class="num"><em>16/16</em></div>
+        <div class="label">Brutal scenarios passing — multi-day recall, contradictions, idle-fired wake summaries.</div>
+      </div>
+      <div class="stat">
+        <div class="num"><em>1×</em></div>
+        <div class="label">Sleep cycle per night, in your user's local time. Not every five minutes.</div>
+      </div>
+      <div class="stat">
+        <div class="num"><em>0¢</em></div>
+        <div class="label">LLM markup. Bring your own provider key — we run the memory.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ────────────────────────────────────────────── -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2>A complete memory pipeline, <em>not just a vector DB.</em></h2>
+      <p>Six modules, one HTTP API. Every layer is exposed and configurable — but you don't have to touch any of them to get the default product behavior.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature">
+        <span class="num">01 / ENCODING</span>
+        <h3>Selective attention</h3>
+        <p>An attention gate filters incoming text — "hmm okay" gets dropped; "I'm allergic to peanuts" gets encoded with high importance. Concepts go in, noise stays out.</p>
+      </div>
+      <div class="feature">
+        <span class="num">02 / RETRIEVAL</span>
+        <h3>Spreading activation</h3>
+        <p>Cue-driven graph propagation, not raw vector similarity. Asks "where do I work?" returns "I'm at Atlas Labs" even though those tokens never overlap.</p>
+      </div>
+      <div class="feature">
+        <span class="num">03 / VERSIONING</span>
+        <h3>Contradiction-safe</h3>
+        <p>"I left Northstar, I'm at Atlas now" doesn't delete the old fact. It supersedes it. Ask "where did I used to work?" and the agent still knows.</p>
+      </div>
+      <div class="feature">
+        <span class="num">04 / SLEEP</span>
+        <h3>NREM + REM consolidation</h3>
+        <p>NREM strengthens rehearsed memories and lets weak ones fade. REM finds patterns: "Tuesday-morning runs are recurring." Both phases run during the user's sleep window.</p>
+      </div>
+      <div class="feature">
+        <span class="num">05 / WAKE SUMMARY</span>
+        <h3>What changed overnight</h3>
+        <p>The next time the user shows up, your agent surfaces a short narrative of what it consolidated and what patterns it noticed. The most-shared SCM moment.</p>
+      </div>
+      <div class="feature">
+        <span class="num">06 / TENANCY</span>
+        <h3>Multi-tenant safe</h3>
+        <p>Every user_id is namespaced under your account server-side. Cross-account reads are impossible — even if a customer guesses another customer's user_id.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CODE ────────────────────────────────────────────────────── -->
+<section class="code-section" id="code">
+  <div class="container">
+    <div class="code-grid">
+      <div>
+        <h2>Drop in <em>anywhere.</em></h2>
+        <p>One Python SDK. One HTTP API. One MCP server. Works with LangChain, OpenAI Agents, Claude Desktop, Cursor, or anything that can issue an HTTP call.</p>
+        <p>Each request goes to your account's <code>/v1/memories</code> endpoint with a Bearer key. Rate limits are per-key. Tenancy is enforced server-side.</p>
+        <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
+          <a class="btn" href="/app">Get an API key</a>
+          <a class="btn secondary" href="/docs/LANGCHAIN_GUIDE.md">Full LangChain guide →</a>
+        </div>
+      </div>
+      <div>
+        <div class="code-tabs">
+          <button class="code-tab active" data-tab="python">python</button>
+          <button class="code-tab" data-tab="curl">curl</button>
+          <button class="code-tab" data-tab="langchain">langchain</button>
+        </div>
+<div class="code-block" id="codeBlock"><span class="com"># pip install scm-memory</span>
+<span class="kw">from</span> scm_memory <span class="kw">import</span> <span class="fn">SCMClient</span>
+
+scm = <span class="fn">SCMClient</span>(
+    api_key=<span class="str">"scm_live_..."</span>,
+    base_url=<span class="str">"https://scm.run/v1"</span>,
+)
+
+<span class="com"># Store a memory</span>
+scm.<span class="fn">add_memory</span>(text=<span class="str">"I run every Tuesday morning along the river."</span>)
+
+<span class="com"># Retrieve relevant memories</span>
+result = scm.<span class="fn">search_memory</span>(query=<span class="str">"when do I run?"</span>)
+<span class="fn">print</span>(result[<span class="str">"memory_context"</span>])
+<span class="com"># → "I run every Tuesday morning along the river."</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── USE CASES ───────────────────────────────────────────────── -->
+<section class="usecases">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">What it's for</span>
+      <h2>Built for agents that <em>compound.</em></h2>
+      <p>Anywhere your AI is supposed to know more about the user this week than it did last week.</p>
+    </div>
+    <div class="usecase-grid">
+      <div class="usecase">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>Personal assistants</h3>
+        <p>Remembers what the user said weeks ago. Surfaces patterns ("you've mentioned this three times now"). Wakes up with a summary of what it figured out.</p>
+      </div>
+      <div class="usecase">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+        </div>
+        <h3>Customer support agents</h3>
+        <p>One ticket today, another in three weeks — same customer, same context. SCM consolidates the relationship, not just the conversation.</p>
+      </div>
+      <div class="usecase">
+        <div class="icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        </div>
+        <h3>Coding & research copilots</h3>
+        <p>Knows what you're building, what you tried last Tuesday, what you decided not to do. Doesn't suggest the same dead-end twice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PAPER ───────────────────────────────────────────────────── -->
+<section class="paper" id="paper">
+  <div class="container">
+    <div class="paper-card">
+      <div>
+        <div class="eyebrow">Research · 35 pages</div>
+        <h2>Sleep-Consolidated Memory: a brain-inspired architecture for lifelong AI agents.</h2>
+        <p>The full architecture, the brutal-test methodology, the workload-sensitivity benchmark, and the four real bugs we caught in the process. Honestly written, including the failure modes.</p>
+        <div class="meta">
+          <span><b>5</b> figures</span>
+          <span><b>8</b> tables</span>
+          <span><b>322</b> regression tests</span>
+          <span><b>16/16</b> brutal scenarios</span>
+        </div>
+        <a class="btn" href="/research/SCM_Final_Paper.pdf" target="_blank">
+          Read the paper
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </a>
+      </div>
+      <div style="font-family: var(--serif); font-size: 200px; color: var(--accent); line-height: 1; opacity: 0.9;">
+        ¶
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─────────────────────────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow">Pricing</span>
+      <h2>Free during beta. <em>BYOK forever.</em></h2>
+      <p>You bring your own LLM key. We never proxy or charge for inference. We charge for the memory infrastructure — eventually. Right now, all of it is free.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan">
+        <div class="plan-name">Hobby</div>
+        <div class="plan-desc">Hack on a side project, build a prototype.</div>
+        <div class="plan-price">$0<small>/forever</small></div>
+        <div class="plan-period">No credit card. No expiry.</div>
+        <ul>
+          <li>10K memories</li>
+          <li>50K operations / month</li>
+          <li>1 API key</li>
+          <li>Heuristic extraction</li>
+          <li>Community support</li>
+        </ul>
+        <a class="btn secondary full" href="/app">Get started</a>
+      </div>
+      <div class="plan featured">
+        <div class="plan-name">Pro</div>
+        <div class="plan-desc">Production agents, real users.</div>
+        <div class="plan-price">$0<small>during beta</small></div>
+        <div class="plan-period">Will be $19 / mo at GA</div>
+        <ul>
+          <li>Unlimited memories</li>
+          <li>1M operations / month</li>
+          <li>Unlimited API keys</li>
+          <li>BYOK LLM extraction</li>
+          <li>Email support</li>
+          <li>99.5% uptime target</li>
+        </ul>
+        <a class="btn full" href="/app">Get an API key</a>
+      </div>
+      <div class="plan">
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-desc">Self-host, SLA, security review.</div>
+        <div class="plan-price">Custom</div>
+        <div class="plan-period">Talk to us</div>
+        <ul>
+          <li>Dedicated infra</li>
+          <li>VPC / on-prem deploy</li>
+          <li>Postgres + pgvector</li>
+          <li>Custom retention</li>
+          <li>SOC 2 (in progress)</li>
+          <li>Phone + Slack support</li>
+        </ul>
+        <a class="btn secondary full" href="mailto:saish.shinde15@gmail.com?subject=SCM%20Enterprise">Contact us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA STRIP ───────────────────────────────────────────────── -->
+<section class="cta-strip">
+  <div class="container">
+    <h2>Give your agent a <em>night.</em></h2>
+    <p>Sign up, mint an API key in 30 seconds, drop it into your LangChain code. Your agent learns the way humans do.</p>
+    <div class="cta-row" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a class="btn lg" href="/app">Get an API key</a>
+      <a class="btn secondary lg" href="/demo">Try the live demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ──────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/">
+          <span class="brand-mark"></span>
+          <span>SCM</span>
+        </a>
+        <p>Memory that works like yours. The first agent memory layer with a wake phase and a sleep phase.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/app">Dashboard</a></li>
+          <li><a href="/demo">Live demo</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#how">How it works</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <ul>
+          <li><a href="/docs/LANGCHAIN_GUIDE.md">LangChain guide</a></li>
+          <li><a href="/docs/API_AUTH.md">API reference</a></li>
+          <li><a href="/docs/POSTGRES_PGVECTOR.md">Self-hosting</a></li>
+          <li><a href="/v1/openapi.json">OpenAPI spec</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Research</h4>
+        <ul>
+          <li><a href="/research/SCM_Final_Paper.pdf" target="_blank">The paper</a></li>
+          <li><a href="/docs/BENCHMARKS.md">Benchmarks</a></li>
+          <li><a href="/docs/BUG_LOG.md">Bug log</a></li>
+          <li><a href="/docs/STATUS.md">Status</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 SCM. Beta service. BYOK forever.</div>
+      <div style="display: flex; gap: 18px;">
+        <a href="/docs/API_AUTH.md">Privacy</a>
+        <a href="/docs/API_AUTH.md">Terms</a>
+        <a href="mailto:saish.shinde15@gmail.com">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Code tabs
+  const tabs = document.querySelectorAll(".code-tab");
+  const codeBlock = document.getElementById("codeBlock");
+  const SNIPPETS = {
+    python: `<span class="com"># pip install scm-memory</span>
+<span class="kw">from</span> scm_memory <span class="kw">import</span> <span class="fn">SCMClient</span>
+
+scm = <span class="fn">SCMClient</span>(
+    api_key=<span class="str">"scm_live_..."</span>,
+    base_url=<span class="str">"https://scm.run/v1"</span>,
+)
+
+<span class="com"># Store a memory</span>
+scm.<span class="fn">add_memory</span>(text=<span class="str">"I run every Tuesday morning along the river."</span>)
+
+<span class="com"># Retrieve relevant memories</span>
+result = scm.<span class="fn">search_memory</span>(query=<span class="str">"when do I run?"</span>)
+<span class="fn">print</span>(result[<span class="str">"memory_context"</span>])
+<span class="com"># → "I run every Tuesday morning along the river."</span>`,
+
+    curl: `<span class="com"># Store a memory</span>
+curl -X POST https://scm.run/v1/memories \\
+     -H <span class="str">"Authorization: Bearer scm_live_..."</span> \\
+     -H <span class="str">"Content-Type: application/json"</span> \\
+     -d <span class="str">'{"text":"I run every Tuesday along the river."}'</span>
+
+<span class="com"># Retrieve memories</span>
+curl -X POST https://scm.run/v1/memories/search \\
+     -H <span class="str">"Authorization: Bearer scm_live_..."</span> \\
+     -d <span class="str">'{"query":"when do I run?"}'</span>`,
+
+    langchain: `<span class="kw">from</span> langchain_openai <span class="kw">import</span> <span class="fn">ChatOpenAI</span>
+<span class="kw">from</span> langchain_core.messages <span class="kw">import</span> <span class="fn">SystemMessage</span>, <span class="fn">HumanMessage</span>
+<span class="kw">from</span> scm_memory <span class="kw">import</span> <span class="fn">SCMClient</span>
+
+scm = <span class="fn">SCMClient</span>(api_key=<span class="str">"scm_live_..."</span>)
+llm = <span class="fn">ChatOpenAI</span>(model=<span class="str">"deepseek-chat"</span>, ...)
+
+<span class="kw">def</span> <span class="fn">chat</span>(user_msg: str) -> str:
+    <span class="com"># 1. Retrieve from SCM</span>
+    ctx = scm.<span class="fn">search_memory</span>(user_msg, wait_for_pending=<span class="kw">True</span>)
+    sys = <span class="str">f"Memories: {ctx['memory_context']}"</span>
+
+    <span class="com"># 2. Generate</span>
+    reply = llm.<span class="fn">invoke</span>([
+        <span class="fn">SystemMessage</span>(content=sys),
+        <span class="fn">HumanMessage</span>(content=user_msg),
+    ]).content
+
+    <span class="com"># 3. Store the user's facts</span>
+    scm.<span class="fn">add_memory</span>(text=user_msg)
+    <span class="kw">return</span> reply`,
+  };
+  tabs.forEach(t => {
+    t.addEventListener("click", () => {
+      tabs.forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      codeBlock.innerHTML = SNIPPETS[t.dataset.tab];
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SleepAI - Brain-Inspired Memory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Chat Section */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .chat-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .viz-link {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.9;
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .viz-link:hover {
+            opacity: 1;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: #f0f0f0;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message .meta {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 6px;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            gap: 10px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input input:focus {
+            border-color: #667eea;
+        }
+
+        .chat-input button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .chat-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .chat-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .stat-item .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-item .label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .sleep-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .sleep-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .sleep-btn.sleeping {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .memory-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .memory-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .memory-item .type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .memory-item .type.person { background: #e3f2fd; color: #1976d2; }
+        .memory-item .type.preference { background: #f3e5f5; color: #7b1fa2; }
+        .memory-item .type.location { background: #e8f5e9; color: #388e3c; }
+        .memory-item .type.fact { background: #fff3e0; color: #f57c00; }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            padding: 12px 16px;
+            background: #f0f0f0;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .status-dot.sleeping {
+            background: #ff9800;
+            animation: pulse 1s infinite;
+        }
+
+        .signal-list {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .signal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .signal-badge {
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .signal-badge.pass {
+            background: #e7f7ec;
+            color: #1e8e3e;
+        }
+
+        .signal-badge.fail {
+            background: #fdecea;
+            color: #c5221f;
+        }
+
+        .demo-note {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .demo-btn {
+            width: 100%;
+            border: 1px solid #d9d9d9;
+            background: #fafafa;
+            color: #333;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .demo-btn:hover {
+            background: #f0f4ff;
+            border-color: #667eea;
+        }
+
+        .demo-btn.primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00c6ff 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .demo-btn.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.35);
+        }
+
+        .readiness-score {
+            margin-top: 8px;
+            font-size: 30px;
+            font-weight: 700;
+            color: #1e8e3e;
+        }
+
+        .readiness-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-header">
+                <div>
+                    <h1>SCM Product Demo</h1>
+                    <p>Human-like memory behavior: learn, sleep, forget, update</p>
+                </div>
+                <a href="/static/visualize.html" class="viz-link" target="_blank">🧠 View Memory Graph</a>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div>Hello! I'm SCM memory. I learn quickly, consolidate with sleep, forget low-value noise, and handle contradictions safely. Try the Human-Like Demo.</div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span><span></span><span></span>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
+                <button id="sendBtn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Guided Demo -->
+            <div class="panel">
+                <h2>Human-Like Demo</h2>
+                <div class="demo-note">
+                    Show memory behavior in one flow: quick learning, sleep-based consolidation, selective forgetting, and contradiction-safe updates.
+                </div>
+                <button class="demo-btn primary" id="runDemoBtn" onclick="runHumanDemo()">Run Full Demo</button>
+                <button class="demo-btn" onclick="demoSend('My name is Alice and I live in Seattle.')">Try One-Shot Memory Prompt</button>
+                <button class="demo-btn" onclick="demoSend('I prefer morning meetings.')">Set Initial Preference</button>
+                <button class="demo-btn" onclick="demoSend('I prefer evening meetings.')">Contradict Preference</button>
+                <button class="demo-btn" onclick="demoSend('What do I prefer?')">Query Current Preference</button>
+                <button class="demo-btn" onclick="forceSleep('micro')">Run Micro Sleep</button>
+                <button class="demo-btn" onclick="forceSleep('deep')">Run Deep Sleep</button>
+            </div>
+
+            <!-- Wake Summary Panel — the killer feature -->
+            <div class="panel" id="wakeSummaryPanel">
+                <h2>🌅 Wake Summary</h2>
+                <div class="demo-note" style="margin-bottom: 8px;">
+                    What the agent learned while you were away — patterns, contradictions, knowledge gaps it filled.
+                </div>
+                <button class="demo-btn primary" onclick="showWakeSummary()">Show wake summary</button>
+                <div id="wakeSummaryContent" style="
+                    margin-top: 12px;
+                    padding: 12px;
+                    background: rgba(255, 255, 255, 0.06);
+                    border-radius: 8px;
+                    font-size: 13px;
+                    line-height: 1.5;
+                    color: #e6e6f0;
+                    display: none;
+                    max-height: 280px;
+                    overflow-y: auto;
+                "></div>
+            </div>
+
+            <!-- Stats Panel -->
+            <div class="panel">
+                <h2>Memory Stats</h2>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="value" id="wmSize">0</div>
+                        <div class="label">Working Memory</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="value" id="ltmSize">0</div>
+                        <div class="label">LTM Concepts</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="value" id="messageCount">0</div>
+                        <div class="label">Messages</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="value" id="sleepCount">0</div>
+                        <div class="label">Sleeps</div>
+                    </div>
+                </div>
+                <button class="sleep-btn" id="sleepBtn" onclick="forceSleep('deep')">
+                    Force Sleep Consolidation
+                </button>
+            </div>
+
+            <!-- Status Panel -->
+            <div class="panel">
+                <h2>System Status</h2>
+                <div class="status-bar">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Awake</span>
+                </div>
+                <div class="signal-list">
+                    <div class="signal-item">
+                        <span>One-shot readiness</span>
+                        <span class="signal-badge fail" id="signalOneShot">unknown</span>
+                    </div>
+                    <div class="signal-item">
+                        <span>Selective forgetting</span>
+                        <span class="signal-badge fail" id="signalForgetting">unknown</span>
+                    </div>
+                    <div class="signal-item">
+                        <span>Contradiction versioning</span>
+                        <span class="signal-badge fail" id="signalVersioning">unknown</span>
+                    </div>
+                    <div class="signal-item">
+                        <span>Avg retention score</span>
+                        <span id="retentionScore">0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Readiness -->
+            <div class="panel">
+                <h2>Product Readiness</h2>
+                <div class="signal-list">
+                    <div class="signal-item">
+                        <span>Phase 4 benchmark</span>
+                        <span class="signal-badge fail" id="packPhase4">unknown</span>
+                    </div>
+                    <div class="signal-item">
+                        <span>Human-memory benchmark</span>
+                        <span class="signal-badge fail" id="packHuman">unknown</span>
+                    </div>
+                    <div class="signal-item">
+                        <span>Guardrails suite</span>
+                        <span class="signal-badge fail" id="packGuardrails">unknown</span>
+                    </div>
+                    <div class="signal-item">
+                        <span>Story pack present</span>
+                        <span class="signal-badge fail" id="packStory">unknown</span>
+                    </div>
+                </div>
+                <div class="readiness-score" id="readinessScore">0/100</div>
+                <div class="readiness-subtitle" id="readinessStatus">Waiting for signals...</div>
+            </div>
+
+            <!-- Recent Memories -->
+            <div class="panel">
+                <h2>Recent Memories</h2>
+                <div class="memory-list" id="memoryList">
+                    <div class="memory-item" style="text-align:center; color:#999;">
+                        No memories yet. Start chatting!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let sessionId = 'web_user_' + Math.random().toString(36).substr(2, 9);
+        let messageCount = 0;
+        let isSleeping = false;
+        let isDemoRunning = false;
+        const DEMO_USER_DELAY_MS = 500;
+        const DEMO_AI_DELAY_MS = 900;
+
+        // Send message
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message || isSleeping || isDemoRunning) return;
+
+            input.value = '';
+            await sendAutomatedMessage(message);
+        }
+
+        // Shared send path used by manual chat and guided demo
+        async function sendAutomatedMessage(message) {
+            if (!message || isSleeping) return null;
+
+            // Add user message
+            addMessage(message, 'user');
+
+            // Show typing
+            document.getElementById('typingIndicator').classList.add('active');
+
+            try {
+                const response = await fetch(`${API_BASE}/chat/message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, session_id: sessionId })
+                });
+
+                const data = await response.json();
+                
+                // Hide typing
+                document.getElementById('typingIndicator').classList.remove('active');
+
+                // Add AI response
+                addMessage(data.response, 'ai', data.metadata);
+
+                // Update stats
+                messageCount++;
+                await updateStats(data.metadata);
+
+                // Check if sleep triggered
+                if (data.metadata.sleep_triggered) {
+                    showSleepNotification(data.metadata.sleep_stats);
+                }
+
+                return data;
+
+            } catch (error) {
+                document.getElementById('typingIndicator').classList.remove('active');
+                addMessage('Sorry, I had trouble processing that. Please try again.', 'ai');
+                console.error('Error:', error);
+                return null;
+            }
+        }
+
+        // Add message to chat
+        function addMessage(text, sender, metadata = null) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            let metaHtml = '';
+            if (metadata) {
+                metaHtml = `<div class="meta">${metadata.latency_ms}ms | concepts: ${metadata.user_concepts} | memories: ${metadata.memories_retrieved}</div>`;
+            }
+            
+            messageDiv.innerHTML = `<div>${escapeHtml(text)}</div>${metaHtml}`;
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Update stats
+        async function updateStats(metadata) {
+            document.getElementById('messageCount').textContent = messageCount;
+            
+            // Fetch full memory report
+            try {
+                const response = await fetch(`${API_BASE}/chat/memory/${sessionId}`);
+                const data = await response.json();
+                const report = data.report;
+                
+                document.getElementById('wmSize').textContent = report.working_memory.size;
+                document.getElementById('ltmSize').textContent = report.long_term_memory.total_concepts;
+                document.getElementById('sleepCount').textContent = report.total_sleeps;
+
+                // Update memory list
+                updateMemoryList(report.working_memory.recent_episodes);
+            } catch (e) {
+                console.error('Failed to fetch stats:', e);
+            }
+
+            try {
+                const data = await fetchProductReportWithFallback(sessionId);
+                const report = data.report || {};
+                updateProductSignals(report.diagnostics || {});
+                updateProductReadiness(report.readiness || {}, report.benchmarks || {});
+            } catch (e) {
+                console.error('Failed to fetch product diagnostics:', e);
+            }
+        }
+
+        async function fetchProductReportWithFallback(sessionId) {
+            const primary = await fetch(`${API_BASE}/chat/product-report/${sessionId}`);
+            if (primary.ok) {
+                return await primary.json();
+            }
+
+            if (primary.status === 404) {
+                const legacy = await fetch(`${API_BASE}/chat/product/${sessionId}`);
+                if (legacy.ok) {
+                    const data = await legacy.json();
+                    return {
+                        report: {
+                            session_id: sessionId,
+                            diagnostics: data.diagnostics || {},
+                            benchmarks: {},
+                            readiness: {
+                                score: 0,
+                                max_score: 100,
+                                flags: {
+                                    overall_pass: false,
+                                },
+                            },
+                        },
+                    };
+                }
+            }
+
+            const detail = await primary.text();
+            throw new Error(`Product report fetch failed (${primary.status}): ${detail}`);
+        }
+
+        function toSignal(value) {
+            return value ? ['pass', 'pass'] : ['fail', 'not yet'];
+        }
+
+        function paintSignal(id, enabled) {
+            const el = document.getElementById(id);
+            const [klass, label] = toSignal(!!enabled);
+            el.className = `signal-badge ${klass}`;
+            el.textContent = label;
+        }
+
+        function updateProductSignals(diagnostics) {
+            const signals = diagnostics && diagnostics.human_like_signals
+                ? diagnostics.human_like_signals
+                : {};
+
+            paintSignal('signalOneShot', signals.one_shot_ready);
+            paintSignal('signalForgetting', signals.selective_forgetting_present);
+            paintSignal('signalVersioning', signals.versioning_present);
+
+            const avg = diagnostics && diagnostics.memory_state
+                ? diagnostics.memory_state.avg_retention_score
+                : 0.0;
+            document.getElementById('retentionScore').textContent = Number(avg || 0).toFixed(2);
+        }
+
+        function paintPackSignal(id, enabled) {
+            const el = document.getElementById(id);
+            const [klass, label] = enabled ? ['pass', 'pass'] : ['fail', 'missing/fail'];
+            el.className = `signal-badge ${klass}`;
+            el.textContent = label;
+        }
+
+        function updateProductReadiness(readiness, benchmarks) {
+            const packs = benchmarks && benchmarks.packs ? benchmarks.packs : {};
+
+            paintPackSignal('packPhase4', packs.phase4 && packs.phase4.overall_pass === true);
+            paintPackSignal('packHuman', packs.phase6_human && packs.phase6_human.overall_pass === true);
+            paintPackSignal('packGuardrails', packs.phase6_guardrails && packs.phase6_guardrails.overall_pass === true);
+            paintPackSignal('packStory', packs.phase6_demo && packs.phase6_demo.present === true);
+
+            const score = Number(readiness.score || 0);
+            const flags = readiness.flags || {};
+            document.getElementById('readinessScore').textContent = `${score.toFixed(1)}/100`;
+            document.getElementById('readinessStatus').textContent = flags.overall_pass
+                ? 'Product signals are green for external user trials.'
+                : 'Product still has gaps before full external rollout.';
+        }
+
+        // Update memory list
+        function updateMemoryList(episodes) {
+            const list = document.getElementById('memoryList');
+            if (!episodes || episodes.length === 0) return;
+            
+            list.innerHTML = episodes.slice(-5).reverse().map(ep => `
+                <div class="memory-item">
+                    <span class="type ${ep.source}">${ep.source}</span>
+                    ${escapeHtml(ep.content)}
+                </div>
+            `).join('');
+        }
+
+        // Force sleep
+        async function forceSleep(mode = 'deep', silent = false) {
+            if (isSleeping) return;
+            
+            isSleeping = true;
+            const btn = document.getElementById('sleepBtn');
+            btn.textContent = 'Sleeping...';
+            btn.classList.add('sleeping');
+            document.getElementById('statusDot').classList.add('sleeping');
+            document.getElementById('statusText').textContent = 'Sleeping (consolidating memories...)';
+
+            try {
+                const response = await fetch(`${API_BASE}/chat/sleep/${sessionId}?mode=${encodeURIComponent(mode)}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    if (!silent) {
+                        showSleepNotification(data.sleep_stats);
+                    }
+                    return data.sleep_stats;
+                }
+                return null;
+            } catch (error) {
+                console.error('Sleep failed:', error);
+                return null;
+            } finally {
+                isSleeping = false;
+                btn.textContent = 'Force Sleep Consolidation';
+                btn.classList.remove('sleeping');
+                document.getElementById('statusDot').classList.remove('sleeping');
+                document.getElementById('statusText').textContent = 'Awake';
+                await updateStats({});
+            }
+        }
+
+        function sleepMs(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        async function replayTranscript(transcript) {
+            for (const entry of transcript) {
+                if (entry.role === 'user') {
+                    await sleepMs(DEMO_USER_DELAY_MS);
+                    addMessage(entry.content, 'user');
+                } else {
+                    await sleepMs(DEMO_AI_DELAY_MS);
+                    addMessage(entry.content, 'ai', entry.metadata || null);
+                }
+            }
+        }
+
+        function setDemoMode(active) {
+            isDemoRunning = active;
+            document.getElementById('sendBtn').disabled = active;
+            document.getElementById('messageInput').disabled = active;
+            const buttons = document.querySelectorAll('.demo-btn');
+            buttons.forEach((btn) => btn.disabled = active);
+            const runBtn = document.getElementById('runDemoBtn');
+            if (runBtn) {
+                runBtn.disabled = active;
+                runBtn.textContent = active ? 'Running Demo...' : 'Run Full Demo';
+            }
+        }
+
+        function resetDemoSession() {
+            sessionId = 'demo_user_' + Math.random().toString(36).substr(2, 9);
+            messageCount = 0;
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="message ai">
+                    <div>New demo session started. I will show human-like memory behavior now.</div>
+                </div>
+            `;
+            updateStats({});
+        }
+
+        async function demoSend(message) {
+            if (isSleeping || isDemoRunning) return;
+            await sendAutomatedMessage(message);
+        }
+
+        async function runHumanDemo() {
+            if (isDemoRunning || isSleeping) return;
+            setDemoMode(true);
+            resetDemoSession();
+
+            try {
+                addMessage('Running product-grade human-like demo scenario on backend...', 'ai');
+
+                const data = await runDemoWithFallback(sessionId);
+
+                if (!data.success) {
+                    addMessage('Demo failed to run. Please retry.', 'ai');
+                    return;
+                }
+
+                const results = data.results;
+                const transcript = results.transcript || [];
+                const container = document.getElementById('chatMessages');
+                container.innerHTML = '';
+
+                await replayTranscript(transcript);
+
+                if (results.micro_sleep) showSleepNotification(results.micro_sleep);
+                if (results.deep_sleep) showSleepNotification(results.deep_sleep);
+
+                const checks = results.checks || {};
+                addMessage(
+                    `Demo summary: ${results.passed_checks}/${results.total_checks} checks passed. ` +
+                    `One-shot name: ${checks.one_shot_name ? 'pass' : 'fail'}, ` +
+                    `one-shot location: ${checks.one_shot_location ? 'pass' : 'fail'}, ` +
+                    `contradiction update: ${checks.contradiction_update ? 'pass' : 'fail'}.`,
+                    'ai'
+                );
+                const readiness = data.product_report && data.product_report.readiness
+                    ? data.product_report.readiness
+                    : null;
+                if (readiness) {
+                    addMessage(
+                        `Product readiness score: ${Number(readiness.score || 0).toFixed(1)}/100.`,
+                        'ai'
+                    );
+                }
+
+                messageCount = Number(results.diagnostics?.messages_processed || messageCount);
+                await updateStats({});
+            } finally {
+                setDemoMode(false);
+            }
+        }
+
+        async function runDemoWithFallback(sessionId) {
+            const primary = await fetch(`${API_BASE}/chat/product-demo/${sessionId}`, {
+                method: 'POST'
+            });
+
+            if (primary.ok) {
+                return await primary.json();
+            }
+
+            if (primary.status === 404) {
+                const legacy = await fetch(`${API_BASE}/chat/demo/${sessionId}`, {
+                    method: 'POST'
+                });
+                if (legacy.ok) {
+                    return await legacy.json();
+                }
+                const legacyDetail = await legacy.text();
+                throw new Error(`Legacy demo failed (${legacy.status}): ${legacyDetail}`);
+            }
+
+            const detail = await primary.text();
+            throw new Error(`Product demo failed (${primary.status}): ${detail}`);
+        }
+
+        // Show sleep notification
+        function showSleepNotification(stats) {
+            const container = document.getElementById('chatMessages');
+            const notif = document.createElement('div');
+            notif.className = 'message ai';
+            notif.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+            notif.style.color = 'white';
+            notif.innerHTML = `
+                <div><strong>💤 Sleep Complete!</strong></div>
+                <div style="margin-top:8px; font-size:14px;">
+                    Consolidated: ${stats.consolidated} | Forgotten: ${stats.forgotten} | Dreams: ${stats.dreams}
+                </div>
+            `;
+            container.appendChild(notif);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Handle Enter key
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Initial stats load
+        updateStats({});
+    </script>
+</body>
+</html>

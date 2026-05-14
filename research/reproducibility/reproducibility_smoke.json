@@ -1,0 +1,8 @@
+{
+  "benchmark": "scm_reproducibility_smoke",
+  "timestamp_utc": "2026-05-01T04:18:35.123808+00:00",
+  "overall_pass": true,
+  "returncode": 0,
+  "command": "/Users/saish/Downloads/SleepAI/venv/bin/python -m pytest tests/test_baseline_comparison.py tests/test_long_horizon_benchmark.py tests/test_human_memory_behavior.py tests/test_forgetting_dynamics.py tests/test_contradiction_versioning.py -q",
+  "log_path": "research/reproducibility/logs/20260501T041700Z/smoke_pytests.log"
+}
