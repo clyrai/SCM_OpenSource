@@ -317,6 +317,26 @@
     margin-bottom: 10px;
   }
   .dash-header p { color: var(--text-muted); font-size: 16px; }
+  .dash-tabs {
+    display: inline-flex;
+    gap: 6px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-pill);
+    background: var(--bg-card);
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 8px 14px;
+    border-radius: var(--r-pill);
+    font: 500 13px var(--sans);
+    cursor: pointer;
+  }
+  .tab-btn:hover { color: var(--ink); background: var(--bg-warm); }
+  .tab-btn.active { background: var(--ink); color: #fff; }
   .dash-stack { display: flex; flex-direction: column; gap: 22px; }
   .card-head {
     display: flex; align-items: flex-start; justify-content: space-between;
@@ -499,7 +519,12 @@
         <p>Manage API keys, configure your LLM provider, and read the docs.</p>
       </div>
 
-      <div class="dash-stack">
+      <div class="dash-tabs">
+        <button class="tab-btn active" id="tabOverviewBtn">Overview</button>
+        <button class="tab-btn" id="tabSleepBtn">Sleep</button>
+      </div>
+
+      <div id="panelOverview" class="dash-stack">
 
         <!-- Account -->
         <div class="card">
@@ -622,6 +647,72 @@ curl -X POST <span id="apiBaseUrl">http://localhost:8000</span>/v1/memories \
         </div>
 
       </div>
+
+      <div id="panelSleep" class="dash-stack hidden">
+        <div class="card">
+          <div class="card-head">
+            <div class="title-stack">
+              <div class="card-title">Sleep settings</div>
+              <div class="card-desc">Choose how auto-sleep should trigger for this account's default memory user.</div>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field" style="margin-bottom:0;">
+              <label class="field-label" for="sleepMode">Auto-sleep mode</label>
+              <select id="sleepMode">
+                <option value="auto">Auto (legacy fallback)</option>
+                <option value="night_only">Night-only</option>
+                <option value="idle_only">Idle-only</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label class="field-label" for="sleepIdleTimeout">Idle timeout (seconds) <span class="field-hint">advanced</span></label>
+              <input type="number" id="sleepIdleTimeout" min="1" step="1" placeholder="Use server default"/>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 14px;">
+            <div class="field" style="margin-bottom:0;">
+              <label class="field-label" for="sleepTimezone">Timezone (IANA)</label>
+              <input type="text" id="sleepTimezone" placeholder="Europe/Lisbon"/>
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label class="field-label" for="sleepEnabled">Night window enabled</label>
+              <label style="display:flex; align-items:center; gap:8px; padding-top:10px;">
+                <input type="checkbox" id="sleepEnabled" style="width:auto;" />
+                <span>Enable nightly auto-consolidation</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-grid" style="margin-top: 14px;">
+            <div class="field" style="margin-bottom:0;">
+              <label class="field-label" for="sleepStart">Sleep starts (HH:MM)</label>
+              <input type="text" id="sleepStart" placeholder="23:00"/>
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label class="field-label" for="sleepEnd">Sleep ends (HH:MM)</label>
+              <input type="text" id="sleepEnd" placeholder="07:00"/>
+            </div>
+          </div>
+
+          <div class="callout success" id="sleepModeHint" style="margin-top:16px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div>Auto mode uses nightly schedule for configured users, with idle fallback for legacy default users.</div>
+          </div>
+
+          <div class="footnote" id="sleepMetaLine">No sleep cycle recorded yet.</div>
+
+          <div class="form-actions">
+            <button class="btn" id="sleepSaveBtn">Save sleep settings</button>
+            <button class="btn secondary" id="sleepReloadBtn">Reload</button>
+            <span class="spacer"></span>
+            <button class="btn ghost" id="sleepRunNowBtn">Test sleep now</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -667,6 +758,8 @@ curl -X POST <span id="apiBaseUrl">http://localhost:8000</span>/v1/memories \
   // ── Token + HTTP ────────────────────────────────────────────────
   const getToken = () => localStorage.getItem(TOKEN_KEY) || "";
   const setToken = (t) => t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY);
+  const SLEEP_USER_ID = "default";
+  let sleepConfigLoaded = false;
 
   async function fetchJSON(url, opts = {}) {
     const headers = Object.assign({}, opts.headers || {});
@@ -685,6 +778,134 @@ curl -X POST <span id="apiBaseUrl">http://localhost:8000</span>/v1/memories \
     }
     return body;
   }
+
+  // ── Dashboard tabs + sleep settings ────────────────────────────
+  function setDashboardTab(tab) {
+    const onSleep = tab === "sleep";
+    show($("panelOverview"), !onSleep);
+    show($("panelSleep"), onSleep);
+    $("tabOverviewBtn").classList.toggle("active", !onSleep);
+    $("tabSleepBtn").classList.toggle("active", onSleep);
+    if (onSleep) refreshSleepConfig();
+  }
+
+  function fmtDateTime(iso) {
+    if (!iso) return "—";
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString();
+  }
+
+  function applySleepModeUi() {
+    const mode = ($("sleepMode").value || "auto").trim();
+    const hint = $("sleepModeHint");
+    const hintText = {
+      auto: "Auto mode uses nightly schedule for configured users, with idle fallback for legacy default users.",
+      night_only: "Night-only runs once per night window in the configured timezone.",
+      idle_only: "Idle-only ignores night windows and sleeps after inactivity.",
+      off: "Off disables autonomous sleep. Use manual consolidate when needed.",
+    };
+    hint.querySelector("div").textContent = hintText[mode] || hintText.auto;
+
+    const disableNight = mode === "idle_only" || mode === "off";
+    $("sleepTimezone").disabled = disableNight;
+    $("sleepStart").disabled = disableNight;
+    $("sleepEnd").disabled = disableNight;
+    $("sleepEnabled").disabled = disableNight;
+    $("sleepIdleTimeout").disabled = mode === "night_only" || mode === "off";
+  }
+
+  async function refreshSleepConfig(force = false) {
+    if (sleepConfigLoaded && !force) return;
+    try {
+      const [cfg, health] = await Promise.all([
+        fetchJSON(`/v1/users/${encodeURIComponent(SLEEP_USER_ID)}/sleep-config`),
+        fetchJSON("/v1/health"),
+      ]);
+      $("sleepMode").value = cfg.auto_sleep_mode || "auto";
+      $("sleepTimezone").value = cfg.timezone || "UTC";
+      $("sleepStart").value = cfg.sleep_start || "23:00";
+      $("sleepEnd").value = cfg.sleep_end || "07:00";
+      $("sleepEnabled").checked = cfg.enabled !== false;
+      $("sleepIdleTimeout").value = cfg.idle_timeout_sec == null ? "" : `${cfg.idle_timeout_sec}`;
+
+      const defaultIdle = Number(health.idle_threshold_sec);
+      $("sleepIdleTimeout").placeholder = Number.isFinite(defaultIdle)
+        ? `Use server default (${defaultIdle}s)`
+        : "Use server default";
+
+      if (!cfg.last_sleep_at && !cfg.last_sleep_reason) {
+        $("sleepMetaLine").textContent = "No sleep cycle recorded yet.";
+      } else {
+        const reason = (cfg.last_sleep_reason || "unknown").replace(/_/g, " ");
+        $("sleepMetaLine").textContent = `Last trigger: ${reason} · Last sleep: ${fmtDateTime(cfg.last_sleep_at)}`;
+      }
+      applySleepModeUi();
+      sleepConfigLoaded = true;
+    } catch (err) {
+      toast(`Couldn't load sleep settings: ${err.message}`, "danger");
+    }
+  }
+
+  async function saveSleepConfig() {
+    const idleRaw = $("sleepIdleTimeout").value.trim();
+    let idleTimeout = null;
+    if (idleRaw) {
+      const n = Number(idleRaw);
+      if (!Number.isFinite(n) || n <= 0) {
+        return toast("Idle timeout must be a positive number.", "danger");
+      }
+      idleTimeout = Math.floor(n);
+    }
+    const payload = {
+      auto_sleep_mode: $("sleepMode").value,
+      timezone: $("sleepTimezone").value.trim() || "UTC",
+      sleep_start: $("sleepStart").value.trim(),
+      sleep_end: $("sleepEnd").value.trim(),
+      enabled: $("sleepEnabled").checked,
+      idle_timeout_sec: idleTimeout,
+    };
+    $("sleepSaveBtn").disabled = true;
+    try {
+      await fetchJSON(`/v1/users/${encodeURIComponent(SLEEP_USER_ID)}/sleep-config`, {
+        method: "POST",
+        json: payload,
+      });
+      sleepConfigLoaded = false;
+      await refreshSleepConfig(true);
+      toast("Sleep settings saved.", "success");
+    } catch (err) {
+      toast(`Couldn't save sleep settings: ${err.message}`, "danger");
+    } finally {
+      $("sleepSaveBtn").disabled = false;
+    }
+  }
+
+  async function triggerSleepNow() {
+    $("sleepRunNowBtn").disabled = true;
+    try {
+      await fetchJSON("/v1/memories/consolidate", {
+        method: "POST",
+        json: { user_id: SLEEP_USER_ID, mode: "deep" },
+      });
+      sleepConfigLoaded = false;
+      await refreshSleepConfig(true);
+      toast("Manual sleep triggered. Wake summary is cached for next activity.", "success", 5000);
+    } catch (err) {
+      toast(`Couldn't trigger sleep: ${err.message}`, "danger");
+    } finally {
+      $("sleepRunNowBtn").disabled = false;
+    }
+  }
+
+  $("tabOverviewBtn").addEventListener("click", () => setDashboardTab("overview"));
+  $("tabSleepBtn").addEventListener("click", () => setDashboardTab("sleep"));
+  $("sleepMode").addEventListener("change", applySleepModeUi);
+  $("sleepSaveBtn").addEventListener("click", saveSleepConfig);
+  $("sleepReloadBtn").addEventListener("click", () => {
+    sleepConfigLoaded = false;
+    refreshSleepConfig(true);
+  });
+  $("sleepRunNowBtn").addEventListener("click", triggerSleepNow);
 
   // ── Render ──────────────────────────────────────────────────────
   function renderAccount(account) {
@@ -767,6 +988,8 @@ curl -X POST <span id="apiBaseUrl">http://localhost:8000</span>/v1/memories \
     show($("loginView"), false);
     show($("dashboardView"), true);
     renderAccount(account);
+    sleepConfigLoaded = false;
+    setDashboardTab("overview");
     refreshKeys();
     $("apiBaseUrl").textContent = window.location.origin;
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -776,6 +999,8 @@ curl -X POST <span id="apiBaseUrl">http://localhost:8000</span>/v1/memories \
     setToken("");
     show($("dashboardView"), false);
     show($("loginView"), true);
+    sleepConfigLoaded = false;
+    setDashboardTab("overview");
     $("loginToken").value = "";
     $("brandSuffix").textContent = "cloud";
     show($("navAccount"), false);

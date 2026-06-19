@@ -199,6 +199,38 @@ def test_aggregates_sleep_history():
     assert "8" in summary.narrative
 
 
+def test_wake_summary_surfaces_latest_dream_state():
+    now = utc_now()
+    dream_state = {
+        "enabled": True,
+        "dream_summary": "Sleep replay connected project deadline and team conflict.",
+        "dream_emotional_tone": "anxious",
+        "replayed_memories": ["project deadline", "team conflict"],
+        "resolved_conflicts": [],
+        "open_threads_for_today": ["project deadline"],
+        "dream_count": 2,
+    }
+    eng = FakeEngine(
+        sleep_history=[
+            {
+                "timestamp": utc_isoformat(now - timedelta(hours=2)),
+                "mode": "deep",
+                "consolidated": 3,
+                "dreams": 2,
+                "dream_state": dream_state,
+            },
+        ],
+    )
+    summary = WakeSummaryBuilder(eng, now_fn=lambda: now).build()
+
+    assert summary.dream_state["dream_summary"] == dream_state["dream_summary"]
+    assert summary.to_dict()["dream_state"]["dream_emotional_tone"] == "anxious"
+    assert "Morning brief" in summary.narrative
+    assert "project deadline" in summary.narrative
+    assert "conscious" not in summary.narrative.lower()
+    assert "real feelings" not in summary.narrative.lower()
+
+
 def test_old_sleep_records_excluded_when_since_provided():
     now = utc_now()
     eng = FakeEngine(

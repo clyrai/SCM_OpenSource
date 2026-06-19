@@ -92,6 +92,106 @@ class TestDeepSleep(unittest.TestCase):
 
         self.assertGreaterEqual(stats["rem"].get("dreams_generated", 0), 1)
         self.assertGreaterEqual(len(stats.get("dreams", [])), 1)
+        self.assertTrue(stats["dream_state"]["enabled"])
+        self.assertIn("dream_summary", stats["dream_state"])
+        self.assertGreaterEqual(len(stats["dream_state"]["replayed_memories"]), 1)
+
+    def test_deep_sleep_dream_state_can_be_disabled(self):
+        rem = REMDreaming(dream_count=2, novelty_factor=0.0, integration_threshold=0.3)
+        deep = DeepSleep(rem=rem, enable_synthesis=True, enable_dream_state=False)
+
+        concepts = [
+            Concept(
+                id=f"c{i}",
+                type=ConceptType.FACT,
+                description=f"deadline thread {i}",
+                importance=ImportanceVector(novelty=0.6, emotional=-0.6, task_relevance=0.6, repetition=0.6),
+                strength=1.0,
+                embedding=[0.1 + i * 0.001] * 384,
+            )
+            for i in range(6)
+        ]
+
+        _, _, stats = deep.run(concepts=concepts, relations=[], episodes=[])
+
+        self.assertGreaterEqual(len(stats.get("dreams", [])), 1)
+        self.assertFalse(stats["dream_state"]["enabled"])
+        self.assertEqual(stats["dream_state"]["dream_summary"], "")
+
+    def test_deep_sleep_dream_state_uses_unresolved_tension(self):
+        rem = REMDreaming(dream_count=1, novelty_factor=0.0, integration_threshold=0.3)
+        deep = DeepSleep(rem=rem, enable_synthesis=True)
+
+        tense = Concept(
+            id="tense",
+            type=ConceptType.FACT,
+            description="project deadline is still unclear and blocking launch",
+            importance=ImportanceVector(novelty=0.7, emotional=-0.8, task_relevance=0.95, repetition=0.8),
+            strength=1.0,
+            embedding=[0.4] * 384,
+        )
+        filler = [
+            Concept(
+                id=f"f{i}",
+                type=ConceptType.FACT,
+                description=f"neutral project detail {i}",
+                importance=ImportanceVector(novelty=0.4, emotional=0.0, task_relevance=0.3, repetition=0.3),
+                strength=1.0,
+                embedding=[0.2 + i * 0.001] * 384,
+            )
+            for i in range(5)
+        ]
+
+        _, _, stats = deep.run(
+            concepts=[tense] + filler,
+            relations=[],
+            episodes=[],
+        )
+
+        self.assertGreaterEqual(len(stats["unresolved_tensions"]), 1)
+        self.assertEqual(stats["unresolved_tensions"][0]["concept_id"], "tense")
+        self.assertIn("because it still looks unresolved", stats["dream_state"]["dream_summary"])
+        self.assertIn("project deadline", stats["dream_state"]["open_threads_for_today"][0])
+
+    def test_deep_sleep_closes_resolved_tension_threads(self):
+        rem = REMDreaming(dream_count=1, novelty_factor=0.0, integration_threshold=0.3)
+        deep = DeepSleep(rem=rem, enable_synthesis=True)
+
+        concept = Concept(
+            id="tense",
+            type=ConceptType.FACT,
+            description="project deadline is still unclear and blocking launch",
+            importance=ImportanceVector(novelty=0.7, emotional=-0.8, task_relevance=0.95, repetition=0.8),
+            strength=1.0,
+            embedding=[0.4] * 384,
+        )
+        fillers = [
+            Concept(
+                id=f"f{i}",
+                type=ConceptType.FACT,
+                description=f"neutral project detail {i}",
+                importance=ImportanceVector(novelty=0.4, emotional=0.0, task_relevance=0.3, repetition=0.3),
+                strength=1.0,
+                embedding=[0.2 + i * 0.001] * 384,
+            )
+            for i in range(5)
+        ]
+        episode = Episode(
+            concept_ids=[],
+            raw_content="The project deadline issue is resolved now and launch is no longer an issue.",
+        )
+
+        updated, _, stats = deep.run(
+            concepts=[concept] + fillers,
+            relations=[],
+            episodes=[episode],
+        )
+
+        updated_concept = next(c for c in updated if c.id == "tense")
+        self.assertTrue(updated_concept.context_tags["tension_resolved"])
+        self.assertEqual(stats["unresolved_tensions"], [])
+        self.assertEqual(stats["closed_threads"][0]["concept_id"], "tense")
+        self.assertIn("project deadline", stats["dream_state"]["resolved_conflicts"][0])
 
     def test_deep_sleep_preserves_metadata_for_consolidated_concepts(self):
         deep = DeepSleep(enable_synthesis=False)

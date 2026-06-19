@@ -67,6 +67,7 @@ class WakeSummary:
     memories_consolidated: int = 0
     memories_forgotten: int = 0
     dreams_generated: int = 0
+    dream_state: Dict[str, Any] = field(default_factory=dict)
     sessions_consulted: List[str] = field(default_factory=list)
     insights: List[WakeInsight] = field(default_factory=list)
 
@@ -93,6 +94,7 @@ class WakeSummary:
             "memories_consolidated": self.memories_consolidated,
             "memories_forgotten": self.memories_forgotten,
             "dreams_generated": self.dreams_generated,
+            "dream_state": dict(self.dream_state),
             "sessions_consulted": list(self.sessions_consulted),
             "insights": [
                 {
@@ -164,6 +166,7 @@ class WakeSummaryBuilder:
         consolidated = sum(r.get("consolidated", 0) for r in sleep_records)
         forgotten = sum(r.get("forgotten", 0) for r in sleep_records)
         dreams = sum(r.get("dreams", 0) for r in sleep_records)
+        dream_state = self._latest_dream_state(sleep_records)
         sessions_consulted = self._collect_sessions_consulted()
 
         # Schema-based insights
@@ -179,6 +182,7 @@ class WakeSummaryBuilder:
             memories_consolidated=consolidated,
             memories_forgotten=forgotten,
             dreams_generated=dreams,
+            dream_state=dream_state,
             sessions_consulted=sessions_consulted,
             insights=insights,
         )
@@ -226,6 +230,20 @@ class WakeSummaryBuilder:
             if ts is None or cutoff_utc is None or ts >= cutoff_utc:
                 kept.append(r)
         return kept
+
+    @staticmethod
+    def _latest_dream_state(sleep_records: List[Dict[str, Any]]) -> Dict[str, Any]:
+        latest_ts: Optional[datetime] = None
+        latest_state: Dict[str, Any] = {}
+        for record in sleep_records:
+            state = record.get("dream_state")
+            if not isinstance(state, dict) or not state.get("enabled"):
+                continue
+            ts = ensure_utc(record.get("timestamp"))
+            if latest_ts is None or (ts is not None and ts > latest_ts):
+                latest_ts = ts
+                latest_state = dict(state)
+        return latest_state
 
     def _collect_autonomous_records(
         self,
@@ -434,6 +452,18 @@ class WakeSummaryBuilder:
             key = "sessions_consulted_singular" if n == 1 else "sessions_consulted_plural"
             tmpl = T.get(key, "Drew on {n} prior session(s).")
             lines.append(tmpl.format(n=n))
+
+        # Dream State morning brief
+        dream_state = summary.dream_state if isinstance(summary.dream_state, dict) else {}
+        dream_summary = str(dream_state.get("dream_summary") or "").strip()
+        if dream_summary:
+            tone = str(dream_state.get("dream_emotional_tone") or "neutral").strip()
+            lines.append(f"Morning brief: {dream_summary} Tone: {tone}.")
+            open_threads = dream_state.get("open_threads_for_today") or []
+            if open_threads:
+                lines.append("Open threads for today:")
+                for thread in open_threads[:3]:
+                    lines.append(f"  • {thread}")
 
         # Insights
         if summary.insights:

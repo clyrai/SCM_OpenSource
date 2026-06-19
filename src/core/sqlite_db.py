@@ -133,7 +133,10 @@ def init_db():
             sleep_start TEXT NOT NULL DEFAULT '23:00',
             sleep_end TEXT NOT NULL DEFAULT '07:00',
             enabled INTEGER NOT NULL DEFAULT 1,
+            auto_sleep_mode TEXT NOT NULL DEFAULT 'auto',
+            idle_timeout_sec REAL,
             last_sleep_at TEXT,
+            last_sleep_reason TEXT,
             updated_at TEXT NOT NULL
         )
     """)
@@ -184,6 +187,7 @@ def init_db():
     conn.commit()
     _ensure_concept_version_columns(conn)
     _ensure_episode_session_columns(conn)
+    _ensure_user_sleep_config_columns(conn)
     conn.close()
     print(f"Database initialized at {DB_PATH}")
 
@@ -232,6 +236,23 @@ def _ensure_episode_session_columns(conn):
         "CREATE INDEX IF NOT EXISTS idx_episodes_session_ts "
         "ON episodes(session_id, timestamp)"
     )
+    conn.commit()
+
+
+def _ensure_user_sleep_config_columns(conn):
+    """Migration: add auto-sleep mode fields for older DBs."""
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA table_info(user_sleep_config)")
+    existing = {row[1] for row in cursor.fetchall()}
+
+    columns = {
+        "auto_sleep_mode": "TEXT NOT NULL DEFAULT 'auto'",
+        "idle_timeout_sec": "REAL",
+        "last_sleep_reason": "TEXT",
+    }
+    for column, ddl in columns.items():
+        if column not in existing:
+            cursor.execute(f"ALTER TABLE user_sleep_config ADD COLUMN {column} {ddl}")
     conn.commit()
 
 
@@ -634,6 +655,7 @@ class SQLiteMemory:
                         "mode": record.get("mode"),
                         "reason": record.get("reason"),
                         "dreams": record.get("dreams", 0),
+                        "dream_state": record.get("dream_state", {}),
                         "synced_concepts": record.get("synced_concepts", 0),
                         "synced_relations": record.get("synced_relations", 0),
                     }),
@@ -677,6 +699,7 @@ class SQLiteMemory:
                     "consolidated": int(row["memories_consolidated"] or 0),
                     "forgotten": int(row["memories_forgotten"] or 0),
                     "dreams": int(meta.get("dreams") or 0),
+                    "dream_state": meta.get("dream_state") or {},
                     "duration": float((row["nrem_duration"] or 0) + (row["rem_duration"] or 0)),
                     "synced_concepts": int(meta.get("synced_concepts") or 0),
                     "synced_relations": int(meta.get("synced_relations") or 0),
@@ -731,11 +754,24 @@ class SQLiteMemory:
                     "sleep_start": "23:00",
                     "sleep_end": "07:00",
                     "enabled": True,
+                    "auto_sleep_mode": "auto",
+                    "idle_timeout_sec": None,
                     "last_sleep_at": None,
+                    "last_sleep_reason": None,
                     "is_default": True,
                 }
             d = dict(row)
             d["enabled"] = bool(d.get("enabled", 1))
+            mode = str(d.get("auto_sleep_mode") or "auto").strip().lower()
+            if mode not in {"auto", "night_only", "idle_only", "off"}:
+                mode = "auto"
+            d["auto_sleep_mode"] = mode
+            raw_idle = d.get("idle_timeout_sec")
+            try:
+                d["idle_timeout_sec"] = float(raw_idle) if raw_idle is not None else None
+            except Exception:
+                d["idle_timeout_sec"] = None
+            d.setdefault("last_sleep_reason", None)
             d["is_default"] = False
             return d
         finally:
@@ -748,6 +784,9 @@ class SQLiteMemory:
         sleep_start: Optional[str] = None,
         sleep_end: Optional[str] = None,
         enabled: Optional[bool] = None,
+        auto_sleep_mode: Optional[str] = None,
+        idle_timeout_sec: Optional[float] = None,
+        clear_idle_timeout: bool = False,
     ) -> Dict[str, Any]:
         """Upsert this user's sleep config. Only the fields the caller
         provided are updated; missing fields keep their existing or
@@ -760,6 +799,23 @@ class SQLiteMemory:
             int(bool(enabled)) if enabled is not None
             else int(bool(existing.get("enabled", True)))
         )
+        valid_modes = {"auto", "night_only", "idle_only", "off"}
+        mode_existing = str(existing.get("auto_sleep_mode") or "auto").strip().lower()
+        if mode_existing not in valid_modes:
+            mode_existing = "auto"
+        new_mode = (
+            str(auto_sleep_mode).strip().lower()
+            if auto_sleep_mode is not None
+            else mode_existing
+        )
+        if new_mode not in valid_modes:
+            new_mode = "auto"
+        if clear_idle_timeout:
+            new_idle_timeout = None
+        elif idle_timeout_sec is not None:
+            new_idle_timeout = float(idle_timeout_sec)
+        else:
+            new_idle_timeout = existing.get("idle_timeout_sec")
         now = utc_isoformat()
 
         conn = get_connection()
@@ -768,23 +824,43 @@ class SQLiteMemory:
             cursor.execute(
                 """
                 INSERT INTO user_sleep_config
-                  (user_id, timezone, sleep_start, sleep_end, enabled, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?)
+                  (
+                    user_id, timezone, sleep_start, sleep_end, enabled,
+                    auto_sleep_mode, idle_timeout_sec, updated_at
+                  )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(user_id) DO UPDATE SET
                   timezone   = excluded.timezone,
                   sleep_start = excluded.sleep_start,
                   sleep_end   = excluded.sleep_end,
                   enabled     = excluded.enabled,
+                  auto_sleep_mode = excluded.auto_sleep_mode,
+                  idle_timeout_sec = excluded.idle_timeout_sec,
                   updated_at  = excluded.updated_at
                 """,
-                (user_id, new_tz, new_start, new_end, new_enabled, now),
+                (
+                    user_id,
+                    new_tz,
+                    new_start,
+                    new_end,
+                    new_enabled,
+                    new_mode,
+                    new_idle_timeout,
+                    now,
+                ),
             )
             conn.commit()
         finally:
             conn.close()
         return self.get_user_sleep_config(user_id)
 
-    def mark_user_slept(self, user_id: str, when_iso: Optional[str] = None) -> None:
+    def mark_user_slept(
+        self,
+        user_id: str,
+        when_iso: Optional[str] = None,
+        reason: Optional[str] = None,
+        create_if_missing: bool = True,
+    ) -> None:
         """Record that this user just completed a deep-sleep cycle. Used
         by the scheduler to enforce once-per-night."""
         when_iso = when_iso or utc_isoformat()
@@ -793,11 +869,20 @@ class SQLiteMemory:
             cursor = conn.cursor()
             # Make sure a row exists first (insert with defaults if not).
             existing = self.get_user_sleep_config(user_id)
-            if existing.get("is_default"):
+            if existing.get("is_default") and create_if_missing:
                 self.save_user_sleep_config(user_id)
+            cursor.execute("SELECT 1 FROM user_sleep_config WHERE user_id = ?", (user_id,))
+            if cursor.fetchone() is None:
+                return
             cursor.execute(
-                "UPDATE user_sleep_config SET last_sleep_at = ? WHERE user_id = ?",
-                (when_iso, user_id),
+                """
+                UPDATE user_sleep_config
+                SET
+                  last_sleep_at = ?,
+                  last_sleep_reason = COALESCE(?, last_sleep_reason)
+                WHERE user_id = ?
+                """,
+                (when_iso, reason, user_id),
             )
             conn.commit()
         finally:
@@ -815,6 +900,15 @@ class SQLiteMemory:
             for row in rows:
                 d = dict(row)
                 d["enabled"] = bool(d.get("enabled", 1))
+                mode = str(d.get("auto_sleep_mode") or "auto").strip().lower()
+                if mode not in {"auto", "night_only", "idle_only", "off"}:
+                    mode = "auto"
+                d["auto_sleep_mode"] = mode
+                raw_idle = d.get("idle_timeout_sec")
+                try:
+                    d["idle_timeout_sec"] = float(raw_idle) if raw_idle is not None else None
+                except Exception:
+                    d["idle_timeout_sec"] = None
                 out.append(d)
             return out
         finally:

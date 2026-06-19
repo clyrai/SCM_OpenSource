@@ -61,6 +61,8 @@ def test_default_config_when_user_unknown(server):
     assert cfg["sleep_start"] == "23:00"
     assert cfg["sleep_end"] == "07:00"
     assert cfg["enabled"] is True
+    assert cfg["auto_sleep_mode"] == "auto"
+    assert cfg["idle_timeout_sec"] is None
     assert cfg["is_default"] is True
 
 
@@ -70,6 +72,8 @@ def test_post_then_get_round_trip(server):
         "sleep_start": "00:30",
         "sleep_end": "08:15",
         "enabled": True,
+        "auto_sleep_mode": "idle_only",
+        "idle_timeout_sec": 120,
     }
     r = requests.post(f"{server}/v1/users/alice/sleep-config", json=body)
     assert r.status_code == 200
@@ -77,12 +81,16 @@ def test_post_then_get_round_trip(server):
     assert saved["timezone"] == "Europe/Lisbon"
     assert saved["sleep_start"] == "00:30"
     assert saved["sleep_end"] == "08:15"
+    assert saved["auto_sleep_mode"] == "idle_only"
+    assert saved["idle_timeout_sec"] == 120.0
 
     # Read back
     r2 = requests.get(f"{server}/v1/users/alice/sleep-config")
     cfg = r2.json()
     assert cfg["is_default"] is False
     assert cfg["timezone"] == "Europe/Lisbon"
+    assert cfg["auto_sleep_mode"] == "idle_only"
+    assert cfg["idle_timeout_sec"] == 120.0
 
 
 def test_partial_update_keeps_other_fields(server):
@@ -116,6 +124,24 @@ def test_invalid_hhmm_400(server):
     )
     assert r.status_code == 400
     assert "sleep_start" in r.json()["detail"]
+
+
+def test_invalid_auto_sleep_mode_400(server):
+    r = requests.post(
+        f"{server}/v1/users/eve/sleep-config",
+        json={"auto_sleep_mode": "wrong"},
+    )
+    assert r.status_code == 400
+    assert "auto_sleep_mode" in r.json()["detail"]
+
+
+def test_invalid_idle_timeout_400(server):
+    r = requests.post(
+        f"{server}/v1/users/eve/sleep-config",
+        json={"idle_timeout_sec": 0},
+    )
+    assert r.status_code == 400
+    assert "idle_timeout_sec" in r.json()["detail"]
 
 
 def test_disabled_means_no_circadian_fire(server):

@@ -10,6 +10,7 @@ Endpoints:
     POST   /v1/memories              add_memory tool
     POST   /v1/memories/search       search_memory tool
     POST   /v1/memories/consolidate  consolidate tool (manual override)
+    GET    /v1/memories/{id}/lineage version lineage + conflict provenance
     GET    /v1/wake-summary          wake_summary tool
     DELETE /v1/memories/{id}         forget tool
     GET    /v1/tools                 export tool definitions in any format
@@ -85,6 +86,7 @@ def _namespace_for_account(request, payload: Dict[str, Any]) -> Dict[str, Any]:
 # activity, so a manual consolidate doesn't make the user look "active"
 # to the auto-sleep sweeper.
 _USER_ACTIVITY_TOOLS = frozenset({"add_memory", "search_memory"})
+_ALLOWED_AUTO_SLEEP_MODES = frozenset({"auto", "night_only", "idle_only", "off"})
 
 
 def _invoke(tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -154,6 +156,19 @@ def _invoke(tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
     return result
 
 
+def _memory_lineage_for_user(user_id: str, memory_id: str) -> Dict[str, Any]:
+    pool = get_pool()
+    engine = pool.get_or_create(user_id, bump_activity=False)
+    ltm = getattr(engine, "long_term_memory", None)
+    if ltm is None or not hasattr(ltm, "get_lineage"):
+        raise HTTPException(status_code=503, detail="lineage unavailable for this engine")
+    try:
+        payload = ltm.get_lineage(memory_id)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"failed to load lineage: {type(exc).__name__}") from exc
+    return payload if isinstance(payload, dict) else {}
+
+
 # ─── Endpoints ────────────────────────────────────────────────────────────
 
 
@@ -217,11 +232,30 @@ async def forget(memory_id: str, request: Request, user_id: str = Query("default
     return _invoke("forget", payload)
 
 
+@router.get("/memories/{memory_id}/lineage")
+async def memory_lineage(
+    memory_id: str,
+    request: Request,
+    user_id: str = Query("default"),
+) -> Dict[str, Any]:
+    """Return version lineage + contradiction links for one memory concept."""
+    namespaced = _namespace_for_account(request, {"user_id": user_id}).get("user_id") or "default"
+    lineage = _memory_lineage_for_user(namespaced, memory_id)
+    if not lineage:
+        raise HTTPException(status_code=404, detail=f"memory not found: {memory_id}")
+    return {
+        "ok": True,
+        "user_id": user_id,
+        "memory_id": memory_id,
+        "lineage": lineage,
+    }
+
+
 # ─── Per-user circadian sleep schedule (v0.7.7+) ─────────────────────────
 
 
 @router.get("/users/{user_id}/sleep-config")
-async def get_sleep_config(user_id: str) -> Dict[str, Any]:
+async def get_sleep_config(user_id: str, request: Request) -> Dict[str, Any]:
     """Return this user's nightly consolidation schedule.
 
     Defaults to (UTC, 23:00→07:00, enabled) when the user hasn't set
@@ -230,20 +264,27 @@ async def get_sleep_config(user_id: str) -> Dict[str, Any]:
     the human-circadian model that replaces v0.7.6's fixed-idle timer.
     """
     from ..core.sqlite_db import get_memory
-    cfg = get_memory().get_user_sleep_config(user_id)
+    args = _namespace_for_account(request, {"user_id": user_id})
+    namespaced = args.get("user_id") or "default"
+    cfg = get_memory().get_user_sleep_config(namespaced)
     return {
-        "user_id": cfg["user_id"],
+        "user_id": user_id,
         "timezone": cfg["timezone"],
         "sleep_start": cfg["sleep_start"],
         "sleep_end": cfg["sleep_end"],
         "enabled": bool(cfg["enabled"]),
+        "auto_sleep_mode": cfg.get("auto_sleep_mode", "auto"),
+        "idle_timeout_sec": cfg.get("idle_timeout_sec"),
         "is_default": bool(cfg.get("is_default", False)),
         "last_sleep_at": cfg.get("last_sleep_at"),
+        "last_sleep_reason": cfg.get("last_sleep_reason"),
     }
 
 
 @router.post("/users/{user_id}/sleep-config")
-async def set_sleep_config(user_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+async def set_sleep_config(
+    user_id: str, payload: Dict[str, Any], request: Request,
+) -> Dict[str, Any]:
     """Update this user's nightly consolidation schedule.
 
     Body fields (all optional — partial updates supported):
@@ -251,10 +292,15 @@ async def set_sleep_config(user_id: str, payload: Dict[str, Any]) -> Dict[str, A
         sleep_start:  "HH:MM" in local tz, e.g. "23:00"
         sleep_end:    "HH:MM" in local tz, e.g. "07:00"
         enabled:      bool — disable to opt out of nightly sleep
+        auto_sleep_mode: "auto" | "night_only" | "idle_only" | "off"
+        idle_timeout_sec: positive number; null clears custom override
     """
     from zoneinfo import ZoneInfo
     from ..core.sqlite_db import get_memory
     from ..lifecycle.circadian import parse_hhmm
+
+    args = _namespace_for_account(request, {"user_id": user_id})
+    namespaced = args.get("user_id") or "default"
 
     tz = payload.get("timezone")
     if tz is not None:
@@ -266,19 +312,58 @@ async def set_sleep_config(user_id: str, payload: Dict[str, Any]) -> Dict[str, A
         if payload.get(field) is not None and parse_hhmm(payload[field]) is None:
             raise HTTPException(status_code=400, detail=f"{field} must be 'HH:MM'")
 
+    mode = payload.get("auto_sleep_mode")
+    if mode is not None:
+        mode = str(mode).strip().lower()
+        if mode not in _ALLOWED_AUTO_SLEEP_MODES:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "auto_sleep_mode must be one of: "
+                    "auto, night_only, idle_only, off"
+                ),
+            )
+
+    clear_idle_timeout = False
+    idle_timeout_sec = None
+    if "idle_timeout_sec" in payload:
+        raw_idle = payload.get("idle_timeout_sec")
+        if raw_idle in (None, ""):
+            clear_idle_timeout = True
+        else:
+            try:
+                idle_timeout_sec = float(raw_idle)
+            except Exception:
+                raise HTTPException(
+                    status_code=400,
+                    detail="idle_timeout_sec must be a number",
+                )
+            if idle_timeout_sec <= 0:
+                raise HTTPException(
+                    status_code=400,
+                    detail="idle_timeout_sec must be > 0",
+                )
+
     cfg = get_memory().save_user_sleep_config(
-        user_id=user_id,
+        user_id=namespaced,
         timezone_name=tz,
         sleep_start=payload.get("sleep_start"),
         sleep_end=payload.get("sleep_end"),
         enabled=payload.get("enabled"),
+        auto_sleep_mode=mode,
+        idle_timeout_sec=idle_timeout_sec,
+        clear_idle_timeout=clear_idle_timeout,
     )
     return {
-        "user_id": cfg["user_id"],
+        "user_id": user_id,
         "timezone": cfg["timezone"],
         "sleep_start": cfg["sleep_start"],
         "sleep_end": cfg["sleep_end"],
         "enabled": bool(cfg["enabled"]),
+        "auto_sleep_mode": cfg.get("auto_sleep_mode", "auto"),
+        "idle_timeout_sec": cfg.get("idle_timeout_sec"),
+        "last_sleep_at": cfg.get("last_sleep_at"),
+        "last_sleep_reason": cfg.get("last_sleep_reason"),
     }
 
 

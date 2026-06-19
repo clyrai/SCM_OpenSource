@@ -78,6 +78,29 @@ class _SearchMetadataStubAgent:
             }
 
 
+class _StubSemanticReranker:
+    enabled = True
+    force = True
+
+    def rerank(self, query, candidates):
+        target = next((c for c in candidates if "atlas labs" in (c.description or "").lower()), None)
+        if target is None:
+            return {"applied": False, "reason": "no_target"}
+        return {
+            "applied": True,
+            "reason": "stub_rerank",
+            "boosts": {target.id: 0.25},
+        }
+
+
+class _BrokenSemanticReranker:
+    enabled = True
+    force = True
+
+    def rerank(self, query, candidates):
+        raise RuntimeError("boom")
+
+
 def _patch_agent_builders(monkeypatch):
     monkeypatch.setattr(chat_router, "_build_llm", lambda *_a, **_k: object())
     monkeypatch.setattr(
@@ -126,6 +149,43 @@ def test_chat_message_returns_retrieval_snapshot_and_endpoint(monkeypatch):
     assert "updated_at" in payload["retrieval"]
 
 
+def test_chat_retrieval_lineage_endpoint(monkeypatch):
+    _patch_agent_builders(monkeypatch)
+    client = TestClient(app)
+    slug = f"retrieval_lineage_{uuid.uuid4().hex[:8]}"
+
+    seed = client.post(
+        f"/chat/api/message/{slug}",
+        json=_base_payload("I work at Atlas Labs in Zurich."),
+    )
+    assert seed.status_code == 200
+
+    ask = client.post(
+        f"/chat/api/message/{slug}",
+        json=_base_payload("where do i work?"),
+    )
+    assert ask.status_code == 200
+
+    retrieval = client.get(f"/chat/api/retrieval/{slug}")
+    assert retrieval.status_code == 200
+    citations = (retrieval.json().get("retrieval") or {}).get("citations") or []
+    assert citations
+    memory_id = citations[0]["memory_id"]
+    assert memory_id
+
+    lineage = client.get(f"/chat/api/retrieval-lineage/{slug}/{memory_id}")
+    assert lineage.status_code == 200
+    payload = lineage.json()
+    assert payload["ok"] is True
+    assert payload["memory_id"] == memory_id
+    assert payload["lineage"]["current_id"]
+    assert int(payload["lineage"]["version_count"]) >= 1
+
+    missing = client.get(f"/chat/api/retrieval-lineage/{slug}/missing-memory-id")
+    assert missing.status_code == 404
+    assert missing.json()["ok"] is False
+
+
 def test_chat_stream_done_event_includes_retrieval_snapshot(monkeypatch):
     _patch_agent_builders(monkeypatch)
     client = TestClient(app)
@@ -152,3 +212,53 @@ def test_chat_stream_done_event_includes_retrieval_snapshot(monkeypatch):
     assert done, events
     assert "retrieval" in done[-1]
     assert done[-1]["retrieval"]["fusion_mode"] == "weighted_rrf"
+
+
+def test_chat_message_surfaces_byok_semantic_rerank_metadata(monkeypatch):
+    _patch_agent_builders(monkeypatch)
+    monkeypatch.setattr(
+        chat_router,
+        "_build_semantic_reranker",
+        lambda *_a, **_k: _StubSemanticReranker(),
+    )
+    client = TestClient(app)
+    slug = f"retrieval_rerank_{uuid.uuid4().hex[:8]}"
+
+    client.post(
+        f"/chat/api/message/{slug}",
+        json=_base_payload("I work at Atlas Labs in Zurich."),
+    )
+
+    ask = client.post(
+        f"/chat/api/message/{slug}",
+        json=_base_payload("where do i work?"),
+    )
+    assert ask.status_code == 200
+    rerank = ask.json()["retrieval"]["semantic_rerank"]
+    assert rerank["applied"] is True
+    assert rerank["reason"] == "stub_rerank"
+
+
+def test_chat_message_rerank_failure_falls_back(monkeypatch):
+    _patch_agent_builders(monkeypatch)
+    monkeypatch.setattr(
+        chat_router,
+        "_build_semantic_reranker",
+        lambda *_a, **_k: _BrokenSemanticReranker(),
+    )
+    client = TestClient(app)
+    slug = f"retrieval_rerank_fail_{uuid.uuid4().hex[:8]}"
+
+    client.post(
+        f"/chat/api/message/{slug}",
+        json=_base_payload("I work at Atlas Labs in Zurich."),
+    )
+
+    ask = client.post(
+        f"/chat/api/message/{slug}",
+        json=_base_payload("where do i work?"),
+    )
+    assert ask.status_code == 200
+    rerank = ask.json()["retrieval"]["semantic_rerank"]
+    assert rerank["applied"] is False
+    assert rerank["reason"].startswith("hook_error:")

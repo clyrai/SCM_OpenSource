@@ -660,6 +660,105 @@ class LongTermMemory:
             'versioned_count': versioned,
         }
 
+    @staticmethod
+    def _iso_or_none(value: Any) -> Optional[str]:
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return value
+        try:
+            normalized = ensure_utc(value)
+            if normalized is not None:
+                return normalized.isoformat()
+        except Exception:
+            pass
+        try:
+            return value.isoformat()
+        except Exception:
+            return str(value)
+
+    def _lineage_sort_key(self, concept: Concept) -> Tuple[float, float, str]:
+        valid_from = ensure_utc(getattr(concept, "valid_from", None))
+        created_at = ensure_utc(getattr(concept, "created_at", None))
+        valid_ts = valid_from.timestamp() if valid_from is not None else 0.0
+        created_ts = created_at.timestamp() if created_at is not None else 0.0
+        return (valid_ts, created_ts, concept.id)
+
+    def get_lineage(self, concept_id: str) -> Dict[str, Any]:
+        """Return version lineage + contradiction edges for one concept."""
+        target = self.get_concept(concept_id)
+        if target is None:
+            return {}
+
+        root_id = getattr(target, "version_root", None) or target.id
+        lineage_map: Dict[str, Concept] = {}
+
+        for concept in self.get_all_concepts(
+            include_suppressed=True,
+            include_superseded=True,
+        ):
+            concept_root = getattr(concept, "version_root", None) or concept.id
+            if concept.id == concept_id or concept_root == root_id:
+                lineage_map[concept.id] = concept
+
+        if target.id not in lineage_map:
+            lineage_map[target.id] = target
+
+        ordered = sorted(lineage_map.values(), key=self._lineage_sort_key)
+        current = next((c for c in ordered if getattr(c, "is_current_version", False)), target)
+
+        versions: List[Dict[str, Any]] = []
+        for concept in ordered:
+            tags = concept.context_tags if isinstance(concept.context_tags, dict) else {}
+            versions.append({
+                "id": concept.id,
+                "type": concept.type.value if hasattr(concept.type, "value") else str(concept.type),
+                "description": concept.description,
+                "state": concept.state.value if hasattr(concept.state, "value") else str(concept.state),
+                "version_root": getattr(concept, "version_root", None) or concept.id,
+                "version_parent": getattr(concept, "version_parent", None),
+                "is_current_version": bool(getattr(concept, "is_current_version", True)),
+                "valid_from": self._iso_or_none(getattr(concept, "valid_from", None)),
+                "valid_to": self._iso_or_none(getattr(concept, "valid_to", None)),
+                "created_at": self._iso_or_none(getattr(concept, "created_at", None)),
+                "last_accessed": self._iso_or_none(getattr(concept, "last_accessed", None)),
+                "superseded_by": tags.get("superseded_by"),
+                "superseded_at": tags.get("superseded_at"),
+                "provenance": {
+                    "source": tags.get("source"),
+                    "session_id": tags.get("session_id"),
+                    "person": tags.get("person"),
+                    "task": tags.get("task"),
+                },
+            })
+
+        lineage_ids = set(lineage_map.keys())
+        conflicts: List[Dict[str, Any]] = []
+        for relation in self.get_all_relations(include_history=True):
+            predicate = relation.predicate.value if hasattr(relation.predicate, "value") else str(relation.predicate)
+            if predicate != PredicateType.CONTRADICTS.value:
+                continue
+            if relation.subject_id not in lineage_ids or relation.object_id not in lineage_ids:
+                continue
+            conflicts.append({
+                "relation_id": relation.id,
+                "from": relation.subject_id,
+                "to": relation.object_id,
+                "predicate": predicate,
+                "strength": float(relation.strength),
+                "created_at": self._iso_or_none(getattr(relation, "created_at", None)),
+            })
+
+        return {
+            "memory_id": concept_id,
+            "version_root": root_id,
+            "current_id": current.id,
+            "version_count": len(versions),
+            "conflict_count": len(conflicts),
+            "versions": versions,
+            "conflicts": conflicts,
+        }
+
     def _persist_concept(self, concept: Concept):
         """Save concept to database (PostgreSQL -> SQLite fallback)"""
         if not self._persist_enabled:

@@ -83,6 +83,17 @@ def _add_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
     }
 
 
+def _iso_or_none(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return value
+    try:
+        return value.isoformat()
+    except Exception:
+        return str(value)
+
+
 def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
     """Retrieve memories relevant to a query via the latest hybrid stack.
 
@@ -97,9 +108,24 @@ def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
         return {"ok": False, "error": "query is required"}
     user_id = args.get("user_id") or "default"
     limit = int(args.get("limit") or 5)
+    ltm = getattr(engine, "long_term_memory", None)
+    lineage_cache: Dict[str, Dict[str, Any]] = {}
 
     seen_ids: set = set()
     concepts: List[Dict[str, Any]] = []
+
+    def _lineage_for(cid: str) -> Dict[str, Any]:
+        cached = lineage_cache.get(cid)
+        if cached is not None:
+            return cached
+        lineage: Dict[str, Any] = {}
+        if ltm is not None and hasattr(ltm, "get_lineage"):
+            try:
+                lineage = ltm.get_lineage(cid) or {}
+            except Exception:
+                lineage = {}
+        lineage_cache[cid] = lineage
+        return lineage
 
     def _add(c) -> None:
         cid = getattr(c, "id", "")
@@ -112,6 +138,16 @@ def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
         tags = getattr(c, "context_tags", None)
         if isinstance(tags, dict) and tags.get("_internal"):
             return
+        tags = tags if isinstance(tags, dict) else {}
+        lineage_payload = _lineage_for(cid)
+        version_root = (
+            getattr(c, "version_root", None)
+            or tags.get("version_root")
+            or cid
+        )
+        version_parent = getattr(c, "version_parent", None) or tags.get("version_parent")
+        conflict_count = int(lineage_payload.get("conflict_count", 0) or 0)
+        version_count = int(lineage_payload.get("version_count", 0) or 0)
         seen_ids.add(cid)
         concepts.append({
             "id": cid,
@@ -122,6 +158,25 @@ def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
                 c.created_at.isoformat()
                 if getattr(c, "created_at", None) else None
             ),
+            "lineage": {
+                "version_root": version_root,
+                "version_parent": version_parent,
+                "is_current_version": bool(getattr(c, "is_current_version", True)),
+                "valid_from": _iso_or_none(getattr(c, "valid_from", None)),
+                "valid_to": _iso_or_none(getattr(c, "valid_to", None)),
+                "current_id": lineage_payload.get("current_id") or cid,
+                "version_count": max(version_count, 1),
+                "conflict_count": max(conflict_count, 0),
+            },
+            "provenance": {
+                "source": tags.get("source"),
+                "session_id": tags.get("session_id"),
+                "person": tags.get("person"),
+                "task": tags.get("task"),
+                "event_key": tags.get("event_key"),
+                "superseded_by": tags.get("superseded_by"),
+                "superseded_at": tags.get("superseded_at"),
+            },
         })
 
     memory_context: str = ""
@@ -140,61 +195,67 @@ def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
         "person": None,
     }
     channel_limit = max(limit * 2, 8)
-    hybrid_candidates = []
+    cached_candidates = getattr(engine, "_last_hybrid_candidates", None)
+    cached_query = getattr(engine, "_last_hybrid_query", None)
+    hybrid_candidates = (
+        list(cached_candidates)
+        if isinstance(cached_candidates, list) and cached_query == query
+        else []
+    )
     sa = getattr(engine, "_spreading_activation", None)
 
-    try:
-        graph_concepts = []
-        if sa is not None:
-            graph_concepts, _sa_stats = sa.retrieve(query, context_tags=context_tags)
+    if not hybrid_candidates:
+        try:
+            graph_concepts = []
+            if sa is not None:
+                graph_concepts, _sa_stats = sa.retrieve(query, context_tags=context_tags)
 
-        semantic_concepts = (
-            engine._semantic_channel_candidates(
-                query=query,
-                query_embedding=None,
-                limit=channel_limit,
+            semantic_concepts = (
+                engine._semantic_channel_candidates(
+                    query=query,
+                    query_embedding=None,
+                    limit=channel_limit,
+                )
+                if hasattr(engine, "_semantic_channel_candidates")
+                else []
             )
-            if hasattr(engine, "_semantic_channel_candidates")
-            else []
-        )
-        lexical_concepts = (
-            engine._lexical_channel_candidates(query=query, limit=channel_limit)
-            if hasattr(engine, "_lexical_channel_candidates")
-            else []
-        )
-        exact_concepts = (
-            engine._exact_channel_candidates(query=query, limit=channel_limit)
-            if hasattr(engine, "_exact_channel_candidates")
-            else []
-        )
+            lexical_concepts = (
+                engine._lexical_channel_candidates(query=query, limit=channel_limit)
+                if hasattr(engine, "_lexical_channel_candidates")
+                else []
+            )
+            exact_concepts = (
+                engine._exact_channel_candidates(query=query, limit=channel_limit)
+                if hasattr(engine, "_exact_channel_candidates")
+                else []
+            )
 
-        if hasattr(engine, "_fuse_hybrid_channels"):
-            hybrid_candidates, _scores, _votes = engine._fuse_hybrid_channels(
-                channels={
-                    "graph": graph_concepts,
-                    "semantic": semantic_concepts,
-                    "lexical": lexical_concepts,
-                    "exact": exact_concepts,
-                },
-                context_tags=context_tags,
-                exact_match_ids={c.id for c in exact_concepts},
-            )
-        else:
-            # Backward-compat fallback for older engines.
-            hybrid_candidates = [
-                *graph_concepts,
-                *semantic_concepts,
-                *lexical_concepts,
-                *exact_concepts,
-            ]
-    except Exception:
-        hybrid_candidates = []
+            if hasattr(engine, "_fuse_hybrid_channels"):
+                hybrid_candidates, _scores, _votes = engine._fuse_hybrid_channels(
+                    channels={
+                        "graph": graph_concepts,
+                        "semantic": semantic_concepts,
+                        "lexical": lexical_concepts,
+                        "exact": exact_concepts,
+                    },
+                    context_tags=context_tags,
+                    exact_match_ids={c.id for c in exact_concepts},
+                )
+            else:
+                # Backward-compat fallback for older engines.
+                hybrid_candidates = [
+                    *graph_concepts,
+                    *semantic_concepts,
+                    *lexical_concepts,
+                    *exact_concepts,
+                ]
+        except Exception:
+            hybrid_candidates = []
 
     for c in hybrid_candidates[: limit * 3]:
         _add(c)
 
     # 3) Last fallback: text search if everything above returned nothing.
-    ltm = getattr(engine, "long_term_memory", None)
     if not concepts and ltm is not None:
         try:
             results = ltm.search_by_text(query, limit=limit)
@@ -218,6 +279,16 @@ def _search_memory_handler(args: Dict[str, Any], engine: Any) -> Dict[str, Any]:
             "lexical": int(retrieval_stats.get("ltm_lexical", 0) or 0),
             "exact": int(retrieval_stats.get("ltm_exact", 0) or 0),
         },
+        "semantic_rerank": retrieval_stats.get("semantic_rerank") or {},
+        "citations": [
+            {
+                "memory_id": m.get("id"),
+                "version_root": (m.get("lineage") or {}).get("version_root"),
+                "is_current_version": bool((m.get("lineage") or {}).get("is_current_version", True)),
+                "source": (m.get("provenance") or {}).get("source"),
+            }
+            for m in concepts[:limit]
+        ],
     }
 
     return {

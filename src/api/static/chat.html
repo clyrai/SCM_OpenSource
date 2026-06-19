@@ -58,6 +58,7 @@
   a:hover { text-decoration-color: var(--ink); }
   code, pre, .mono { font-family: var(--mono); }
   button { font-family: inherit; }
+  .hidden { display: none !important; }
 
   /* ── Top nav ───────────────────────────────────────────────────── */
   .nav {
@@ -203,9 +204,69 @@
   .sleep-btn:hover { background: var(--ink-hover); }
   .sleep-btn:active { transform: translateY(1px); }
   .sleep-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .sleep-actions {
+    display: flex; gap: 8px; align-items: stretch;
+  }
+  .sleep-actions .sleep-btn { flex: 1; }
+  .sleep-secondary-btn, .sleep-save-btn {
+    background: var(--bg-card);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    font: 500 12.5px var(--sans);
+    cursor: pointer;
+    padding: 11px 12px;
+    transition: background 150ms, border-color 150ms;
+  }
+  .sleep-secondary-btn:hover, .sleep-save-btn:hover {
+    background: var(--bg-soft);
+    border-color: var(--ink);
+  }
+  .sleep-meta, .sleep-status {
+    margin-top: 10px;
+    padding: 9px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r-sm);
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
   .sleep-explain {
     font-size: 11.5px; color: var(--text-faint); margin-top: 8px; line-height: 1.55;
   }
+  .sleep-settings {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--r);
+  }
+  .sleep-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .sleep-settings .field { margin-bottom: 10px; }
+  .sleep-checkbox {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .sleep-checkbox input { width: auto; }
+  .sleep-settings-actions {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    margin-top: 12px;
+  }
+  .sleep-link-btn {
+    background: transparent;
+    border: 0;
+    color: var(--text-muted);
+    cursor: pointer;
+    font: 500 12px var(--sans);
+    padding: 6px 0;
+  }
+  .sleep-link-btn:hover { color: var(--ink); }
 
   .memory-section { margin-bottom: 16px; }
   .memory-section .section-head {
@@ -243,6 +304,31 @@
   .mem-section-empty {
     font-size: 11.5px; color: var(--text-faint); font-style: italic;
     padding: 4px;
+  }
+  .lineage-citations {
+    margin-top: 7px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .lineage-link {
+    border: 1px solid var(--border);
+    background: var(--bg-warm);
+    color: var(--ink);
+    border-radius: var(--r-pill);
+    padding: 3px 9px;
+    font: 500 11px var(--mono);
+    cursor: pointer;
+    transition: background 140ms, border-color 140ms, color 140ms;
+  }
+  .lineage-link:hover {
+    background: var(--hover-bg);
+    border-color: var(--ink);
+  }
+  .lineage-meta {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
   }
 
   /* ── Conversation ──────────────────────────────────────────────── */
@@ -484,6 +570,25 @@
     background: var(--ink); color: white; border: 0;
   }
   .modal-btn.primary:hover { background: var(--ink-hover); }
+  .modal-btn.secondary {
+    background: var(--bg-card);
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .modal-btn.secondary:hover { background: var(--bg-soft); }
+  .lineage-json {
+    margin-top: 12px;
+    border: 1px solid var(--border-soft);
+    background: #1f1d1b;
+    color: #f2efe9;
+    border-radius: var(--r);
+    padding: 10px 12px;
+    font: 11.5px/1.55 var(--mono);
+    max-height: 320px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 
   /* ── Toast ─────────────────────────────────────────────────────── */
   .toast {
@@ -510,7 +615,8 @@
     </a>
     <div class="nav-right">
       <span id="statusPill" class="pill" title="Click to open settings">no key</span>
-      <button class="nav-icon-btn" id="settingsBtn" title="Settings" aria-label="Settings">
+      <span id="rerankPill" class="pill" title="Semantic retrieval rerank status">semantic rerank</span>
+      <button class="nav-icon-btn" id="settingsBtn" title="LLM settings" aria-label="LLM settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -566,15 +672,64 @@
   <!-- ── Right sidebar: sleep + memory ──────────────────────────── -->
   <aside class="sidebar-right" id="memoryPanel">
     <h2>Sleep cycle</h2>
-    <div class="desc">SCM consolidates memories at night. Skip ahead to see what your agent figured out.</div>
-    <button class="sleep-btn" id="sleepBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-      </svg>
-      Simulate night
-    </button>
+    <div class="desc">Configure auto-sleep for this chat. SCM can sleep after idle time or in your night window, then surface a wake summary when you come back.</div>
+    <div class="sleep-actions">
+      <button class="sleep-btn" id="sleepBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        Sleep now
+      </button>
+      <button class="sleep-secondary-btn" id="sleepSettingsToggleBtn">Settings</button>
+    </div>
+    <div class="sleep-meta" id="sleepMeta">Auto mode currently uses idle fallback for this chat.</div>
     <div class="sleep-explain">
-      Fires a deep-sleep cycle: NREM consolidation + REM schema extraction. The agent will surface what it noticed in your next message.
+      Manual sleep uses your live BYOK key if present. Auto-sleep while you're away stays heuristic because your key is never stored on the server.
+    </div>
+    <div class="sleep-status" id="sleepStatus">No sleep cycle recorded yet.</div>
+
+    <div class="sleep-settings hidden" id="sleepSettingsPanel">
+      <div class="field">
+        <label class="field-label" for="sleepMode">Auto-sleep mode</label>
+        <select id="sleepMode">
+          <option value="auto">Auto</option>
+          <option value="night_only">Night-only</option>
+          <option value="idle_only">Idle-only</option>
+          <option value="off">Off</option>
+        </select>
+      </div>
+
+      <div class="sleep-grid">
+        <div class="field">
+          <label class="field-label" for="sleepTimezone">Timezone</label>
+          <input type="text" id="sleepTimezone" placeholder="Europe/Lisbon"/>
+        </div>
+        <div class="field">
+          <label class="field-label" for="sleepIdleTimeout">Idle timeout <span class="field-hint">sec</span></label>
+          <input type="text" id="sleepIdleTimeout" placeholder="300"/>
+        </div>
+      </div>
+
+      <div class="sleep-grid">
+        <div class="field">
+          <label class="field-label" for="sleepStart">Sleep starts</label>
+          <input type="text" id="sleepStart" placeholder="23:00"/>
+        </div>
+        <div class="field">
+          <label class="field-label" for="sleepEnd">Sleep ends</label>
+          <input type="text" id="sleepEnd" placeholder="07:00"/>
+        </div>
+      </div>
+
+      <label class="sleep-checkbox">
+        <input type="checkbox" id="sleepEnabled"/>
+        <span>Enable nightly auto-sleep</span>
+      </label>
+
+      <div class="sleep-settings-actions">
+        <button class="sleep-save-btn" id="sleepSettingsSaveBtn">Save</button>
+        <button class="sleep-link-btn" id="sleepSettingsCancelBtn">Hide</button>
+      </div>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -627,9 +782,9 @@
 
 <!-- ── Settings modal ────────────────────────────────────────────── -->
 <div class="modal-backdrop" id="settingsModal">
-  <div class="modal" role="dialog" aria-label="Settings" onclick="event.stopPropagation()">
+  <div class="modal" role="dialog" aria-label="LLM settings" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <h2>Settings</h2>
+      <h2>LLM settings</h2>
       <button class="modal-close" id="settingsClose" aria-label="Close">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -667,6 +822,51 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="rerankModal">
+  <div class="modal" role="dialog" aria-label="Semantic rerank" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h2>Semantic rerank</h2>
+      <button class="modal-close" id="rerankClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="desc" id="rerankModalDesc">Semantic rerank can use your BYOK provider to improve harder memory queries.</div>
+    <div class="privacy-note" id="rerankModalStatus">
+      <b>Status.</b> Checking provider support…
+    </div>
+    <div class="privacy-note" id="rerankModalWhy">
+      <b>How it works.</b> SCM still keeps graph, lexical, and exact-match retrieval. Semantic rerank is only an on-demand boost.
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" id="rerankOpenSettingsBtn">LLM settings</button>
+      <button class="modal-btn primary" id="rerankDoneBtn">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="lineageModal">
+  <div class="modal" role="dialog" aria-label="Memory lineage" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h2>Memory lineage</h2>
+      <button class="modal-close" id="lineageClose" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="desc" id="lineageModalDesc">Lineage includes version history and contradiction edges for this memory.</div>
+    <div class="privacy-note" id="lineageModalMeta">
+      <b>Status.</b> Pick a citation from Retrieval to inspect lineage.
+    </div>
+    <pre class="lineage-json" id="lineageModalJson">No lineage loaded yet.</pre>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="lineageDoneBtn">Done</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -694,6 +894,13 @@
   const m = window.location.pathname.match(/\/chat\/s\/([a-zA-Z0-9_-]+)/);
   const slug = m ? m[1] : null;
   if (!slug) window.location.href = "/chat";
+  const browserTZ = (() => {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+    catch { return "UTC"; }
+  })();
+  let semanticCapabilityMap = null;
+  let capabilityRefreshTimer = null;
+  let lastCapabilitySignature = "";
 
   // ── BYOK persistence ──────────────────────────────────────────
   function loadCfg() {
@@ -707,6 +914,7 @@
     localStorage.setItem(APIKEY_KEY, $("cfgKey").value.trim());
     localStorage.setItem(MODEL_KEY, $("cfgModel").value.trim());
     updateStatus();
+    queueCapabilityRefresh();
   }
   function updateStatus() {
     const has_key = !!($("cfgKey").value || "").trim();
@@ -721,10 +929,18 @@
       pill.className = "pill";
       pill.title = "Click to add your LLM key";
     }
+    updateRerankStatus();
   }
   $("cfgProvider").addEventListener("change", saveCfg);
   $("cfgKey").addEventListener("input", saveCfg);
   $("cfgModel").addEventListener("input", saveCfg);
+
+  function queueCapabilityRefresh() {
+    clearTimeout(capabilityRefreshTimer);
+    capabilityRefreshTimer = setTimeout(() => {
+      refreshByokCapabilities();
+    }, 260);
+  }
 
   // ── Settings modal ────────────────────────────────────────────
   function openSettings() {
@@ -732,17 +948,37 @@
     setTimeout(() => $("cfgKey").focus(), 50);
   }
   function closeSettings() { $("settingsModal").classList.remove("open"); }
+  function openRerankModal() { $("rerankModal").classList.add("open"); }
+  function closeRerankModal() { $("rerankModal").classList.remove("open"); }
+  function openLineageModal() { $("lineageModal").classList.add("open"); }
+  function closeLineageModal() { $("lineageModal").classList.remove("open"); }
   $("statusPill").addEventListener("click", openSettings);
+  $("rerankPill").addEventListener("click", openRerankModal);
   $("settingsBtn").addEventListener("click", openSettings);
   $("settingsClose").addEventListener("click", closeSettings);
   $("settingsSave").addEventListener("click", closeSettings);
+  $("rerankClose").addEventListener("click", closeRerankModal);
+  $("rerankDoneBtn").addEventListener("click", closeRerankModal);
+  $("lineageClose").addEventListener("click", closeLineageModal);
+  $("lineageDoneBtn").addEventListener("click", closeLineageModal);
+  $("rerankOpenSettingsBtn").addEventListener("click", () => {
+    closeRerankModal();
+    openSettings();
+  });
   $("settingsModal").addEventListener("click", e => {
     if (e.target === $("settingsModal")) closeSettings();
   });
+  $("rerankModal").addEventListener("click", e => {
+    if (e.target === $("rerankModal")) closeRerankModal();
+  });
+  $("lineageModal").addEventListener("click", e => {
+    if (e.target === $("lineageModal")) closeLineageModal();
+  });
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && $("settingsModal").classList.contains("open")) {
-      closeSettings();
-    }
+    if (e.key !== "Escape") return;
+    if ($("lineageModal").classList.contains("open")) closeLineageModal();
+    if ($("rerankModal").classList.contains("open")) closeRerankModal();
+    if ($("settingsModal").classList.contains("open")) closeSettings();
   });
 
   // ── Toast helper ─────────────────────────────────────────────
@@ -753,6 +989,141 @@
     t.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+  }
+
+  async function fetchJSON(url, opts = {}) {
+    const r = await fetch(url, opts);
+    let body = null;
+    try { body = await r.json(); } catch {}
+    if (!r.ok) {
+      throw new Error((body && (body.detail || body.error)) || `HTTP ${r.status}`);
+    }
+    return body;
+  }
+
+  function formatDateTime(iso) {
+    if (!iso) return "—";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "—";
+    return d.toLocaleString();
+  }
+
+  function shortId(value, head = 8, tail = 4) {
+    const s = String(value || "");
+    if (!s) return "—";
+    if (s.length <= head + tail + 1) return s;
+    return `${s.slice(0, head)}…${s.slice(-tail)}`;
+  }
+
+  async function openLineageForMemory(memoryId) {
+    const mid = String(memoryId || "").trim();
+    if (!mid) return;
+    const desc = $("lineageModalDesc");
+    const meta = $("lineageModalMeta");
+    const raw = $("lineageModalJson");
+    openLineageModal();
+    desc.textContent = `Loading lineage for ${shortId(mid)}…`;
+    meta.innerHTML = `<b>Memory.</b> <code>${escape(mid)}</code>`;
+    raw.textContent = "Loading…";
+    try {
+      const data = await fetchJSON(`/chat/api/retrieval-lineage/${slug}/${encodeURIComponent(mid)}`);
+      const lineage = data.lineage || {};
+      const versionCount = Number(lineage.version_count || ((lineage.versions || []).length || 0));
+      const conflictCount = Number(lineage.conflict_count || ((lineage.conflicts || []).length || 0));
+      desc.textContent = `Lineage for ${shortId(mid)} · ${versionCount} versions`;
+      meta.innerHTML = `<b>Current.</b> <code>${escape(lineage.current_id || "—")}</code> · <b>Root.</b> <code>${escape(lineage.root_id || "—")}</code> · <b>Conflicts.</b> ${escape(String(conflictCount))}`;
+      raw.textContent = JSON.stringify(lineage, null, 2);
+    } catch (e) {
+      desc.textContent = `Lineage unavailable for ${shortId(mid)}`;
+      meta.innerHTML = `<b>Status.</b> ${escape(e.message || "request failed")}`;
+      raw.textContent = "";
+      showToast(`Lineage fetch failed: ${e.message}`);
+    }
+  }
+
+  async function refreshByokCapabilities() {
+    const provider = ($("cfgProvider").value || "").trim().toLowerCase();
+    const apiKey = ($("cfgKey").value || "").trim();
+    const signature = `${provider}|${apiKey}`;
+    if (signature === lastCapabilitySignature && semanticCapabilityMap) {
+      updateRerankStatus();
+      return;
+    }
+    try {
+      if (provider && apiKey) {
+        semanticCapabilityMap = await fetchJSON("/chat/api/byok-capabilities", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            llm_provider: provider,
+            llm_api_key: apiKey,
+          }),
+        });
+      } else {
+        semanticCapabilityMap = await fetchJSON("/chat/api/byok-capabilities");
+      }
+      lastCapabilitySignature = signature;
+    } catch {
+      semanticCapabilityMap = null;
+      lastCapabilitySignature = "";
+    }
+    updateRerankStatus();
+  }
+
+  function updateRerankStatus() {
+    const provider = $("cfgProvider").value;
+    const hasKey = !!($("cfgKey").value || "").trim();
+    const pill = $("rerankPill");
+    const modalDesc = $("rerankModalDesc");
+    const modalStatus = $("rerankModalStatus");
+    const modalWhy = $("rerankModalWhy");
+    const info = (((semanticCapabilityMap || {}).semantic_rerank || {}).providers || {})[provider];
+
+    if (!pill || !modalDesc || !modalStatus || !modalWhy) return;
+
+    if (!semanticCapabilityMap) {
+      pill.textContent = "semantic rerank · …";
+      pill.className = "pill";
+      pill.title = "Checking server support";
+      modalDesc.textContent = "Semantic rerank can use your BYOK provider to improve harder memory queries.";
+      modalStatus.innerHTML = `<b>Status.</b> Checking provider support…`;
+      modalWhy.innerHTML = `<b>How it works.</b> SCM still keeps graph, lexical, and exact-match retrieval. Semantic rerank is only an on-demand boost.`;
+      return;
+    }
+
+    if (!hasKey) {
+      pill.textContent = "semantic rerank · no key";
+      pill.className = "pill";
+      pill.title = "Add your provider key to enable live chat and optional rerank";
+      modalDesc.textContent = `Semantic rerank is available only after you add a ${provider} key.`;
+      modalStatus.innerHTML = `<b>Status.</b> No active key for ${escape(provider)}.`;
+      modalWhy.innerHTML = `<b>How it works.</b> Once you add a key, SCM can optionally rerank difficult memory queries. Fast paths still use normal hybrid retrieval with no extra provider call.`;
+      return;
+    }
+
+    if (info && info.supported) {
+      pill.textContent = "semantic rerank · on-demand";
+      pill.className = "pill live";
+      pill.title = `${provider} rerank uses ${info.model || "the configured embedding model"} on harder retrievals`;
+      modalDesc.textContent = `${provider} semantic rerank is available for this chat.`;
+      modalStatus.innerHTML = `<b>Status.</b> On-demand using <code>${escape(info.model || "configured model")}</code>.`;
+      modalWhy.innerHTML = `<b>Why it matters.</b> SCM still retrieves with graph, lexical, and exact channels first. This provider embedding call is only used on harder queries, so it should not slow every turn.`;
+      return;
+    }
+
+    pill.textContent = "semantic rerank · off";
+    pill.className = "pill";
+    pill.title = (info && info.note) || "This provider is not configured for semantic rerank on this server";
+    modalDesc.textContent = `${provider} semantic rerank is currently unavailable on this server.`;
+    modalStatus.innerHTML = `<b>Status.</b> ${(info && info.note) || `No semantic rerank is configured for ${escape(provider)} on this server.`}`;
+    modalWhy.innerHTML = `<b>What still works.</b> Your chat replies still use ${escape(provider)}. SCM retrieval still uses graph, lexical, exact, and canonical semantic channels even when provider rerank is off.`;
+  }
+
+  function semanticRerankSummary(info) {
+    if (!info || typeof info !== "object") return "";
+    if (info.applied) return `semantic rerank · ${info.reason || "applied"}`;
+    if (info.reason) return `semantic rerank · ${info.reason}`;
+    return "";
   }
 
   // ── Chat history (localStorage) ──────────────────────────────
@@ -824,6 +1195,128 @@
     window.location.href = `/chat/s/${s}`;
   }
   $("newChatBtn").addEventListener("click", newChat);
+
+  let sleepConfigLoaded = false;
+
+  function setSleepSettingsOpen(open) {
+    $("sleepSettingsPanel").classList.toggle("hidden", !open);
+    $("sleepSettingsToggleBtn").textContent = open ? "Hide" : "Settings";
+  }
+
+  function applySleepModeUi() {
+    const mode = $("sleepMode").value || "auto";
+    const nightDisabled = mode === "idle_only" || mode === "off";
+    $("sleepTimezone").disabled = nightDisabled;
+    $("sleepStart").disabled = nightDisabled;
+    $("sleepEnd").disabled = nightDisabled;
+    $("sleepEnabled").disabled = nightDisabled;
+    $("sleepIdleTimeout").disabled = mode !== "idle_only";
+  }
+
+  function renderSleepConfig(cfg) {
+    $("sleepMode").value = cfg.auto_sleep_mode || "auto";
+    $("sleepTimezone").value = (cfg.is_default_schedule && (!cfg.timezone || cfg.timezone === "UTC"))
+      ? browserTZ
+      : (cfg.timezone || browserTZ);
+    $("sleepStart").value = cfg.sleep_start || "23:00";
+    $("sleepEnd").value = cfg.sleep_end || "07:00";
+    $("sleepEnabled").checked = cfg.enabled !== false;
+    $("sleepIdleTimeout").value = cfg.idle_timeout_sec == null ? "" : `${cfg.idle_timeout_sec}`;
+
+    const idleLabel = cfg.idle_timeout_sec == null
+      ? `${cfg.default_idle_timeout_sec || 300}s default`
+      : `${cfg.idle_timeout_sec}s`;
+    let meta = "Auto-sleep is off for this chat.";
+    if ((cfg.auto_sleep_mode || "auto") === "auto" && cfg.is_default_schedule) {
+      meta = `Auto currently uses idle fallback (${idleLabel}). Saving a night window here switches auto to nightly sleep.`;
+    } else if ((cfg.auto_sleep_mode || "auto") === "auto") {
+      meta = `Auto currently follows ${cfg.sleep_start || "23:00"}–${cfg.sleep_end || "07:00"} in ${cfg.timezone || "UTC"}.`;
+    } else if (cfg.auto_sleep_mode === "night_only") {
+      meta = `Night-only sleeps during ${cfg.sleep_start || "23:00"}–${cfg.sleep_end || "07:00"} in ${cfg.timezone || "UTC"}.`;
+    } else if (cfg.auto_sleep_mode === "idle_only") {
+      meta = `Idle-only sleeps after ${idleLabel} of inactivity.`;
+    }
+    $("sleepMeta").textContent = meta;
+
+    const localTime = cfg.now_local
+      ? new Date(cfg.now_local).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      : "—";
+    const reason = String(cfg.last_sleep_reason || "").replace(/_/g, " ");
+    if (cfg.last_sleep_at) {
+      $("sleepStatus").textContent = `Local time ${localTime} · Last sleep ${formatDateTime(cfg.last_sleep_at)} · ${reason || "unknown trigger"}`;
+    } else if (cfg.in_sleep_window) {
+      $("sleepStatus").textContent = `Local time ${localTime} · You're currently inside the configured sleep window.`;
+    } else {
+      $("sleepStatus").textContent = `Local time ${localTime} · No sleep cycle recorded yet.`;
+    }
+
+    applySleepModeUi();
+    sleepConfigLoaded = true;
+  }
+
+  async function refreshSleepPanel(force = false) {
+    if (sleepConfigLoaded && !force) return;
+    try {
+      const cfg = await fetchJSON(`/chat/api/sleep-config/${slug}`);
+      renderSleepConfig(cfg);
+    } catch (e) {
+      showToast(`Sleep settings unavailable: ${e.message}`);
+    }
+  }
+
+  async function saveSleepConfig() {
+    const mode = $("sleepMode").value || "auto";
+    const payload = { auto_sleep_mode: mode };
+    if (mode === "auto" || mode === "night_only") {
+      payload.timezone = $("sleepTimezone").value.trim() || browserTZ || "UTC";
+      payload.sleep_start = $("sleepStart").value.trim();
+      payload.sleep_end = $("sleepEnd").value.trim();
+      payload.enabled = $("sleepEnabled").checked;
+    }
+    if (mode === "idle_only") {
+      const idleRaw = $("sleepIdleTimeout").value.trim();
+      if (!idleRaw) {
+        payload.idle_timeout_sec = null;
+      } else {
+        const idleValue = Number(idleRaw);
+        if (!Number.isFinite(idleValue) || idleValue <= 0) {
+          showToast("Idle timeout must be a positive number.");
+          return;
+        }
+        payload.idle_timeout_sec = idleValue;
+      }
+    }
+
+    $("sleepSettingsSaveBtn").disabled = true;
+    try {
+      await fetchJSON(`/chat/api/sleep-config/${slug}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      sleepConfigLoaded = false;
+      await refreshSleepPanel(true);
+      setSleepSettingsOpen(false);
+      showToast("Sleep settings saved.");
+    } catch (e) {
+      showToast(`Couldn't save sleep settings: ${e.message}`);
+    } finally {
+      $("sleepSettingsSaveBtn").disabled = false;
+    }
+  }
+
+  $("sleepSettingsToggleBtn").addEventListener("click", async () => {
+    const isOpen = !$("sleepSettingsPanel").classList.contains("hidden");
+    if (isOpen) {
+      setSleepSettingsOpen(false);
+      return;
+    }
+    await refreshSleepPanel(true);
+    setSleepSettingsOpen(true);
+  });
+  $("sleepSettingsCancelBtn").addEventListener("click", () => setSleepSettingsOpen(false));
+  $("sleepSettingsSaveBtn").addEventListener("click", saveSleepConfig);
+  $("sleepMode").addEventListener("change", applySleepModeUi);
 
   // ── Render helpers ────────────────────────────────────────────
   function renderMarkdown(text) {
@@ -959,6 +1452,8 @@
             activeTools.push(ev.name);
             toolsCalled.push(ev.name);
             refreshToolTrace();
+          } else if (ev.type === "wake_summary") {
+            if (ev.narrative) appendWakeBanner(ev.narrative);
           } else if (ev.type === "tool_done") {
             const i = activeTools.indexOf(ev.name);
             if (i >= 0) activeTools.splice(i, 1);
@@ -997,12 +1492,15 @@
               const r = ev.retrieval;
               const t = document.createElement("div");
               t.className = "tools";
-              t.innerHTML = `<b>retrieval:</b> ${escape(r.confidence || "none")} · ${escape(r.decision || "answer")} · ${escape(r.fusion_mode || "weighted_rrf")}`;
+              const citationCount = Array.isArray(r.citations) ? r.citations.length : 0;
+              const semantic = semanticRerankSummary(r.semantic_rerank);
+              t.innerHTML = `<b>retrieval:</b> ${escape(r.confidence || "none")} · ${escape(r.decision || "answer")} · ${escape(r.fusion_mode || "weighted_rrf")}${citationCount ? ` · cites:${citationCount}` : ""}${semantic ? ` · ${escape(semantic)}` : ""}`;
               botEl.appendChild(t);
             }
             if (window.hljs) botEl.querySelectorAll("pre code").forEach(b => hljs.highlightElement(b));
             toolTraceEl.remove();
             refreshMemoryPanel();
+            refreshSleepPanel(true);
           } else if (ev.type === "error") {
             toolTraceEl.remove();
             const errBubble = appendBotMsg();
@@ -1062,6 +1560,7 @@
         appendWakeBanner("No patterns found yet — chat a few more turns about substantive things, then try again.");
       }
       refreshMemoryPanel();
+      refreshSleepPanel(true);
     } catch (e) {
       showToast(`Sleep failed: ${e.message}`);
     } finally {
@@ -1129,11 +1628,43 @@
       } else {
         const channels = retrieval.channels || {};
         const channelSummary = `g:${channels.graph || 0} · s:${channels.semantic || 0} · l:${channels.lexical || 0} · e:${channels.exact || 0}`;
+        const semantic = semanticRerankSummary(retrieval.semantic_rerank);
+        const citations = Array.isArray(retrieval.citations) ? retrieval.citations : [];
+        const citationsHtml = citations.length
+          ? `
+            <div class="mem-item">
+              <span class="kind">citations</span>${citations.length}
+              <div class="lineage-citations">
+                ${citations.slice(0, 6).map(c => `
+                  <button class="lineage-link" data-memory-id="${encodeURIComponent(String((c && c.memory_id) || ""))}" title="Open lineage details">
+                    ${escape(shortId((c && c.memory_id) || ""))}
+                  </button>
+                `).join("")}
+              </div>
+              ${citations.slice(0, 3).map(c => {
+                const source = (c && c.source) || "unknown";
+                const root = shortId((c && c.version_root) || (c && c.memory_id) || "");
+                const current = (c && c.is_current_version) ? "current" : "archived";
+                return `<div class="lineage-meta">${escape(source)} · root ${escape(root)} · ${escape(current)}</div>`;
+              }).join("")}
+            </div>
+          `
+          : `<div class="mem-item"><span class="kind">citations</span>none</div>`;
         rl.innerHTML = `
           <div class="mem-item"><span class="kind">query</span>${escape(retrieval.query || "—")}</div>
           <div class="mem-item"><span class="kind">confidence</span>${escape(retrieval.confidence || "none")} · ${escape(retrieval.decision || "answer")}</div>
           <div class="mem-item"><span class="kind">fusion</span>${escape(retrieval.fusion_mode || "weighted_rrf")} · ${escape(channelSummary)}</div>
+          ${semantic ? `<div class="mem-item"><span class="kind">semantic</span>${escape(semantic)}</div>` : ""}
+          ${citationsHtml}
         `;
+        rl.querySelectorAll(".lineage-link").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const encoded = btn.getAttribute("data-memory-id") || "";
+            let memoryId = "";
+            try { memoryId = decodeURIComponent(encoded); } catch { memoryId = encoded; }
+            openLineageForMemory(memoryId);
+          });
+        });
       }
     } catch {}
   }
@@ -1149,6 +1680,9 @@
     try {
       const r = await fetch(`/chat/api/history/${slug}`);
       const data = await r.json();
+      if (data.wake_summary && data.wake_summary.narrative) {
+        appendWakeBanner(data.wake_summary.narrative);
+      }
       const turns = data.turns || [];
       if (turns.length === 0) return;
       clearEmpty();
@@ -1185,7 +1719,9 @@
           if (t.retrieval && typeof t.retrieval === "object") {
             const rdiv = document.createElement("div");
             rdiv.className = "tools";
-            rdiv.innerHTML = `<b>retrieval:</b> ${escape(t.retrieval.confidence || "none")} · ${escape(t.retrieval.decision || "answer")} · ${escape(t.retrieval.fusion_mode || "weighted_rrf")}`;
+            const citationCount = Array.isArray(t.retrieval.citations) ? t.retrieval.citations.length : 0;
+            const semantic = semanticRerankSummary(t.retrieval.semantic_rerank);
+            rdiv.innerHTML = `<b>retrieval:</b> ${escape(t.retrieval.confidence || "none")} · ${escape(t.retrieval.decision || "answer")} · ${escape(t.retrieval.fusion_mode || "weighted_rrf")}${citationCount ? ` · cites:${citationCount}` : ""}${semantic ? ` · ${escape(semantic)}` : ""}`;
             b.appendChild(rdiv);
           }
           $("convInner").appendChild(b);
@@ -1203,10 +1739,12 @@
 
   // ── Boot ───────────────────────────────────────────────────────
   loadCfg();
+  refreshByokCapabilities();
   historyEnsure(slug);
   renderHistory();
   restore();
   refreshMemoryPanel();
+  refreshSleepPanel(true);
 
   // First-time visitor with no key → open settings automatically.
   if (!($("cfgKey").value || "").trim()) {

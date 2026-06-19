@@ -6,7 +6,7 @@ import threading
 import time
 import json
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ..core.models import (
     Concept,
@@ -138,6 +138,11 @@ You are currently in a conversation. Here are relevant memories that might help 
             self._hypothesis_ranker = None
         self._prior_concepts: List[Concept] = []
         self._event_history = []
+        self._query_semantic_rerank_hook = None
+        self._force_query_semantic_rerank = False
+        self._last_hybrid_candidates: List[Concept] = []
+        self._last_hybrid_query: Optional[str] = None
+        self._last_semantic_rerank_meta: Dict[str, Any] = {}
 
         # Phase 7: cross-session memory pool. None = legacy (current-session
         # WM only). When set, sleep cycles will pull recent prior-session
@@ -662,6 +667,52 @@ You are currently in a conversation. Here are relevant memories that might help 
             context_tags=context_tags,
         )
 
+        rerank_meta: Dict[str, Any] = {}
+        should_rerank = bool(getattr(self, "_force_query_semantic_rerank", False))
+        should_rerank = should_rerank or (
+            callable(getattr(self, "_query_semantic_rerank_hook", None))
+            and hypothesis_set.confidence.value in {"medium", "low", "none"}
+            and len(activated) >= 2
+        )
+        if should_rerank and callable(getattr(self, "_query_semantic_rerank_hook", None)):
+            try:
+                rerank_payload = self._query_semantic_rerank_hook(
+                    query=query,
+                    candidates=list(activated),
+                ) or {}
+            except Exception as exc:
+                rerank_payload = {
+                    "applied": False,
+                    "reason": f"hook_error:{type(exc).__name__}",
+                }
+            boosts = rerank_payload.pop("boosts", {}) if isinstance(rerank_payload, dict) else {}
+            if isinstance(boosts, dict) and boosts:
+                for concept_id, boost in boosts.items():
+                    if concept_id in fused_scores:
+                        try:
+                            fused_scores[concept_id] = fused_scores.get(concept_id, 0.0) + float(boost)
+                        except Exception:
+                            continue
+                activated = sorted(
+                    activated,
+                    key=lambda concept: (
+                        fused_scores.get(concept.id, 0.0),
+                        channel_votes.get(concept.id, 0),
+                        concept.importance.overall if concept.importance else 0.0,
+                    ),
+                    reverse=True,
+                )[:max_candidates]
+                active_ids = {c.id for c in activated}
+                activation_map = self._normalize_scores(
+                    {cid: score for cid, score in fused_scores.items() if cid in active_ids}
+                )
+                hypothesis_set = self._hypothesis_ranker.rank(
+                    activated_concepts=activated,
+                    activation_map=activation_map,
+                    context_tags=context_tags,
+                )
+            rerank_meta = rerank_payload if isinstance(rerank_payload, dict) else {}
+
         memory_context = self._hypothesis_ranker.format_context(
             hypothesis_set,
             section_title="Retrieved Memories",
@@ -669,6 +720,9 @@ You are currently in a conversation. Here are relevant memories that might help 
         )
 
         confidence_value = hypothesis_set.confidence.value
+        self._last_hybrid_candidates = list(activated)
+        self._last_hybrid_query = query
+        self._last_semantic_rerank_meta = dict(rerank_meta) if isinstance(rerank_meta, dict) else {}
         if confidence_value in {"low", "none"}:
             memory_context += (
                 "\n\n## Retrieval Guidance\n"
@@ -692,6 +746,7 @@ You are currently in a conversation. Here are relevant memories that might help 
             'hypothesis_ensemble': hypothesis_set.ensemble_score,
             'hypothesis_confidence': confidence_value,
             'coverage': hypothesis_set.coverage,
+            'semantic_rerank': rerank_meta,
             'confidence_decision': (
                 'clarify_or_bound_uncertainty'
                 if confidence_value in {"low", "none"}
@@ -1267,6 +1322,7 @@ You are currently in a conversation. Here are relevant memories that might help 
                     'consolidated': cycle.memories_consolidated,
                     'forgotten': cycle.memories_forgotten,
                     'dreams': len(cycle.dreams_generated),
+                    'dream_state': stats.get('dream_state', {}),
                     'duration': cycle.nrem_duration + cycle.rem_duration,
                     'synced_concepts': sync_stats.get('synced_concepts', 0),
                     'synced_relations': sync_stats.get('synced_relations', 0),
@@ -1337,6 +1393,7 @@ You are currently in a conversation. Here are relevant memories that might help 
                     'consolidated': cycle.memories_consolidated,
                     'forgotten': cycle.memories_forgotten,
                     'dreams': len(cycle.dreams_generated),
+                    'dream_state': stats.get('dream_state', {}),
                     'duration': cycle.nrem_duration + cycle.rem_duration,
                     'synced_concepts': sync_stats.get('synced_concepts', 0),
                     'synced_relations': sync_stats.get('synced_relations', 0),
@@ -1356,6 +1413,7 @@ You are currently in a conversation. Here are relevant memories that might help 
                     'consolidated': cycle.memories_consolidated,
                     'forgotten': cycle.memories_forgotten,
                     'dreams': len(cycle.dreams_generated),
+                    'dream_state': stats.get('dream_state', {}),
                     'nrem_duration': round(cycle.nrem_duration, 2),
                     'rem_duration': round(cycle.rem_duration, 2),
                     'synced_concepts': sync_stats.get('synced_concepts', 0),

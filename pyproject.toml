@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scm-memory"
-version = "0.7.9"
+version = "0.8.0"
 description = "SCM: memory that works like yours — wake + sleep phases for AI agents."
 readme = "README.md"
 requires-python = ">=3.10"

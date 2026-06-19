@@ -250,6 +250,15 @@ class UserEnginePool:
                 }
             except Exception as e:
                 logger.warning(f"wake-summary build failed for {user_id!r}: {e}")
+            try:
+                from ..core.sqlite_db import get_memory
+                get_memory().mark_user_slept(
+                    user_id,
+                    reason="manual",
+                    create_if_missing=False,
+                )
+            except Exception:
+                pass
             return {"ok": True, **stats}
 
     @staticmethod
@@ -416,14 +425,39 @@ class UserEnginePool:
             if user_id in self._cached_summaries:
                 continue
             cfg = sqlite.get_user_sleep_config(user_id)
+            mode = self._mode_from_cfg(cfg)
+            idle_for = max(0.0, now - self._last_activity[user_id])
+
+            if mode == "off":
+                continue
+
+            if mode == "idle_only":
+                threshold = self._idle_threshold_for_cfg(cfg)
+                if idle_for < threshold:
+                    continue
+                self._fire_sleep_for(user_id, idle_for)
+                sqlite.mark_user_slept(
+                    user_id,
+                    reason="idle",
+                    create_if_missing=False,
+                )
+                fired += 1
+                continue
+
+            if mode == "night_only":
+                if should_fire(cfg):
+                    self._fire_sleep_for(user_id, idle_for=0.0, scheduled=True)
+                    sqlite.mark_user_slept(user_id, reason="scheduled")
+                    fired += 1
+                continue
 
             if cfg.get("is_default") and self._legacy_idle_mode:
                 # Legacy fallback: deployments using SCM_IDLE_THRESHOLD_SEC
                 # without ever calling /v1/users/{id}/sleep-config keep
                 # their old behavior. Once they POST a config, they
                 # transition to the circadian model automatically.
-                idle_for = now - self._last_activity[user_id]
-                if idle_for < self._idle_threshold:
+                threshold = self._idle_threshold_for_cfg(cfg)
+                if idle_for < threshold:
                     continue
                 self._fire_sleep_for(user_id, idle_for)
                 fired += 1
@@ -433,9 +467,28 @@ class UserEnginePool:
                 self._fire_sleep_for(user_id, idle_for=0.0, scheduled=True)
                 # Persist last_sleep_at so should_fire() returns False until
                 # the next night (its once-per-night guard).
-                sqlite.mark_user_slept(user_id)
+                sqlite.mark_user_slept(user_id, reason="scheduled")
                 fired += 1
         return fired
+
+    def _idle_threshold_for_cfg(self, cfg: Dict[str, Any]) -> float:
+        raw = cfg.get("idle_timeout_sec")
+        if raw is None:
+            return self._idle_threshold
+        try:
+            v = float(raw)
+            if v > 0:
+                return v
+        except Exception:
+            pass
+        return self._idle_threshold
+
+    @staticmethod
+    def _mode_from_cfg(cfg: Dict[str, Any]) -> str:
+        mode = str(cfg.get("auto_sleep_mode") or "auto").strip().lower()
+        if mode in {"auto", "night_only", "idle_only", "off"}:
+            return mode
+        return "auto"
 
     def _fire_sleep_for(
         self, user_id: str, idle_for: float, scheduled: bool = False,

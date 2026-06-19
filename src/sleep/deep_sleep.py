@@ -1,16 +1,22 @@
 """
 DeepSleep: full replay/downscale/synthesis/pruning pass for HME Phase 4.
 """
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
-from ..core.config import DEEP_SLEEP_ENABLE_SYNTHESIS, DEEP_SLEEP_GLOBAL_DOWNSCALE_FACTOR
+from ..core.config import (
+    DEEP_SLEEP_ENABLE_SYNTHESIS,
+    DEEP_SLEEP_GLOBAL_DOWNSCALE_FACTOR,
+    DREAM_STATE_ENABLED,
+)
 from ..core.models import Concept, Episode, MemoryState, Relation
 from ..core.memory_scoring import refresh_consolidation_score
+from .dream_state import DreamStateBuilder
 from .forgetting import ForgettingModule
 from .nrem import NREMConsolidation
 from .paraphrase import SleepParaphraser
 from .rem import REMDreaming
 from .schema_extractor import SchemaExtractor, SchemaExtractorConfig
+from .tension import TensionDetector
 
 
 def _state_value(concept: Concept) -> str:
@@ -31,6 +37,7 @@ class DeepSleep:
         curiosity_engine: Any = None,  # CuriosityEngine - circular-import-free
         global_downscale_factor: float = DEEP_SLEEP_GLOBAL_DOWNSCALE_FACTOR,
         enable_synthesis: bool = DEEP_SLEEP_ENABLE_SYNTHESIS,
+        enable_dream_state: bool = DREAM_STATE_ENABLED,
         enable_paraphrase: bool = False,
         enable_schema_extraction: bool = False,
         enable_curiosity: bool = False,
@@ -40,6 +47,9 @@ class DeepSleep:
         self.forgetting = forgetting or ForgettingModule()
         self.global_downscale_factor = min(1.0, max(0.70, global_downscale_factor))
         self.enable_synthesis = enable_synthesis
+        self.enable_dream_state = bool(enable_dream_state)
+        self.dream_state_builder = DreamStateBuilder()
+        self.tension_detector = TensionDetector()
         # Phase 6: optional sleep-time paraphrase for retrieval-friendly storage.
         # min_rehearsals=0 → paraphrase every concept on its first sleep so
         # benchmarks see the effect immediately. Production deployments may
@@ -96,6 +106,16 @@ class DeepSleep:
             self.paraphraser.apply(nrem_concepts)
 
         self._refresh_consolidation_scores(nrem_concepts)
+        closed_threads = self.tension_detector.close_resolved(
+            concepts=nrem_concepts,
+            episodes=episodes,
+        )
+        unresolved_tensions = self.tension_detector.detect(
+            concepts=nrem_concepts,
+            relations=relation_pool,
+            episodes=episodes,
+        )
+        self.tension_detector.annotate(nrem_concepts, unresolved_tensions)
 
         dreams: List[Dict] = []
         rem_new_relations: List[Relation] = []
@@ -109,6 +129,16 @@ class DeepSleep:
             relation_pool.extend(rem_new_relations)
         else:
             rem_stats = self.rem._empty_stats()
+
+        dream_state = (
+            self.dream_state_builder.build(
+                dreams,
+                tensions=unresolved_tensions,
+                closed_threads=closed_threads,
+            )
+            if self.enable_dream_state
+            else self.dream_state_builder.empty()
+        )
 
         # Phase 7: schema extraction. Detect recurring patterns across the
         # episode set (which now spans sessions thanks to M2) and emit
@@ -162,6 +192,9 @@ class DeepSleep:
             "rem": rem_stats,
             "forgetting": forgetting_stats,
             "dreams": dreams,
+            "dream_state": dream_state,
+            "unresolved_tensions": unresolved_tensions,
+            "closed_threads": closed_threads,
             "global_downscale_factor": self.global_downscale_factor,
             "relations_created_nrem": len(nrem_new_relations),
             "relations_created_rem": len(rem_new_relations),
@@ -251,6 +284,9 @@ class DeepSleep:
             "rem": {},
             "forgetting": {},
             "dreams": [],
+            "dream_state": DreamStateBuilder.empty(),
+            "unresolved_tensions": [],
+            "closed_threads": [],
             "global_downscale_factor": DEEP_SLEEP_GLOBAL_DOWNSCALE_FACTOR,
             "relations_created_nrem": 0,
             "relations_created_rem": 0,

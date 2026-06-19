@@ -111,6 +111,12 @@ class REMDreaming:
             )
 
             concept_scores[concept.id] = base_score + episode_count * 0.2
+            tags = concept.context_tags if isinstance(concept.context_tags, dict) else {}
+            try:
+                tension_boost = float(tags.get("unresolved_tension_score", 0.0) or 0.0)
+            except Exception:
+                tension_boost = 0.0
+            concept_scores[concept.id] += min(0.4, max(0.0, tension_boost) * 0.4)
 
         sorted_concepts = sorted(
             concepts,

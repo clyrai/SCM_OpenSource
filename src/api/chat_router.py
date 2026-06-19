@@ -37,6 +37,7 @@ Tools the agent gets:
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import re
 import os
 import secrets
@@ -44,10 +45,17 @@ import string
 import threading
 import time
 import uuid
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List, Optional
 
 import json
+import math
+
+try:
+    import requests as _requests
+except Exception:
+    _requests = None
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, StreamingResponse
@@ -147,6 +155,362 @@ class _BYOKLLM:
         return []
 
 
+class _BYOKSemanticReranker:
+    """Optional query-time semantic reranker using the user's BYOK provider.
+
+    Important: this does NOT replace SCM's canonical stored embeddings.
+    It only rescoring the already-fused top candidates during live /chat
+    retrieval, with a tight timeout and graceful fallback.
+    """
+
+    _BASE_URLS = {
+        "openai": "https://api.openai.com/v1",
+        "together": "https://api.together.xyz/v1",
+        "openrouter": "https://openrouter.ai/api/v1",
+        # DeepSeek / Groq are opt-in via env until a stable embedding
+        # endpoint+model is pinned for this product path.
+        "deepseek": "https://api.deepseek.com/v1",
+        "groq": "https://api.groq.com/openai/v1",
+    }
+    _DEFAULT_MODELS = {
+        "openai": os.environ.get("SCM_CHAT_OPENAI_EMBED_MODEL", "text-embedding-3-small"),
+        "together": os.environ.get(
+            "SCM_CHAT_TOGETHER_EMBED_MODEL",
+            "togethercomputer/m2-bert-80M-32k-retrieval",
+        ),
+        "openrouter": os.environ.get(
+            "SCM_CHAT_OPENROUTER_EMBED_MODEL",
+            "openai/text-embedding-3-small",
+        ),
+        "deepseek": os.environ.get("SCM_CHAT_DEEPSEEK_EMBED_MODEL", ""),
+        "groq": os.environ.get("SCM_CHAT_GROQ_EMBED_MODEL", ""),
+    }
+
+    def __init__(
+        self,
+        provider: str,
+        api_key: str,
+        model_override: Optional[str] = None,
+        cache: Optional[Dict[str, List[float]]] = None,
+    ):
+        self.provider = (provider or "").strip().lower()
+        self.api_key = (api_key or "").strip()
+        self.model = (model_override or self._DEFAULT_MODELS.get(self.provider) or "").strip()
+        self.base_url = (self._BASE_URLS.get(self.provider) or "").rstrip("/")
+        self.timeout = float(os.environ.get("SCM_CHAT_RERANK_TIMEOUT_SEC", "1.5"))
+        self.max_candidates = int(os.environ.get("SCM_CHAT_RERANK_MAX_CANDIDATES", "8"))
+        self.max_boost = float(os.environ.get("SCM_CHAT_RERANK_MAX_BOOST", "0.18"))
+        self.cache = cache if isinstance(cache, dict) else {}
+        self.enabled = bool(
+            os.environ.get("SCM_CHAT_BYOK_RERANK_DISABLE", "0") != "1"
+            and _requests is not None
+            and self.api_key
+            and self.model
+            and self.base_url
+        )
+        self.force = False
+
+    def rerank(self, query: str, candidates: List[Any]) -> Dict[str, Any]:
+        started = time.time()
+        payload: Dict[str, Any] = {
+            "applied": False,
+            "provider": self.provider,
+            "model": self.model,
+            "reason": "unsupported",
+            "candidate_count": 0,
+            "latency_ms": 0.0,
+        }
+        if not self.enabled:
+            return payload
+
+        ranked = [
+            c for c in (candidates or [])[: self.max_candidates]
+            if getattr(c, "description", None)
+        ]
+        payload["candidate_count"] = len(ranked)
+        if len(ranked) < 2:
+            payload["reason"] = "insufficient_candidates"
+            return payload
+
+        query_vec = self._embed(query)
+        if not query_vec:
+            payload["reason"] = "query_embedding_unavailable"
+            return payload
+
+        similarities: Dict[str, float] = {}
+        for concept in ranked:
+            text = (getattr(concept, "description", "") or "").strip()
+            if not text:
+                continue
+            vec = self._embed(text)
+            if not vec or len(vec) != len(query_vec):
+                continue
+            similarities[concept.id] = self._cosine(query_vec, vec)
+
+        if len(similarities) < 2:
+            payload["reason"] = "candidate_embedding_unavailable"
+            return payload
+
+        boosts = self._normalize_boosts(similarities)
+        if not boosts:
+            payload["reason"] = "no_signal"
+            return payload
+
+        payload.update({
+            "applied": True,
+            "reason": "byok_semantic_rerank",
+            "boosts": boosts,
+            "top_similarity": max(similarities.values()),
+            "latency_ms": round((time.time() - started) * 1000.0, 2),
+        })
+        return payload
+
+    def _embed(self, text: str) -> Optional[List[float]]:
+        clean = (text or "").strip()
+        if not clean or not self.enabled:
+            return None
+        key = f"{self.provider}|{self.model}|{clean}"
+        cached = self.cache.get(key)
+        if isinstance(cached, list) and cached:
+            return cached
+        try:
+            response = _requests.post(
+                f"{self.base_url}/embeddings",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={"model": self.model, "input": clean},
+                timeout=self.timeout,
+            )
+            response.raise_for_status()
+            body = response.json()
+            data = body.get("data") or []
+            if not data or "embedding" not in data[0]:
+                return None
+            vec = list(data[0]["embedding"])
+            self.cache[key] = vec
+            return vec
+        except Exception:
+            return None
+
+    def _normalize_boosts(self, similarities: Dict[str, float]) -> Dict[str, float]:
+        if not similarities:
+            return {}
+        lo = min(similarities.values())
+        hi = max(similarities.values())
+        if hi - lo <= 1e-9:
+            return {}
+        return {
+            cid: self.max_boost * max(0.0, min(1.0, (score - lo) / (hi - lo)))
+            for cid, score in similarities.items()
+        }
+
+    @staticmethod
+    def _cosine(left: List[float], right: List[float]) -> float:
+        dot = 0.0
+        left_norm = 0.0
+        right_norm = 0.0
+        for a, b in zip(left, right):
+            dot += a * b
+            left_norm += a * a
+            right_norm += b * b
+        denom = math.sqrt(left_norm) * math.sqrt(right_norm)
+        if denom <= 1e-12:
+            return 0.0
+        return dot / denom
+
+
+def _semantic_cache_key(provider: str, api_key: str) -> str:
+    normalized = f"{(provider or '').strip().lower()}|{(api_key or '').strip()}"
+    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:20]
+    return digest
+
+
+def _get_cached_semantic_model(provider: str, api_key: str) -> str:
+    if not provider or not api_key:
+        return ""
+    cache_key = _semantic_cache_key(provider, api_key)
+    with _SEMANTIC_MODEL_CACHE_LOCK:
+        return (_SEMANTIC_MODEL_CACHE.get(cache_key) or "").strip()
+
+
+def _set_cached_semantic_model(provider: str, api_key: str, model: str) -> None:
+    if not provider or not api_key:
+        return
+    cache_key = _semantic_cache_key(provider, api_key)
+    normalized = (model or "").strip()
+    with _SEMANTIC_MODEL_CACHE_LOCK:
+        if normalized:
+            _SEMANTIC_MODEL_CACHE[cache_key] = normalized
+        else:
+            _SEMANTIC_MODEL_CACHE.pop(cache_key, None)
+
+
+def _probe_embedding_endpoint(
+    base_url: str,
+    api_key: str,
+    model: str,
+    timeout: float = 1.5,
+) -> bool:
+    if _requests is None:
+        return False
+    clean_model = (model or "").strip()
+    if not clean_model or not base_url or not api_key:
+        return False
+    try:
+        response = _requests.post(
+            f"{base_url.rstrip('/')}/embeddings",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={"model": clean_model, "input": "semantic-rerank-probe"},
+            timeout=timeout,
+        )
+        if response.status_code >= 400:
+            return False
+        body = response.json()
+        data = body.get("data") or []
+        if not data or "embedding" not in data[0]:
+            return False
+        embedding = data[0].get("embedding")
+        return isinstance(embedding, list) and len(embedding) > 0
+    except Exception:
+        return False
+
+
+def _list_embedding_candidates(
+    base_url: str,
+    api_key: str,
+    timeout: float = 1.5,
+) -> tuple[List[str], Optional[int]]:
+    if _requests is None:
+        return [], None
+    try:
+        response = _requests.get(
+            f"{base_url.rstrip('/')}/models",
+            headers={"Authorization": f"Bearer {api_key}"},
+            timeout=timeout,
+        )
+        if response.status_code >= 400:
+            return [], response.status_code
+        body = response.json()
+        data = body.get("data") or []
+        discovered: List[str] = []
+        seen: set[str] = set()
+        for row in data:
+            model_id = str((row or {}).get("id") or "").strip()
+            lowered = model_id.lower()
+            if not model_id:
+                continue
+            if "embed" not in lowered and "retriev" not in lowered:
+                continue
+            if model_id in seen:
+                continue
+            seen.add(model_id)
+            discovered.append(model_id)
+        return discovered, response.status_code
+    except Exception:
+        return [], None
+
+
+def _probe_semantic_rerank_model(provider: str, api_key: str) -> Dict[str, Any]:
+    clean_provider = (provider or "").strip().lower()
+    clean_key = (api_key or "").strip()
+    model = (_BYOKSemanticReranker._DEFAULT_MODELS.get(clean_provider) or "").strip()
+    base_url = (_BYOKSemanticReranker._BASE_URLS.get(clean_provider) or "").strip()
+    if not clean_provider or not base_url:
+        return {
+            "supported": False,
+            "model": None,
+            "note": "Provider is not supported for semantic rerank.",
+        }
+    if not clean_key:
+        if model:
+            return {
+                "supported": True,
+                "model": model,
+                "note": "Available for on-demand query reranking.",
+            }
+        if clean_provider == "deepseek":
+            return {
+                "supported": False,
+                "model": None,
+                "note": "Add a DeepSeek key to probe /embeddings support, or set SCM_CHAT_DEEPSEEK_EMBED_MODEL.",
+            }
+        if clean_provider == "groq":
+            return {
+                "supported": False,
+                "model": None,
+                "note": "Add a Groq key to probe /embeddings support, or set SCM_CHAT_GROQ_EMBED_MODEL.",
+            }
+        return {
+            "supported": False,
+            "model": None,
+            "note": "Add a key to probe semantic rerank support.",
+        }
+
+    cached = _get_cached_semantic_model(clean_provider, clean_key)
+    if cached:
+        return {
+            "supported": True,
+            "model": cached,
+            "note": "Available for on-demand query reranking.",
+        }
+
+    if model:
+        _set_cached_semantic_model(clean_provider, clean_key, model)
+        return {
+            "supported": True,
+            "model": model,
+            "note": "Available for on-demand query reranking.",
+        }
+
+    if clean_provider not in {"deepseek", "groq"}:
+        return {
+            "supported": False,
+            "model": None,
+            "note": "No semantic embedding model is configured for this provider.",
+        }
+
+    candidates, status_code = _list_embedding_candidates(base_url, clean_key)
+    if status_code in {401, 403}:
+        return {
+            "supported": False,
+            "model": None,
+            "note": "API key was rejected while probing embedding support.",
+        }
+    if not candidates and clean_provider == "deepseek":
+        candidates = [
+            "deepseek-embedding",
+            "deepseek-embed",
+            "deepseek-v4-embedding",
+            "deepseek-v4-embed",
+        ]
+
+    for candidate in candidates[:6]:
+        if _probe_embedding_endpoint(base_url, clean_key, candidate):
+            _set_cached_semantic_model(clean_provider, clean_key, candidate)
+            return {
+                "supported": True,
+                "model": candidate,
+                "note": "Available for on-demand query reranking.",
+            }
+
+    if clean_provider == "deepseek":
+        return {
+            "supported": False,
+            "model": None,
+            "note": "DeepSeek key is valid for chat, but no embedding model accepted /embeddings for rerank.",
+        }
+    return {
+        "supported": False,
+        "model": None,
+        "note": "No embedding model accepted /embeddings for rerank.",
+    }
+
+
 from contextlib import contextmanager
 
 
@@ -171,6 +535,39 @@ def _byok_attached(engine, byok_llm):
         engine.llm = orig_engine_llm
         if engine.encoder is not None:
             engine.encoder.llm = orig_encoder_llm
+
+
+@contextmanager
+def _semantic_reranker_attached(engine, reranker):
+    """Temporarily attach a query-time semantic reranker to the engine."""
+    orig_hook = getattr(engine, "_query_semantic_rerank_hook", None)
+    orig_force = getattr(engine, "_force_query_semantic_rerank", False)
+    if reranker is not None and getattr(reranker, "enabled", False):
+        engine._query_semantic_rerank_hook = reranker.rerank
+        engine._force_query_semantic_rerank = bool(getattr(reranker, "force", False))
+    else:
+        engine._query_semantic_rerank_hook = None
+        engine._force_query_semantic_rerank = False
+    try:
+        yield
+    finally:
+        engine._query_semantic_rerank_hook = orig_hook
+        engine._force_query_semantic_rerank = orig_force
+
+
+def _build_semantic_reranker(
+    provider: str,
+    api_key: str,
+    sess: "_ChatSession",
+) -> Optional[_BYOKSemanticReranker]:
+    model_override = _get_cached_semantic_model(provider, api_key)
+    reranker = _BYOKSemanticReranker(
+        provider=provider,
+        api_key=api_key,
+        model_override=model_override or None,
+        cache=getattr(sess, "semantic_rerank_cache", None),
+    )
+    return reranker if reranker.enabled else None
 
 
 class _NoOpLLM:
@@ -365,6 +762,60 @@ class _InProcessSCM:
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 _STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+_ALLOWED_AUTO_SLEEP_MODES = {"auto", "night_only", "idle_only", "off"}
+_DEFAULT_CHAT_IDLE_THRESHOLD_SEC = float(os.environ.get("SCM_IDLE_THRESHOLD_SEC", "300"))
+_SEMANTIC_MODEL_CACHE_LOCK = threading.Lock()
+_SEMANTIC_MODEL_CACHE: Dict[str, str] = {}
+
+
+@dataclass
+class _ChatSleepConfig:
+    """Per-chat auto-sleep settings for the public /chat experience."""
+
+    enabled: bool = True
+    sleep_start: str = "23:00"
+    sleep_end: str = "07:00"
+    timezone_name: str = "UTC"
+    auto_sleep_mode: str = "auto"
+    idle_timeout_sec: Optional[float] = None
+    has_custom_schedule: bool = False
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "enabled": self.enabled,
+            "sleep_start": self.sleep_start,
+            "sleep_end": self.sleep_end,
+            "timezone": self.timezone_name,
+            "auto_sleep_mode": self.auto_sleep_mode,
+            "idle_timeout_sec": self.idle_timeout_sec,
+            "is_default_schedule": not self.has_custom_schedule,
+        }
+
+
+def _chat_effective_sleep_mode(cfg: _ChatSleepConfig) -> str:
+    mode = str(cfg.auto_sleep_mode or "auto").strip().lower()
+    if mode not in _ALLOWED_AUTO_SLEEP_MODES:
+        mode = "auto"
+    if mode == "auto":
+        if cfg.has_custom_schedule:
+            return "night_only" if cfg.enabled else "off"
+        return "idle_only"
+    if mode == "night_only" and not cfg.enabled:
+        return "off"
+    return mode
+
+
+def _chat_sleep_threshold(cfg: _ChatSleepConfig) -> float:
+    raw = cfg.idle_timeout_sec
+    if raw is None:
+        return _DEFAULT_CHAT_IDLE_THRESHOLD_SEC
+    try:
+        value = float(raw)
+        if value > 0:
+            return value
+    except Exception:
+        pass
+    return _DEFAULT_CHAT_IDLE_THRESHOLD_SEC
 
 
 # ── Per-slug session state ────────────────────────────────────────────
@@ -396,6 +847,11 @@ class _ChatSession:
         self.transcript: List[Dict[str, Any]] = []
         self.task_context = TaskContextState()
         self.last_retrieval: Dict[str, Any] = {}
+        self.semantic_rerank_cache: Dict[str, List[float]] = {}
+        self.sleep_config = _ChatSleepConfig()
+        self.pending_wake_summary: Optional[Dict[str, Any]] = None
+        self.last_sleep_at: Optional[str] = None
+        self.last_sleep_reason: Optional[str] = None
         self.last_activity = time.time()
         self._lock = threading.Lock()
 
@@ -404,6 +860,12 @@ class _ChatPool:
     def __init__(self):
         self._sessions: Dict[str, _ChatSession] = {}
         self._lock = threading.Lock()
+        self._sweeper: Optional[threading.Thread] = None
+        self._sweeper_stop = threading.Event()
+        self._sweep_interval = float(
+            os.environ.get("SCM_CHAT_SWEEP_INTERVAL_SEC", "30")
+        )
+        self._min_turns = int(os.environ.get("SCM_CHAT_MIN_TURNS", "3"))
 
     def get_or_create(self, slug: str) -> _ChatSession:
         with self._lock:
@@ -418,11 +880,214 @@ class _ChatPool:
         with self._lock:
             return self._sessions.get(slug)
 
+    def touch(self, slug: str) -> None:
+        with self._lock:
+            sess = self._sessions.get(slug)
+            if sess is not None:
+                sess.last_activity = time.time()
+
+    def start(self) -> None:
+        if self._sweeper is not None:
+            return
+        self._sweeper = threading.Thread(
+            target=self._sweep_loop,
+            name="chat-auto-sleep",
+            daemon=True,
+        )
+        self._sweeper.start()
+
+    def _sweep_loop(self) -> None:
+        while not self._sweeper_stop.wait(self._sweep_interval):
+            try:
+                self._sweep_once()
+            except Exception:
+                pass
+
+    def _sweep_once(self) -> int:
+        with self._lock:
+            sessions = list(self._sessions.values())
+        fired = 0
+        for sess in sessions:
+            if self._maybe_auto_sleep(sess):
+                fired += 1
+        return fired
+
+    def _maybe_auto_sleep(self, sess: _ChatSession) -> bool:
+        if self._meaningful_turns(sess) < self._min_turns:
+            return False
+        with sess._lock:
+            if sess.pending_wake_summary:
+                return False
+            cfg = sess.sleep_config
+            last_activity = sess.last_activity
+            last_sleep_at = sess.last_sleep_at
+
+        effective_mode = _chat_effective_sleep_mode(cfg)
+        if effective_mode == "off":
+            return False
+
+        if effective_mode == "idle_only":
+            idle_for = max(0.0, time.time() - last_activity)
+            if idle_for < _chat_sleep_threshold(cfg):
+                return False
+            result = _run_chat_sleep_cycle(sess, reason="idle")
+            if not result.get("ok"):
+                return False
+            narrative = (result.get("narrative") or "").strip()
+            if narrative:
+                _store_pending_chat_wake_summary(sess, {
+                    "narrative": narrative,
+                    "generated_at": result.get("fired_at"),
+                    "reason": "idle",
+                })
+            return True
+
+        if effective_mode == "night_only":
+            from ..lifecycle.circadian import should_fire
+
+            if not should_fire({
+                "enabled": cfg.enabled,
+                "timezone": cfg.timezone_name,
+                "sleep_start": cfg.sleep_start,
+                "sleep_end": cfg.sleep_end,
+                "last_sleep_at": last_sleep_at,
+            }):
+                return False
+            result = _run_chat_sleep_cycle(sess, reason="scheduled")
+            if not result.get("ok"):
+                return False
+            narrative = (result.get("narrative") or "").strip()
+            if narrative:
+                _store_pending_chat_wake_summary(sess, {
+                    "narrative": narrative,
+                    "generated_at": result.get("fired_at"),
+                    "reason": "scheduled",
+                })
+            return True
+        return False
+
+    @staticmethod
+    def _meaningful_turns(sess: _ChatSession) -> int:
+        return sum(1 for turn in sess.transcript if turn.get("user"))
+
 
 _pool = _ChatPool()
+_pool.start()
 
 
 # ── LLM factory ───────────────────────────────────────────────────────
+
+
+def _store_pending_chat_wake_summary(
+    sess: _ChatSession, payload: Optional[Dict[str, Any]],
+) -> None:
+    with sess._lock:
+        sess.pending_wake_summary = dict(payload) if isinstance(payload, dict) else None
+
+
+def _consume_pending_chat_wake_summary(sess: _ChatSession) -> Optional[Dict[str, Any]]:
+    with sess._lock:
+        cached = dict(sess.pending_wake_summary) if isinstance(sess.pending_wake_summary, dict) else None
+        sess.pending_wake_summary = None
+        return cached
+
+
+def _peek_pending_chat_wake_summary(sess: _ChatSession) -> Optional[Dict[str, Any]]:
+    with sess._lock:
+        return dict(sess.pending_wake_summary) if isinstance(sess.pending_wake_summary, dict) else None
+
+
+def _chat_sleep_config_payload(sess: _ChatSession) -> Dict[str, Any]:
+    from ..lifecycle.circadian import is_in_window, parse_hhmm, resolve_tz
+
+    with sess._lock:
+        cfg = sess.sleep_config
+        payload = cfg.to_dict()
+        last_sleep_at = sess.last_sleep_at
+        last_sleep_reason = sess.last_sleep_reason
+    now_local = datetime.now(timezone.utc).astimezone(resolve_tz(cfg.timezone_name))
+    start_min = parse_hhmm(cfg.sleep_start) or 0
+    end_min = parse_hhmm(cfg.sleep_end) or 0
+    payload.update({
+        "effective_mode": _chat_effective_sleep_mode(cfg),
+        "default_idle_timeout_sec": _DEFAULT_CHAT_IDLE_THRESHOLD_SEC,
+        "last_sleep_at": last_sleep_at,
+        "last_sleep_reason": last_sleep_reason,
+        "now_local": now_local.isoformat(),
+        "in_sleep_window": bool(
+            cfg.enabled and is_in_window(now_local, start_min, end_min)
+        ),
+    })
+    return payload
+
+
+def _run_chat_sleep_cycle(
+    sess: _ChatSession,
+    reason: str,
+    byok: Optional[Any] = None,
+) -> Dict[str, Any]:
+    def _do_cycle() -> Dict[str, Any]:
+        if byok is not None:
+            with _byok_attached(sess.engine, byok):
+                stats = _consolidate_handler(
+                    {"user_id": sess.slug, "mode": "deep"},
+                    sess.engine,
+                ) or {}
+                summary = _wake_summary_handler(
+                    {"user_id": sess.slug, "since_hours": 24.0},
+                    sess.engine,
+                ) or {}
+        else:
+            stats = _consolidate_handler(
+                {"user_id": sess.slug, "mode": "deep"},
+                sess.engine,
+            ) or {}
+            summary = _wake_summary_handler(
+                {"user_id": sess.slug, "since_hours": 24.0},
+                sess.engine,
+            ) or {}
+        fired_at = datetime.now(timezone.utc).isoformat()
+        narrative = (summary.get("narrative") or "").strip()
+        sess.last_sleep_at = fired_at
+        sess.last_sleep_reason = reason
+        return {
+            "ok": True,
+            "stats": stats,
+            "narrative": narrative,
+            "fired_at": fired_at,
+            "reason": reason,
+        }
+
+    with sess._lock:
+        return _do_cycle()
+
+
+def _semantic_rerank_capabilities(
+    probe_provider: Optional[str] = None,
+    probe_api_key: Optional[str] = None,
+) -> Dict[str, Any]:
+    providers = {}
+    for provider in ("deepseek", "openai", "groq", "together", "openrouter"):
+        model = (_BYOKSemanticReranker._DEFAULT_MODELS.get(provider) or "").strip()
+        supported = bool(model and _BYOKSemanticReranker._BASE_URLS.get(provider))
+        note = "Available for on-demand query reranking."
+        if not supported and provider == "deepseek":
+            note = "Requires SCM_CHAT_DEEPSEEK_EMBED_MODEL to be set on the server."
+        elif not supported and provider == "groq":
+            note = "Requires SCM_CHAT_GROQ_EMBED_MODEL to be set on the server."
+        providers[provider] = {
+            "supported": supported,
+            "model": model or None,
+            "note": note,
+        }
+    chosen_provider = (probe_provider or "").strip().lower()
+    chosen_key = (probe_api_key or "").strip()
+    if chosen_provider in providers:
+        providers[chosen_provider] = _probe_semantic_rerank_model(
+            chosen_provider,
+            chosen_key,
+        )
+    return {"semantic_rerank": {"providers": providers}}
 
 
 def _build_llm(provider: str, api_key: str, model: Optional[str]):
@@ -779,6 +1444,7 @@ def _run_agent_sync(payload: _MessageRequest, slug: str) -> Dict[str, Any]:
     """Synchronous body of the chat endpoint, run in a thread pool to
     keep FastAPI's event loop responsive while the LLM is generating."""
     sess = _pool.get_or_create(slug)
+    pending_wake_summary = _peek_pending_chat_wake_summary(sess)
 
     # In-process SCM access — bypasses HTTP and the cloud-auth middleware
     # that gates /v1/*. The chat router IS the SCM server, no point doing
@@ -792,6 +1458,11 @@ def _run_agent_sync(payload: _MessageRequest, slug: str) -> Dict[str, Any]:
     llm = _build_llm(payload.llm_provider, payload.llm_api_key, payload.llm_model)
     agent = _build_agent(llm=llm, scm_client=scm)
     byok = _BYOKLLM(payload.llm_provider, payload.llm_api_key, payload.llm_model)
+    reranker = _build_semantic_reranker(
+        payload.llm_provider,
+        payload.llm_api_key,
+        sess,
+    )
 
     previous_bot = ""
     for t in reversed(sess.transcript):
@@ -823,11 +1494,12 @@ def _run_agent_sync(payload: _MessageRequest, slug: str) -> Dict[str, Any]:
     # Engine-internal LLM is the BYOK adapter for this request so any
     # internal call (paraphrase, response gen, etc.) uses the user's key.
     try:
-        with _byok_attached(sess.engine, byok):
-            result = agent.invoke(
-                {"messages": history},
-                {"recursion_limit": 25},
-            )
+        with _semantic_reranker_attached(sess.engine, reranker):
+            with _byok_attached(sess.engine, byok):
+                result = agent.invoke(
+                    {"messages": history},
+                    {"recursion_limit": 25},
+                )
     except Exception as e:
         return {"reply": f"[agent error: {type(e).__name__}: {e}]", "tools_called": []}
 
@@ -885,6 +1557,9 @@ def _run_agent_sync(payload: _MessageRequest, slug: str) -> Dict[str, Any]:
     response: Dict[str, Any] = {"reply": reply, "tools_called": tool_calls}
     if isinstance(scm.last_search_result, dict):
         response["retrieval"] = scm.last_search_result
+    if pending_wake_summary and pending_wake_summary.get("narrative"):
+        response["wake_summary"] = pending_wake_summary
+        _consume_pending_chat_wake_summary(sess)
     return response
 
 
@@ -940,6 +1615,9 @@ async def _stream_agent(payload: _MessageRequest, slug: str):
     """
     try:
         sess = _pool.get_or_create(slug)
+        pending_wake_summary = _consume_pending_chat_wake_summary(sess)
+        if pending_wake_summary and pending_wake_summary.get("narrative"):
+            yield _sse({"type": "wake_summary", **pending_wake_summary})
         scm = _InProcessSCM(
             engine=sess.engine,
             user_id=slug,
@@ -948,6 +1626,11 @@ async def _stream_agent(payload: _MessageRequest, slug: str):
         llm = _build_llm(payload.llm_provider, payload.llm_api_key, payload.llm_model)
         agent = _build_agent(llm=llm, scm_client=scm)
         byok = _BYOKLLM(payload.llm_provider, payload.llm_api_key, payload.llm_model)
+        reranker = _build_semantic_reranker(
+            payload.llm_provider,
+            payload.llm_api_key,
+            sess,
+        )
 
         previous_bot = ""
         for t in reversed(sess.transcript):
@@ -987,48 +1670,49 @@ async def _stream_agent(payload: _MessageRequest, slug: str):
         # Attach BYOK to the engine for THIS request — any engine-internal
         # LLM call (encoder, paraphrase, response gen) now uses the user's
         # cloud key instead of the persistent no-op default.
-        with _byok_attached(sess.engine, byok):
-            async for ev in agent.astream_events(
-                {"messages": history},
-                {"recursion_limit": 25},
-                version="v2",
-            ):
-                kind = ev.get("event")
-                data = ev.get("data") or {}
-                name = ev.get("name") or ""
+        with _semantic_reranker_attached(sess.engine, reranker):
+            with _byok_attached(sess.engine, byok):
+                async for ev in agent.astream_events(
+                    {"messages": history},
+                    {"recursion_limit": 25},
+                    version="v2",
+                ):
+                    kind = ev.get("event")
+                    data = ev.get("data") or {}
+                    name = ev.get("name") or ""
 
-                if kind == "on_tool_start":
-                    tools_called.append(name)
-                    if name == "add_memory":
-                        args = _coerce_tool_args(data.get("input"))
-                        text_arg = args.get("text")
-                        if isinstance(text_arg, str) and text_arg.strip():
-                            add_memory_texts.append(text_arg.strip())
-                    yield _sse({"type": "tool_call", "name": name})
+                    if kind == "on_tool_start":
+                        tools_called.append(name)
+                        if name == "add_memory":
+                            args = _coerce_tool_args(data.get("input"))
+                            text_arg = args.get("text")
+                            if isinstance(text_arg, str) and text_arg.strip():
+                                add_memory_texts.append(text_arg.strip())
+                        yield _sse({"type": "tool_call", "name": name})
 
-                elif kind == "on_tool_end":
-                    yield _sse({"type": "tool_done", "name": name})
-                    # Drop whatever the model emitted BEFORE the tool —
-                    # that's pre-tool narration, not the final answer.
-                    # The next chat-model stream after this is the true
-                    # reply.
-                    full_reply_parts.clear()
-                    yield _sse({"type": "reset_reply"})
+                    elif kind == "on_tool_end":
+                        yield _sse({"type": "tool_done", "name": name})
+                        # Drop whatever the model emitted BEFORE the tool —
+                        # that's pre-tool narration, not the final answer.
+                        # The next chat-model stream after this is the true
+                        # reply.
+                        full_reply_parts.clear()
+                        yield _sse({"type": "reset_reply"})
 
-                elif kind == "on_chat_model_stream":
-                    # Skip stream events from middleware-internal LLM
-                    # calls (summarization, etc). They aren't part of
-                    # the user-visible reply.
-                    tags = ev.get("tags") or []
-                    if any(t.startswith("summarization") for t in tags):
-                        continue
-                    chunk = data.get("chunk")
-                    delta = ""
-                    if chunk is not None:
-                        delta = getattr(chunk, "content", "") or ""
-                    if delta:
-                        full_reply_parts.append(delta)
-                        yield _sse({"type": "token", "delta": delta})
+                    elif kind == "on_chat_model_stream":
+                        # Skip stream events from middleware-internal LLM
+                        # calls (summarization, etc). They aren't part of
+                        # the user-visible reply.
+                        tags = ev.get("tags") or []
+                        if any(t.startswith("summarization") for t in tags):
+                            continue
+                        chunk = data.get("chunk")
+                        delta = ""
+                        if chunk is not None:
+                            delta = getattr(chunk, "content", "") or ""
+                        if delta:
+                            full_reply_parts.append(delta)
+                            yield _sse({"type": "token", "delta": delta})
 
         reply = "".join(full_reply_parts).strip() or "(no reply)"
         _maybe_force_profile_ingest(
@@ -1093,6 +1777,109 @@ class _SleepRequest(BaseModel):
     llm_model: Optional[str] = None
 
 
+class _ChatSleepConfigUpdate(BaseModel):
+    enabled: Optional[bool] = None
+    sleep_start: Optional[str] = None
+    sleep_end: Optional[str] = None
+    timezone: Optional[str] = None
+    auto_sleep_mode: Optional[str] = None
+    idle_timeout_sec: Optional[float] = None
+
+
+class _BYOKCapabilityProbeRequest(BaseModel):
+    llm_provider: str
+    llm_api_key: Optional[str] = None
+
+
+@router.get("/api/byok-capabilities")
+async def chat_byok_capabilities() -> JSONResponse:
+    """Return UI-facing BYOK capability flags for /chat."""
+    return JSONResponse(_semantic_rerank_capabilities())
+
+
+@router.post("/api/byok-capabilities")
+async def chat_byok_capabilities_probe(body: _BYOKCapabilityProbeRequest) -> JSONResponse:
+    """Probe provider-specific rerank support with the user's live key."""
+    provider = (body.llm_provider or "").strip().lower()
+    if not provider:
+        raise HTTPException(status_code=400, detail="llm_provider is required")
+    return JSONResponse(
+        _semantic_rerank_capabilities(
+            probe_provider=provider,
+            probe_api_key=(body.llm_api_key or "").strip(),
+        ),
+    )
+
+
+@router.get("/api/sleep-config/{slug}")
+async def chat_sleep_config(slug: str) -> JSONResponse:
+    """Read the auto-sleep configuration for this public chat session."""
+    sess = _pool.get_or_create(slug)
+    return JSONResponse(_chat_sleep_config_payload(sess))
+
+
+@router.post("/api/sleep-config/{slug}")
+async def update_chat_sleep_config(
+    slug: str, body: _ChatSleepConfigUpdate,
+) -> JSONResponse:
+    """Update auto-sleep settings for this chat session."""
+    from zoneinfo import ZoneInfo
+    from ..lifecycle.circadian import parse_hhmm
+
+    sess = _pool.get_or_create(slug)
+    fields = set(body.model_fields_set)
+
+    mode = body.auto_sleep_mode
+    if "auto_sleep_mode" in fields:
+        mode = str(mode or "").strip().lower()
+        if mode not in _ALLOWED_AUTO_SLEEP_MODES:
+            raise HTTPException(
+                status_code=400,
+                detail="auto_sleep_mode must be one of: auto, night_only, idle_only, off",
+            )
+
+    if "sleep_start" in fields and parse_hhmm(body.sleep_start or "") is None:
+        raise HTTPException(status_code=400, detail="sleep_start must be 'HH:MM'")
+    if "sleep_end" in fields and parse_hhmm(body.sleep_end or "") is None:
+        raise HTTPException(status_code=400, detail="sleep_end must be 'HH:MM'")
+    if "timezone" in fields:
+        tz_name = (body.timezone or "").strip()
+        if not tz_name:
+            raise HTTPException(status_code=400, detail="timezone is required")
+        try:
+            ZoneInfo(tz_name)
+        except Exception:
+            raise HTTPException(status_code=400, detail=f"unknown timezone: {tz_name!r}")
+    if "idle_timeout_sec" in fields and body.idle_timeout_sec is not None:
+        if body.idle_timeout_sec <= 0:
+            raise HTTPException(status_code=400, detail="idle_timeout_sec must be > 0")
+
+    with sess._lock:
+        cfg = sess.sleep_config
+        if "enabled" in fields:
+            cfg.enabled = bool(body.enabled)
+            cfg.has_custom_schedule = True
+        if "sleep_start" in fields:
+            cfg.sleep_start = str(body.sleep_start).strip()
+            cfg.has_custom_schedule = True
+        if "sleep_end" in fields:
+            cfg.sleep_end = str(body.sleep_end).strip()
+            cfg.has_custom_schedule = True
+        if "timezone" in fields:
+            cfg.timezone_name = str(body.timezone).strip()
+            cfg.has_custom_schedule = True
+        if "auto_sleep_mode" in fields:
+            cfg.auto_sleep_mode = mode or "auto"
+        if "idle_timeout_sec" in fields:
+            cfg.idle_timeout_sec = (
+                float(body.idle_timeout_sec)
+                if body.idle_timeout_sec is not None
+                else None
+            )
+
+    return JSONResponse(_chat_sleep_config_payload(sess))
+
+
 @router.post("/api/sleep/{slug}")
 async def chat_sleep(slug: str, body: Optional[_SleepRequest] = None) -> JSONResponse:
     """Force a deep-sleep cycle and return the resulting wake-summary
@@ -1114,24 +1901,10 @@ async def chat_sleep(slug: str, body: Optional[_SleepRequest] = None) -> JSONRes
 
     # Run the sleep cycle in a thread so we don't block the event loop.
     def _do():
-        from ..integrations.tools import _consolidate_handler, _wake_summary_handler
-        if byok is not None:
-            with _byok_attached(sess.engine, byok):
-                stats = _consolidate_handler({"user_id": slug, "mode": "deep"}, sess.engine) or {}
-                summary = _wake_summary_handler(
-                    {"user_id": slug, "since_hours": 24.0}, sess.engine,
-                ) or {}
-        else:
-            stats = _consolidate_handler({"user_id": slug, "mode": "deep"}, sess.engine) or {}
-            summary = _wake_summary_handler(
-                {"user_id": slug, "since_hours": 24.0}, sess.engine,
-            ) or {}
-        return {
-            "ok": True,
-            "stats": stats,
-            "narrative": (summary.get("narrative") or "").strip(),
-        }
+        return _run_chat_sleep_cycle(sess, reason="manual", byok=byok)
+
     result = await asyncio.to_thread(_do)
+    _store_pending_chat_wake_summary(sess, None)
     # Stash the wake-summary on the session so the next chat turn can
     # surface it as a banner if the user wants.
     if result.get("narrative"):
@@ -1213,10 +1986,44 @@ async def chat_retrieval(slug: str) -> JSONResponse:
     return JSONResponse({"available": True, "retrieval": snapshot})
 
 
+@router.get("/api/retrieval-lineage/{slug}/{memory_id}")
+async def chat_retrieval_lineage(slug: str, memory_id: str) -> JSONResponse:
+    """Return lineage details for one retrieved memory id in this chat slug."""
+    sess = _pool.get(slug)
+    if sess is None:
+        return JSONResponse(
+            {"ok": False, "error": "unknown chat slug", "memory_id": memory_id},
+            status_code=404,
+        )
+
+    def _fetch() -> Dict[str, Any]:
+        ltm = getattr(sess.engine, "long_term_memory", None)
+        if ltm is None or not hasattr(ltm, "get_lineage"):
+            return {}
+        try:
+            lineage = ltm.get_lineage(memory_id) or {}
+        except Exception:
+            lineage = {}
+        return lineage if isinstance(lineage, dict) else {}
+
+    lineage = await asyncio.to_thread(_fetch)
+    if not lineage:
+        return JSONResponse(
+            {"ok": False, "error": f"memory not found: {memory_id}", "memory_id": memory_id},
+            status_code=404,
+        )
+    return JSONResponse({"ok": True, "memory_id": memory_id, "lineage": lineage})
+
+
 @router.get("/api/history/{slug}")
 async def chat_history(slug: str) -> JSONResponse:
     """Restore conversation on page reload."""
     sess = _pool.get(slug)
     if sess is None:
-        return JSONResponse({"turns": []})
-    return JSONResponse({"turns": list(sess.transcript)})
+        return JSONResponse({"turns": [], "wake_summary": None})
+    _pool.touch(slug)
+    wake_summary = _consume_pending_chat_wake_summary(sess)
+    return JSONResponse({
+        "turns": list(sess.transcript),
+        "wake_summary": wake_summary,
+    })

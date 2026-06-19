@@ -57,3 +57,52 @@ texput.log
 node_modules/
 .agents/
 .commandcode/
+.claude/
+
+# =============================================================================
+# PUBLIC REPO EXCLUSIONS - Strategic/Internal documents
+# =============================================================================
+
+# Internal strategy & status docs
+docs/STATUS.md
+docs/ROADMAP.md
+docs/PITCH.md
+docs/PRODUCT_VISION.md
+docs/PROJECT_STATUS.md
+docs/SCM_PRODUCTIZATION_STATUS_2026-05-01.md
+docs/RESEARCH_DOC_AUDIT_2026-04-29.md
+docs/SCM_RESEARCH_LOG.md
+docs/HUMAN_MEMORY_REVOLUTION_READINESS.md
+docs/HOSTED_DEMO.md
+docs/DEMO_VIDEO_SCRIPT.md
+docs/HUMAN_LIKE_USER_TRY.md
+docs/HUMAN_MORE.md
+docs/SCM_PAPER_BASELINE_2026-04-29.md
+
+# Paper strategy & unpublished papers
+research/arxiv_submission/
+research/SCM_arXiv_Paper_v2.md
+research/SleepAI_arXiv_Paper.md
+research/SCM_Final_Paper.tex
+research/SCM_Final_Paper.pdf
+research/SCM_Final_Paper.aux
+research/SCM_Final_Paper.out
+research/SCM_Final_Paper.toc
+research/latex/
+research/papers/
+research/03_SleepAI_Architecture.md
+research/04_Comparative_Gap_Analysis.md
+research/10_SCM_Human_Memory_Blueprint.md
+research/11_SCM_HME_Phases_Document.md
+
+# Reference papers (copyright)
+DeepSeek_V4.pdf
+
+# Deployment configs (internal)
+fly.toml
+railway.json
+
+# Benchmark artifacts (internal metrics)
+research/metrics/
+research/reproducibility/
+research/benchmarks/

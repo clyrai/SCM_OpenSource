@@ -236,7 +236,8 @@ class SleepCycleOrchestrator:
             'rem': {},
             'forgetting': {},
             'micro': {},
-            'dreams': []
+            'dreams': [],
+            'dream_state': {},
         }
         if resolved_mode == "micro":
             phase_start = time.time()
@@ -278,6 +279,7 @@ class SleepCycleOrchestrator:
         cycle_stats['rem'] = deep_stats.get('rem', {})
         cycle_stats['forgetting'] = deep_stats.get('forgetting', {})
         cycle_stats['dreams'] = deep_stats.get('dreams', [])
+        cycle_stats['dream_state'] = deep_stats.get('dream_state', {})
         cycle_stats['deep'] = deep_stats
         cycle_stats['updated_concepts'] = updated_concepts
         cycle_stats['updated_relations'] = updated_relations

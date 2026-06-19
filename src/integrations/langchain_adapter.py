@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import json
 from typing import Any, Dict, List, Optional
+from urllib.parse import quote
 
 import requests
 
@@ -107,6 +108,18 @@ class SCMClient:
         )
         r.raise_for_status()
         return r.json()
+
+    def memory_lineage(self, memory_id: str) -> Dict[str, Any]:
+        memory_id = (memory_id or "").strip()
+        if not memory_id:
+            raise ValueError("memory_id is required")
+        encoded = quote(memory_id, safe="")
+        return self._get(
+            f"/memories/{encoded}/lineage",
+            {"user_id": self.user_id},
+        )
+
+    lineage = memory_lineage
 
     def _post(self, path: str, body: Dict[str, Any]) -> Dict[str, Any]:
         r = requests.post(
